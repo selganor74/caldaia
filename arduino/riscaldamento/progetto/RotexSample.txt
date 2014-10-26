@@ -1,0 +1,236 @@
+/* http://forum.portalsole.it/viewtopic.php?f=12&t=716&p=3667&hilit=adattatore+232+rotex#p3667 */
+
+/*
+
+Save Rotex RSP3 data to SD card and mysql database
+Use NTP time provider to sync internal time
+Fabio Roverso 15/10/11
+V 1.0
+
+*/
+
+#include <SPI.h>
+#include <Ethernet.h>
+#include <NewSoftSerial.h>
+#include <Udp.h>
+#include <SD.h>
+#include <Time.h>
+
+//Network stuff
+byte mac[]={ 0x90, 0xA2, 0xDA, 0x00, 0x66, 0x38 }; //Arduino MAC address
+byte ip[]={ 192,168,1,177 }; //Arduino IP address
+byte gateway[]={ 192,168,1,250 }; //Network gateway
+byte mask[]={ 255,255,255,0 }; //Network netmask
+
+//NTP stuff
+byte timeServer[]={ 192, 168, 1, 8 }; //NTP server address
+unsigned int localPort=8888; //local port to listen for UDP packets
+const int NTP_PACKET_SIZE=48; //NTP time stamp
+byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packets
+const unsigned long timeZoneOffset=3600; //set this to the offset in seconds to your local time;
+
+//Web client stuff
+byte server[]={ 192,168,12,8 }; //Web server address
+
+//Serial stuff
+NewSoftSerial mySerial(2,3); //Initialize 2nd serial port (rx,tx)
+const char EndChar=13; //End of transmission
+const unsigned int BufferSize=40; //Max transmission lenght
+unsigned int i=0; //Buffer index
+boolean getSerialString=false;
+
+//SD Stuff
+//On the Ethernet Shield, CS is pin 4. Note that even if it's not
+//used as the CS pin, the hardware CS pin (10 on most Arduino boards,
+//53 on the Mega) must be left as an output or the SD library
+//functions will not work.
+const int chipSelect = 4;
+boolean SDpresent=false;
+
+void setup(){
+
+  //start Ethernet and UDP
+  Ethernet.begin(mac, ip, gateway, mask);
+  Udp.begin(localPort);
+
+  //start serial
+  Serial.begin(9600);
+  mySerial.begin(9600);
+ 
+  //start SD
+  //Serial.println("Initializing SD card...");
+  //make sure that the default chip select pin is set to
+  //output, even if you don't use it:
+  pinMode(10, OUTPUT);
+  //see if the card is present and can be initialized:
+  if (!SD.begin(chipSelect)){
+    //Serial.println("Card failed, or not present.");
+    SDpresent=false;
+  }
+  else {
+    //Serial.println("Card initialized.");
+    SDpresent=true;
+  }
+ 
+  //Sync time and date
+  setSyncProvider(getNtpTime);
+  setSyncInterval(86400);
+  //Serial.print("Synching Clock...");
+  while(timeStatus()==timeNotSet){
+    //Serial.print("."); //wait until the time is set by the sync provider
+    delay(1000);
+  }
+  //Serial.println();
+
+  //Serial.println(GetTime());
+  //Serial.println("Arduino started.");
+  //Serial.println("================================");
+ 
+  delay(1000);
+}
+
+void loop(){
+
+  //Serial.println();
+  //Serial.println("--Main Loop--");
+  //Serial.println();
+  mySerial.flush();
+ 
+  //Serial.print("Waiting for serial data");
+  while (mySerial.available()==0){
+    //Serial.print(".");
+    delay(100);
+  };
+  //Serial.println();
+  //Serial.println("Serial data incoming:");
+ 
+  i=0;
+  char serInString[BufferSize+1]; //define string buffer and set to empty
+  getSerialString=false;
+ 
+  while ((mySerial.available()>0)&&(i<=BufferSize)){
+   char incomingbyte=mySerial.read();
+   //Serial.print(i);
+        //Serial.print(" ");
+   if (incomingbyte==EndChar){
+        serInString[i]=0;
+      getSerialString=true;
+      //Serial.println();
+      //Serial.println("End char found: processing data.");
+      break;
+   }
+   else{
+     serInString[i]=incomingbyte;
+     i++;
+   }
+  }
+  //Serial.print("Received string: ");
+  Serial.println(serInString);
+
+  if (getSerialString){
+    WebClient(serInString); //Save to db
+    if(SDpresent){
+      //Serial.println("SD present");
+      String record=GetTime()+";"+String(serInString);
+      SDWrite(record); //Save to SD
+    }
+  }
+}
+
+void WebClient(char *strArray){
+   
+  Client client(server, 82); //ip,port (usually 80)
+  //Serial.print("Web request: ");
+  //Serial.println(String(strArray));
+  if (client.connect()){
+    //Serial.println("Connected.");
+    client.println("GET /rotex.php?user=dbusername&password=dbpassword&data="+String(strArray)+" HTTP/1.0");
+    client.println();
+  }
+  else{
+    //Serial.println("Connection failed."); 
+  }
+  //Serial.println("Disconnecting.");
+  client.stop();
+}
+
+void SDWrite(String strSD){
+
+  //Serial.println("Opening file.");
+  File dataFile = SD.open("rotex.csv", FILE_WRITE);
+  //if the file is available, write to it:
+  if (dataFile){
+    //Serial.println("Writing.");
+    //Serial.print("Record: ");
+    //Serial.println(strSD);   
+    dataFile.println(strSD);
+    //Serial.println("Closing file.");
+    dataFile.close();
+  }
+  else {
+    //Serial.println("Error opening file.");
+  }
+}
+
+String GetTime(){
+  String ora=hour();
+  String minuti=formatDigits(minute());
+  String secondi=formatDigits(second());
+  String giorno=day();
+  String mese=month();
+  String anno=year();
+  return ora+":"+minuti+":"+secondi+" "+giorno+" "+mese+" "+anno;
+}
+String formatDigits(unsigned int digits){
+  if(digits < 10){
+    return "0"+String(digits);
+  }
+  else {
+    return String(digits);
+  }
+}
+
+/*******************************************************************************
+* Get NTP time function
+*******************************************************************************/
+unsigned long getNtpTime(){
+  sendNTPpacket(timeServer); //send an NTP packet to a time server
+  delay(1000); //wait to see if a reply is available
+  if ( Udp.available() ){
+    Udp.readPacket(packetBuffer,NTP_PACKET_SIZE); //read the packet into the buffer
+
+    //the timestamp starts at byte 40 of the received packet and is four bytes,
+    //or two words, long. First, esxtract the two words:
+    unsigned long highWord = word(packetBuffer[40], packetBuffer[41]);
+    unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);
+    //combine the four bytes (two words) into a long integer
+    //this is NTP time (seconds since Jan 1 1900):
+    unsigned long secsSince1900 = highWord << 16 | lowWord;
+    const unsigned long seventyYears = 2208988800UL - timeZoneOffset;
+    //subtract seventy years:
+    return secsSince1900 - seventyYears;
+  }
+  return 0; //return 0 if unable to get the time
+}
+/*******************************************************************************
+* send an NTP request to the time server at the given address
+*******************************************************************************/
+unsigned long sendNTPpacket(byte *address){
+  //set all bytes in the buffer to 0
+  memset(packetBuffer, 0, NTP_PACKET_SIZE);
+  //Initialize values needed to form NTP request
+  //(see URL above for details on the packets)
+  packetBuffer[0] = 0b11100011; //LI, Version, Mode
+  packetBuffer[1] = 0; //Stratum, or type of clock
+  packetBuffer[2] = 6; //Polling Interval
+  packetBuffer[3] = 0xEC; //Peer Clock Precision
+  //8 bytes of zero for Root Delay & Root Dispersion
+  packetBuffer[12] = 49;
+  packetBuffer[13] = 0x4E;
+  packetBuffer[14] = 49;
+  packetBuffer[15] = 52;
+
+  //all NTP fields have been given values, now
+  //you can send a packet requesting a timestamp:
+  Udp.sendPacket( packetBuffer,NTP_PACKET_SIZE, address, 123); //NTP requests are to port 123
+}
