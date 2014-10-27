@@ -1,4 +1,5 @@
 (function() {
+	var moment = require("moment");
 	var http = require("http");
 	var serialport = require("serialport");
 	var SerialPort = serialport.SerialPort;
@@ -45,7 +46,7 @@
 					console.log("Errore nel parsing della risposta");	
 				}
 				try {
-					putDataIntoES( fromArduino );
+					putDataIntoES( fromArduino, 'GET-RA' );
 				} catch (e) {
 					console.log("Errore nell'invio dai dati: " + e );
 				}
@@ -73,15 +74,25 @@
 	}
 	
 	// inserisce i dati in elasticsearch
-	function putDataIntoES( dataToBePut ) {
+	function putDataIntoES( dataToBePut, dataType ) {
+		var indexPath = "/caldaia/raw-data";
+
+		if (dataType) {
+			if (dataType === "GET-RA" ){
+				indexPath = "/caldaia-ra-"+moment().utc().format('YYYY-MM-DD')+"/raw-data";
+			}
+		}
+
 		var options = {
 			host: 'es.casa.local',
 			port: 9200,
-			path: '/caldaia/raw-data',
+			path: indexPath,
 			method: 'POST'
 		};
 	
 		var req = http.request(options, function(res) {
+			console.log('METHOD: ' + options.method );
+			console.log('URL: ' + options.host + options.path );
 			console.log('STATUS: ' + res.statusCode);
 			console.log('HEADERS: ' + JSON.stringify(res.headers));
 			res.setEncoding('utf8');
