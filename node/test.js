@@ -42,13 +42,13 @@
 					fromArduino = eval( evalResponse );
 					fromArduino["@timestamp"] = new Date();
 					console.log ( fromArduino );
+					try {
+						putDataIntoES( fromArduino, 'GET-RA' );
+					} catch (f) {
+						console.log("Errore nell'invio dai dati: " + f );
+					}
 				} catch (e) {
 					console.log("Errore nel parsing della risposta");	
-				}
-				try {
-					putDataIntoES( fromArduino, 'GET-RA' );
-				} catch (e) {
-					console.log("Errore nell'invio dai dati: " + e );
 				}
 				response = "";
 			}

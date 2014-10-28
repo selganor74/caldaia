@@ -116,6 +116,8 @@ unsigned long lastAccuResetTime;
 boolean outRotexResetValue;
 unsigned long rotexResetCounter;
 
+unsigned long rotexP1Accu_On;
+
 unsigned long isteLastOutCaldaia_On;
 unsigned long isteLastOutCaldaia_On_For;
 
@@ -217,7 +219,7 @@ void resetAccumulators() {
   inTermoAccumulatoreAccu_Off=0;
 
   rotexResetCounter = 0;
-
+  rotexP1Accu_On = 0;
   lastAccuResetTime = millis();
 }
 
@@ -401,8 +403,11 @@ void cmdGetStatus () {
   Serial.print( isteLastOutCaldaia_On_For );
   Serial.println( "," );
 //*/     
-    
-    
+      
+  Serial.print( "  \"rotexP1Accu_On\": " );
+  Serial.print( rotexP1Accu_On );
+  Serial.println( "," );
+  
   Serial.print( "  \"rotexHA\": " );
   Serial.print( rotexValues[ RTX_HA ] );
   Serial.println( "," );
@@ -503,7 +508,7 @@ void cmdGetStatus () {
   
 }
 
-void cmdGetStatusRA() {
+void cmdGetRA() {
   cmdGetStatus();
   resetAccumulators();
 }
@@ -611,7 +616,7 @@ void doManageAccumulators() {
   outCaldaiaValue          == HIGH ? outCaldaiaAccu_On          += Accu_Length : outCaldaiaAccu_Off          += Accu_Length;
 
   Accu_LastTS = Accu_ActualTS;
-
+  rotexP1Accu_On += rotexValues[ RTX_P1 ] != 0 ?  Accu_Length : 0;
 //  timeSinceLastAccuResetMs = calcolaIntervallo( lastAccuResetTime, Accu_ActualTS );
   timeSinceLastAccuResetMs = inTermoAmbienteAccu_On + inTermoAmbienteAccu_Off;
 
