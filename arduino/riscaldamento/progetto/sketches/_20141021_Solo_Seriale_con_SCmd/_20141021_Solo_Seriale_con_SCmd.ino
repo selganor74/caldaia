@@ -508,7 +508,7 @@ void cmdGetStatus () {
   
 }
 
-void cmdGetRA() {
+void cmdGetStatusRA() {
   cmdGetStatus();
   resetAccumulators();
 }
