@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+	<script data-require="angular.js@1.3.7" data-semver="1.3.7" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.7/angular.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js" type="text/javascript"></script>
+	<link href="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.css" type="text/css">
+  </head>
+
+  <body ng-app="app">
+	<div ng-controller="theController">
+		<span>Caldaia {{current.outCaldaiaValue === 1 ? "Accesa!" : "Spenta"}}</span><br/>
+		<span>Pompa Camino {{current.outPompaCaminoValue === 1 ? "Accesa!" : "Spenta"}}</span><br/>
+		<span>Pompa Riscaldamento {{current.inTermoAmbienteValue === 1 ? "Accesa!" : "Spenta"}}</span><br/>
+		<span>Temperatura Accumulo: {{current.rotexTS}}</span><br/>
+		<span>Temperatura Camino: {{current.ainTempCaminoValueCentigradi}}</span><br/>
+		<span>Temperatura Pannelli: {{current.rotexTK}}</span><br/>
+		<pre class="prettyprint" ng-bind="currentAsString">
+		</pre>	
+		<span><button ng-click="loadData()" ng-disable="isLoading">Aggiorna</button></span> <span ng-show="isLoading">Caricamento ...</span>
+		<div>
+			{{errore}}
+		</div>
+	<div>
+	<script language="javascript">
+		angular
+			.module("app", [])
+			.controller( "theController", ['$scope', '$http', '$filter', function( $scope, $http, $filter ) {
+				$scope.isLoading = false;
+				$scope.loadData = function() {
+					$scope.isLoading = true;
+					$http.get('/CURRENT.json')	
+						.success( function( dati ) {
+							$scope.currentAsString = $filter('json')(dati);			
+							$scope.current = dati;
+							$scope.isLoading = false;
+							$scope.errore = null;
+						} )
+						.error( function( dati, status ) {
+							$scope.isLoading = false;
+							$scope.errore = status;
+						} ) 
+				};	
+				$scope.loadData();
+			}] );
+	</script>
+  </body>
+
+</html>

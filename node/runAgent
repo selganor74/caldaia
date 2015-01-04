@@ -1,0 +1,2 @@
+#!/bin/bash
+while sleep 1; do node test.js 900000 450000 /dev/ttyUSB1; done

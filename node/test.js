@@ -110,7 +110,7 @@
 
 		if (dataType) {
 			if (dataType === "GET-RA" ){
-				indexPath = "/caldaia-ra-"+moment().utc().format('YYYY-MM-DD')+"/raw-data";
+				indexPath = "/caldaia-ra-"+moment(dataToBePut['@timestamp']).utc().format('YYYY-MM-DD')+"/raw-data";
 			}
 			if (dataType === "CURRENT" ) {
 				indexPath = "/caldaia-current/current/1";
@@ -137,6 +137,7 @@
 	
 		req.on('error', function(e) {
 			console.log('problem with request: ' + e.message);
+			saveDataToDisk( dataToBePut, dataType );
 		});
 	
 		// write data to request body
@@ -144,6 +145,35 @@
 		req.end();
 	}  
 	
+	function saveDataToDisk( dataToBePut, dataType ) {
+		var tmpPath = "/tmp/";
+		
+		var fs = require('fs');
+		var mkdirp = require('mkdirp');
+
+		var saveDir = tmpPath + dataType;
+		var saveTo = saveDir + '/' + ( dataType==='CURRENT' ? 'CURRENT' : dataToBePut['@timestamp'] ) + '.json';
+
+		console.log('Saving data to ' + saveTo + ' for later use.' );
+
+		mkdirp( saveDir, function( err ) {
+			if ( err ) { 
+				console.log ( "Trouble in creating directory " + saveTo + ": " + err );			
+				return;
+			}
+
+			fs.writeFile( saveTo, JSON.stringify( dataToBePut ), function( err ) {
+				if (err) {
+					console.log( "Unable to save file! " + err );
+				} else {
+					console.log( "Saved!" );
+				}
+			} );
+		} );
+	
+	}
+
+
 	function closeAndReopenSerial() {
 		function reopen() {
 			console.log( "Reopening Serial..." );
