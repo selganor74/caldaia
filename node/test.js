@@ -140,6 +140,12 @@
 			saveDataToDisk( dataToBePut, dataType );
 		});
 	
+		// Se arrivo qui vuol dire che la richiesta è andata a buon fine.
+		// Devo aggiornare comunque lo stato attuale!
+		req.on('data', function( chunk ) {
+			if (dataType === "CURRENT") saveDataToDisk( dataToBePut, dataType );
+		});
+
 		// write data to request body
 		req.write(JSON.stringify(dataToBePut)+'\n');
 		req.end();
