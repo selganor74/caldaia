@@ -131,7 +131,8 @@
 			console.log('HEADERS: ' + JSON.stringify(res.headers));
 			res.setEncoding('utf8');
 			res.on('data', function (chunk) {
-			console.log('BODY: ' + chunk);
+				console.log('BODY: ' + chunk);
+				if (dataType === "CURRENT") saveDataToDisk( dataToBePut, dataType );
 			});
 		});
 	
@@ -140,12 +141,6 @@
 			saveDataToDisk( dataToBePut, dataType );
 		});
 	
-		// Se arrivo qui vuol dire che la richiesta è andata a buon fine.
-		// Devo aggiornare comunque lo stato attuale!
-		req.on('data', function( chunk ) {
-			if (dataType === "CURRENT") saveDataToDisk( dataToBePut, dataType );
-		});
-
 		// write data to request body
 		req.write(JSON.stringify(dataToBePut)+'\n');
 		req.end();
