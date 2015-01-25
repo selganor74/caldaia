@@ -665,7 +665,40 @@ void doCrunchInputs() {
 #define TEMPO_IN_ON ( calcolaIntervallo( tOnPompaCamino, millis() ) )
 #define TEMPO_MINIMO_PER_STATO 60000 
 #define PUO_CAMBIARE_STATO ( outPompaCaminoValue == LOW ? TEMPO_IN_OFF >= TEMPO_MINIMO_PER_STATO : TEMPO_IN_ON >= TEMPO_MINIMO_PER_STATO )
+#define ROTEX_DISPONIBILE ( rotexValues[ RTX_TS ] != 0 )
+#define DELTA_CAMINO_ROTEX ( (int)ainTempCaminoValueCentigradi - (int)rotexValues[ RTX_TS ] )
+#define T_CAMINO (int)ainTempCaminoValueCentigradi
+#define ACCENDI_POMPA_CAMINO      tOnPompaCamino = millis(); outPompaCaminoValue = HIGH;          
+#define SPEGNI_POMPA_CAMINO       tOnPompaCamino = millis(); outPompaCaminoValue = HIGH;          
 
+  //*
+  if ( PUO_CAMBIARE_STATO ) {
+    if ( outPompaCaminoValue == LOW ) {
+      if ( ROTEX_DISPONIBILE ) {
+        if ( DELTA_CAMINO_ROTEX >= 3 || T_CAMINO > 62 ) {
+          ACCENDI_POMPA_CAMINO
+        }
+      }
+      if ( !ROTEX_DISPONIBILE ) {
+        if ( T_CAMINO >=53 ) {
+          ACCENDI_POMPA_CAMINO
+        }  
+      } 
+    } else {   // if ( outPompaCaminoValue == LOW )
+      if ( ROTEX_DISPONIBILE ) {
+        if ( DELTA_CAMINO_ROTEX < 3 ) {
+          SPEGNI_POMPA_CAMINO
+        }
+      }
+      if ( !ROTEX_DISPONIBILE ) {
+        if ( T_CAMINO < 53 ) {
+          SPEGNI_POMPA_CAMINO
+        }         
+      }     
+    }          // if ( outPompaCaminoValue == LOW )
+  }          // if ( PUO_CAMBIARE_STATO )
+  //*/
+  /*
   if ( PUO_CAMBIARE_STATO ) {
     if ( outPompaCaminoValue == LOW ) { // La pompa è spenta vediamo se possiamo accenderla
       if (rotexValues[ RTX_TS ] != 0 ) {
@@ -710,7 +743,6 @@ void doCrunchInputs() {
       }
     }
   } // if PUO_CAMBIARE_STATO 
-  
   //*/
   /* La pompa del riscaldamento è direttamente collegata alla richiesta di calore nel da parte dei termostati ambiente.*/
   inTermoAmbienteValue     == HIGH ? outPompaValue   = HIGH : outPompaValue = LOW;
