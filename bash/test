@@ -1,0 +1,11 @@
+#!/bin/bash
+echo $#
+echo $@
+dest=""
+for a in $@; do
+	dest=$a;
+done
+echo $dest
+shift 1
+echo $#
+echo $@

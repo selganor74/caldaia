@@ -1,2 +1,28 @@
 #!/bin/bash
+#Creiamo l'ambiente per il salvataggio dello stato attuale della caldaia
+if [[ ! -e /run/caldaia/CURRENT.json ]] ; then
+	sudo mkdir -p /run/caldaia
+	sudo chown pi:root /run/caldaia
+	touch /run/caldaia/CALDAIA.json
+fi
+
+if [[ ! -e /tmp/CURRENT ]]; then
+	mkdir -p /tmp/CURRENT
+fi
+
+pushd /tmp/CURRENT
+rm CURRENT.json
+ln -s /run/caldaia/CURRENT.json CURRENT.json
+
+if [[ ! -e index.html ]]; then
+	ln -s /home/pi/caldaia/web/index.html index.html
+fi
+if [[ ! -e lib ]]; then
+	ln -s /home/pi/caldaia/web/lib lib
+fi
+
+http-server &
+popd
+
 while sleep 1; do node test.js 600000 60000 /dev/ttyUSB1; done
+

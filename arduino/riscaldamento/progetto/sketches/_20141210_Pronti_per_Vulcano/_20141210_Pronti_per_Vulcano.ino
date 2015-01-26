@@ -668,8 +668,8 @@ void doCrunchInputs() {
 #define ROTEX_DISPONIBILE ( rotexValues[ RTX_TS ] != 0 )
 #define DELTA_CAMINO_ROTEX ( (int)ainTempCaminoValueCentigradi - (int)rotexValues[ RTX_TS ] )
 #define T_CAMINO (int)ainTempCaminoValueCentigradi
-#define ACCENDI_POMPA_CAMINO      tOnPompaCamino = millis(); outPompaCaminoValue = HIGH;          
-#define SPEGNI_POMPA_CAMINO       tOnPompaCamino = millis(); outPompaCaminoValue = HIGH;          
+#define ACCENDI_POMPA_CAMINO      tOnPompaCamino  = millis(); outPompaCaminoValue = HIGH;          
+#define SPEGNI_POMPA_CAMINO       tOffPompaCamino = millis(); outPompaCaminoValue = LOW;          
 
   //*
   if ( PUO_CAMBIARE_STATO ) {

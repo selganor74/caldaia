@@ -1,0 +1,28 @@
+#!/bin/bash
+DEST_DIR=$2
+
+if [[ ! -d $DEST_DIR ]]; then
+	echo Inexistent destination path $DEST_DIR
+	exit 1
+fi
+
+ES_ADDRESS=http://es.casa.local:9200/
+CURRENT_ARG=0
+arg=$1
+if [[ ! -f $arg ]]; then
+	echo Inexistent file $arg
+	exit 1
+fi
+ES_INDEX=caldaia-ra-
+
+indexDate=$(printf '%s\n' "$arg" | awk '{ printf "%04d-%02d-%02d\n", $4, (index("JanFebMarAprMayJunJulAugSepOctNovDec",$2)+2)/3,$3 }')
+ES_INDEX=$ES_ADDRESS$ES_INDEX$indexDate/raw-data
+DATA_FILE=@$arg
+
+curl -XPOST "$ES_INDEX" -d "$DATA_FILE"
+
+if [[ $? == 0 ]]; then
+	#Qui spostiamo il file letto in saved.
+	echo mv "$arg" "$DEST_DIR"
+	echo Moved!
+fi

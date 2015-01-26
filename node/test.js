@@ -153,8 +153,12 @@
 		var mkdirp = require('mkdirp');
 
 		var saveDir = tmpPath + dataType;
-		var saveTo = saveDir + '/' + ( dataType==='CURRENT' ? 'CURRENT' : dataToBePut['@timestamp'] ) + '.json';
-
+		var saveTo;
+		if (dataType === 'CURRENT' ) {
+			saveTo = '/run/caldaia/CURRENT.json';
+		} else {
+			saveTo = saveDir + '/' + dataToBePut['@timestamp'] + '.json';
+		}
 		console.log('Saving data to ' + saveTo + ' for later use.' );
 
 		mkdirp( saveDir, function( err ) {
