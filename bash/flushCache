@@ -1,0 +1,4 @@
+#!/bin/bash
+
+find /tmp/GET-RA/ -name *.json | xargs -I qq ./putJsonIntoES "qq" /tmp/GET-RA/saved/
+

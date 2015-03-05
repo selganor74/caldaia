@@ -23,6 +23,6 @@ curl -XPOST "$ES_INDEX" -d "$DATA_FILE"
 
 if [[ $? == 0 ]]; then
 	#Qui spostiamo il file letto in saved.
-	echo mv "$arg" "$DEST_DIR"
+	mv "$arg" "$DEST_DIR"
 	echo Moved!
 fi
