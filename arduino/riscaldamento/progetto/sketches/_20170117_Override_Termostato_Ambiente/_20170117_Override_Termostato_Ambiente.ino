@@ -18,6 +18,10 @@ boolean serialDebug;
 //.. CircularBuffer cbRotexPortataTV = CircularBuffer();
 
 // In questa versione:
+//   Aggiunto Override del termostato ambiente. Lo scopo è quello di mantenere la temperatura dell'accumulo tra i 60 ed i 65 gradi
+//     quando il camino è in funzione. In questo modo, in caso di alte temperature del camino, c'è sempre sufficiente delta T per 
+//     garantire un raffreddamento veloce. 
+//     In estate, questo vincolo non deve esistere!
 //   Aggiunta Gestione del Camino Vulcano. Lettura temperatura del camino ed azionamento pompa scambiatore Rotex.
 //   Trasformato l'ingresso In-1 inTermoAccumulatore in un'uscita per comandare il reset (spegni e riaccendi del Rotex)
 //   Rimosso l'ingresso "inTermoAccumulatore" chea usato per leggere lo stato del termostato infilato nel tubo di lettura del ROTEX.
@@ -49,6 +53,8 @@ J3    Arduino	     Evaristo
 5	12 (MIS0)	Out-5 (M19) outPompaCamino. Comanda la pompa del camino.
 4	11 (MOSI)	Out-4 (M20) outRotexReset. Invia impulsi di 5 secondi ad un
                                     rele NC per spegnere e riaccendere la centralina ROTEX.
+                                    [2017 01 17 - Sostituito dall'override del Termostato Ambiente]
+                                    outOverrideTermoAmbiente [Normalmente Aperto]
 3	10 (SS)		Out-3 (M21) TX_Seriale Rotex <<-- Sebbene non sia usato, viene comunque occupato dalla libreria seriale !
 2	9		In-6  (M6)
 1	8		In-5  (M5)
@@ -61,7 +67,7 @@ J1
 6	5		Out-1 (M23) Relay Caldaia
 5	4		In-3  (M3) RX_Seriale Rotex
 4	3		In-2  (M2) Termostato Ambiente
-3	2		In-1  (M1) Termostato Accumulatore
+3	2		In-1  (M1) Termostato Accumulatore 
 2	1 (TXD)
 1	0 (RXD)
 */
@@ -74,7 +80,8 @@ const char serialRotexRX = 4;       // Pin 4  -> Evaristo In-3 -> M3
 const char serialRotexTX = 10;      // Pin 10 -> Evaristo Out-3 -> M21
 const char inTermoAmbiente = 3;     // M1 Input Termostati Ambiente
 const char inTermoAccumulatore = 2; // M2 Input Termostato Accumulatore
-const char outRotexReset = 11;       // Output per reset Rotex. L'output agisce su un Rele' NC
+// const char outRotexReset = 11;       // Output per reset Rotex. L'output agisce su un Rele' NC
+const char outOverrideTermoAmbiente = 11; // Output per Override Termostati Ambiente, [Sostituisce il relay di reset del Rotex]
 // const char ainTempCamino = 0 ;    // M9 Input analogico NTC Temperatura Camino 
 const char ainTempCamino = 1 ;    // M10 Input analogico NTC Temperatura Camino 
 
@@ -82,6 +89,10 @@ const char ainTempCamino = 1 ;    // M10 Input analogico NTC Temperatura Camino
 const char rotexTermoMin = 43;      // Temperatura di accensione delle caldaia
 const char rotexTermoMax = 45;      // Temperatura di spegnimento della caldaia
 const char deltaSolare   = 1;       // Quando i pannelli sono in funzione la temperatura di soglia della caldaia (rotexTermoMin) scende di deltaSolare Gradi.
+const char rotexMaxTempConCamino = 63; // Se la temperatura dell'accumulo rotex è maggiore o uguale a rotexMaxTempConCamino viene attivato l'override 
+                                       // del termostato ambiente mandando in circolo in impianto.
+const char rotexMinTempConCamino = 60; // L'override viene sganciato quando la temperatura dell'accumulo scende sotto rotexMinTempConCamino.
+
 SoftwareSerial rotexSerial = SoftwareSerial(serialRotexRX,serialRotexTX); //Initialize 2nd serial port (rx,tx)
 
 // Oggetto SerialCommand per gestire i comandi da Seriale
@@ -124,13 +135,17 @@ unsigned long inTermoAccumulatoreAccu_Off;
 unsigned long timeSinceLastAccuResetMs;
 unsigned long lastAccuResetTime;
 
-boolean outRotexResetValue;
-unsigned long rotexResetCounter;
+// boolean outRotexResetValue;
+// unsigned long rotexResetCounter;
 
 unsigned long rotexP1Accu_On;
 
 unsigned long isteLastOutCaldaia_On;
 unsigned long isteLastOutCaldaia_On_For;
+
+boolean       outOverrideTermoAmbienteValue;
+unsigned long outOverrideTermoAmbienteAccu_On;
+unsigned long outOverrideTermoAmbienteAccu_Off;
 
 // Variabile usate dal sistema Rotex
 unsigned long rotexHasFailed;
@@ -167,34 +182,34 @@ unsigned long calcolaIntervallo( unsigned long da, unsigned long a ) {
 
 // Esegue il reset della centralina rotex tenendola spenta per 10 secondi
 // deve essere chiamata finché rotexHasFailed non torna a 0
-void doRotexReset() {
-  static boolean rotexIsResetting = false;
-  static unsigned long resetStartedAtMillis = 0;
-  const unsigned long resetTimeMs = 10000;
-  // N.B.: Se l'output è in logica negata, occorre invertire i valori qui sotto:
-#define RESTVALUE LOW
-#define ACTIVEVALUE HIGH
-  
-  // Se siamo in fase di reset ed il tempo di timeout è passato, ritorno a riposo
-  if ( rotexIsResetting && ( calcolaIntervallo(resetStartedAtMillis, millis() ) > resetTimeMs ) ) {
-    rotexHasFailed = false;
-    rotexIsResetting = false;
-  }
-
-  // Se abbiamo rilevato uno stato di FAIL e non siamo già in fase di reset, avvio la procedura di reset
-  if ( rotexHasFailed && !rotexIsResetting ) {
-    rotexResetCounter++;
-    rotexIsResetting = true;
-    resetStartedAtMillis = millis();
-    digitalWrite( outRotexReset, ACTIVEVALUE );
-  } 
-
-  // Se non siamo in una condizione di fail e non stiamo resettando, allora teniamo l'output a RIPOSO (RESTVALUE)
-  // N.B.: Questa sezione di codice gira anche subito dopo che si è verificata la condizione di TIMEOUT passato.
-  if ( !rotexHasFailed && !rotexIsResetting ) {
-        digitalWrite( outRotexReset, RESTVALUE );   
-  }
-}
+//void doRotexReset() {
+//  static boolean rotexIsResetting = false;
+//  static unsigned long resetStartedAtMillis = 0;
+//  const unsigned long resetTimeMs = 10000;
+//  // N.B.: Se l'output è in logica negata, occorre invertire i valori qui sotto:
+//#define RESTVALUE LOW
+//#define ACTIVEVALUE HIGH
+//  
+//  // Se siamo in fase di reset ed il tempo di timeout è passato, ritorno a riposo
+//  if ( rotexIsResetting && ( calcolaIntervallo(resetStartedAtMillis, millis() ) > resetTimeMs ) ) {
+//    rotexHasFailed = false;
+//    rotexIsResetting = false;
+//  }
+//
+//  // Se abbiamo rilevato uno stato di FAIL e non siamo già in fase di reset, avvio la procedura di reset
+//  if ( rotexHasFailed && !rotexIsResetting ) {
+//    rotexResetCounter++;
+//    rotexIsResetting = true;
+//    resetStartedAtMillis = millis();
+//    digitalWrite( outRotexReset, ACTIVEVALUE );
+//  } 
+//
+//  // Se non siamo in una condizione di fail e non stiamo resettando, allora teniamo l'output a RIPOSO (RESTVALUE)
+//  // N.B.: Questa sezione di codice gira anche subito dopo che si è verificata la condizione di TIMEOUT passato.
+//  if ( !rotexHasFailed && !rotexIsResetting ) {
+//        digitalWrite( outRotexReset, RESTVALUE );   
+//  }
+//}
 
 // Genera un impulso di lunghezza "milliseconds"
 void pulse( unsigned long outputPin, unsigned long milliseconds ) {
@@ -228,12 +243,15 @@ void resetAccumulators() {
   outPompaAccu_Off=0;
   outCaldaiaAccu_On=0;
   outCaldaiaAccu_Off=0;
+  outOverrideTermoAmbienteAccu_On = 0;
+  outOverrideTermoAmbienteAccu_Off = 0;
+
   inTermoAmbienteAccu_On=0;
   inTermoAmbienteAccu_Off=0;
   inTermoAccumulatoreAccu_On=0;
   inTermoAccumulatoreAccu_Off=0;
 
-  rotexResetCounter = 0;
+  // rotexResetCounter = 0;
   rotexP1Accu_On = 0;
   lastAccuResetTime = millis();
 }
@@ -246,13 +264,14 @@ void initVariables() {
 
   outCaldaiaValue = LOW;
 
-  outRotexResetValue = HIGH;
+//  outRotexResetValue = HIGH;
+//  rotexResetCounter = 0;
+
+  outOverrideTermoAmbienteValue = LOW;
 
   inTermoAmbienteValue=false;
 
   inTermoAccumulatoreValue=false;
-
-  rotexResetCounter = 0;
 
   ainTempCaminoValue=0;
   ainTempCaminoValueCentigradi=0.0;
@@ -415,19 +434,23 @@ void statusToSerial ( boolean compactVersion ) {
   Serial.print( inTermoAccumulatoreAccu_Off );
   Serial.println( "," );
   
-  Serial.print( "  \"timeSinceLastAccuResetMs\": " );
-  Serial.print( timeSinceLastAccuResetMs );  
-  Serial.println( "," );
-  Serial.print( "  \"lastAccuResetTime\": " );
-  Serial.print( lastAccuResetTime );
-  Serial.println( "," );
-  
-  Serial.print( "  \"outRotexResetValue\": " );
-  Serial.print( outRotexResetValue );
-  Serial.println( "," );
+//  Serial.print( "  \"timeSinceLastAccuResetMs\": " );
+//  Serial.print( timeSinceLastAccuResetMs );  
+//  Serial.println( "," );
+//  Serial.print( "  \"lastAccuResetTime\": " );
+//  Serial.print( lastAccuResetTime );
+//  Serial.println( "," );
+//  
+//  Serial.print( "  \"outRotexResetValue\": " );
+//  Serial.print( outRotexResetValue );
+//  Serial.println( "," );
   }
-  Serial.print( "  \"rotexResetCounter\": " );
-  Serial.print( rotexResetCounter );
+//  Serial.print( "  \"rotexResetCounter\": " );
+//  Serial.print( rotexResetCounter );
+//  Serial.println( "," );
+
+  Serial.print( "  \"outOverrideTermoAmbienteValue\": " );
+  Serial.print( outOverrideTermoAmbienteValue );
   Serial.println( "," );
  
   if (!compactVersion) {
@@ -556,7 +579,8 @@ void ioSetup() {
   pinMode( outPompa, OUTPUT );
   pinMode( outCaldaia, OUTPUT );
   pinMode( inTermoAmbiente, INPUT );
-  pinMode( outRotexReset, OUTPUT );
+  // pinMode( outRotexReset, OUTPUT );
+  pinMode( outOverrideTermoAmbiente, OUTPUT );
   pinMode( inTermoAccumulatore, INPUT );
   // pinMode( ainTempCamino, INPUT );
 }
@@ -580,6 +604,7 @@ void doReadInputs() {
   static char minIndex = 0;
   static int maxTemp = 0;
   static int minTemp = 1023;
+  int valuesToAverage = 0;
   static float lastValidAinTempCaminoValueCentigradi = 0.0;
   if (  calcolaIntervallo( lastTempAcquired, millis() ) >= TEMP_SAMPLING_INTERVAL ) {
     lastTempAcquired = millis();
@@ -588,11 +613,15 @@ void doReadInputs() {
     if ( tempIndex >= CB_VALUES ) {
       tempIndex = 0;
       ainTempCaminoValue = 0;
+      valuesToAverage = 0;
       for ( char i = 0; i < CB_VALUES; i++ ) {
-        if ( i != minIndex && i != maxIndex ) ainTempCaminoValue += Temps[ i ];
+        if ( i != minIndex && i != maxIndex ) {
+          ainTempCaminoValue += Temps[ i ];
+          valuesToAverage ++;
+        }
       } 
       
-      ainTempCaminoValue /= (CB_VALUES - 2);
+      ainTempCaminoValue /= valuesToAverage;
       ainTempCaminoValueCentigradi = (float)getTempFromAin(ainTempCaminoValue);
       // 2016 10 12 - Compensazione linearizzazione sonda NTC. Dalle ultime misurazioni pare che la lookup legga
       // almeno 4 gradi in più rispetto alla realtà. Il risultato è che la pompa parte quando il camino è ancora troppo freddo
@@ -766,6 +795,32 @@ void doCrunchInputs() {
   inTermoAmbienteValue     == HIGH ? outPompaValue   = HIGH : outPompaValue = LOW;
 }
 
+void doManageOverrideTermostatoAmbiente() {
+  if (ainTempCaminoValueCentigradi == 0.0) {
+    return;
+  }
+  
+  if (rotexValues[RTX_TS] == 0) {
+    return;
+  }
+  
+  if (ainTempCaminoValueCentigradi < 40.0) {
+    outOverrideTermoAmbienteValue = LOW;
+    return;
+  }
+  
+  // Se la temperatura è maggiore di 40, supponiamo che il camino stia funzionando
+  if ( outOverrideTermoAmbienteValue == LOW ) {
+    if (rotexValues[RTX_TS] >= rotexMaxTempConCamino) {
+      outOverrideTermoAmbienteValue = HIGH;    
+    }
+  } else {
+    if (rotexValues[RTX_TS] <= rotexMinTempConCamino) {
+      outOverrideTermoAmbienteValue = LOW;    
+    }  
+  }
+}
+
 void doManageAccumulators() {
   unsigned long Accu_ActualTS;
   unsigned long Accu_Length;
@@ -781,7 +836,9 @@ void doManageAccumulators() {
   inTermoAccumulatoreValue == HIGH ? inTermoAccumulatoreAccu_On += Accu_Length : inTermoAccumulatoreAccu_Off += Accu_Length;
   outPompaValue            == HIGH ? outPompaAccu_On            += Accu_Length : outPompaAccu_Off            += Accu_Length;
   outCaldaiaValue          == HIGH ? outCaldaiaAccu_On          += Accu_Length : outCaldaiaAccu_Off          += Accu_Length;
-
+  
+  outOverrideTermoAmbienteValue == HIGH ? outOverrideTermoAmbienteAccu_On += Accu_Length : outOverrideTermoAmbienteAccu_Off += Accu_Length;
+  
   Accu_LastTS = Accu_ActualTS;
   rotexP1Accu_On += rotexValues[ RTX_P1 ] != 0 ?  Accu_Length : 0;
 //  timeSinceLastAccuResetMs = calcolaIntervallo( lastAccuResetTime, Accu_ActualTS );
@@ -791,13 +848,12 @@ void doManageAccumulators() {
 
 // Impostazione dell'output
 void doSetOutputs() {
-  digitalWrite( outPompaCamino, outPompaCaminoValue );   
-  digitalWrite( outPompa,       outPompaValue   );
-  digitalWrite( outCaldaia,     outCaldaiaValue );
-
+  digitalWrite( outPompaCamino,           outPompaCaminoValue );   
+  digitalWrite( outPompa,                 outPompaValue   );
+  digitalWrite( outCaldaia,               outCaldaiaValue );
+  digitalWrite( outOverrideTermoAmbiente, outOverrideTermoAmbienteValue );
   // La logica di reset è contenuta nella funzione;
-  doRotexReset();
-
+  // doRotexReset();
 }
 
 
@@ -833,6 +889,8 @@ void loop() {
   SCmdRotex.readSerial();
   // elaborazione degli ingressi
   doCrunchInputs();
+  // Gestione dell'override del termostato
+  doManageOverrideTermostatoAmbiente();
   // impostazione degli output
   doSetOutputs();
   // gestione degli accumulatori

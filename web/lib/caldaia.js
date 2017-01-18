@@ -1,6 +1,6 @@
 angular
 	.module("caldaia", [])
-	.controller("theController", ['$scope', '$http', '$filter', '$interval', function ($scope, $http, $filter, $interval) {
+	.controller("theController", ['$scope', '$http', '$filter', '$interval', '$window', function ($scope, $http, $filter, $interval, $window) {
 		$scope.isLoading = false;
 		$scope.showDetails = false;
 		$scope.current = {};
@@ -25,6 +25,10 @@ angular
 			plumbConnections.pompaRiscaldamento.endpoints[1].setType(current.inTermoAmbienteValue === 1 ? 'pompaAccesa' : 'pompaSpenta');
 		};
 
+		$scope.gotoDashboard = function () {
+			$window.location.href='/kibana4/app/kibana#/dashboard/Caldaia';
+		}
+	
 		$scope.loadData = function () {
 			$scope.isLoading = true;
 			$http.get('CURRENT.json?v=' + new Date().getTime())

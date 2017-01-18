@@ -24,5 +24,10 @@ fi
 http-server &
 popd
 
-while sleep 1; do node test.js 600000 60000 /dev/ttyUSB1; done
+pushd /home/pi/caldaia/node
 
+while sleep 60; do node test.js 600000 60000 /dev/ttyUSB0; done
+
+# node test.js 600000 60000 /dev/ttyUSB0 >/dev/null
+
+popd

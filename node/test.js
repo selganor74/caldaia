@@ -134,6 +134,10 @@
 				console.log('BODY: ' + chunk);
 				if (dataType === "CURRENT") saveDataToDisk( dataToBePut, dataType );
 			});
+			res.on('error', function (chunk) {
+				console.log('Error: BODY: ' + chunk);
+				if (dataType === "CURRENT") saveDataToDisk( dataToBePut, dataType );
+			});
 		});
 	
 		req.on('error', function(e) {
@@ -147,6 +151,7 @@
 	}  
 	
 	function saveDataToDisk( dataToBePut, dataType ) {
+		console.log('saveDataToDisk');
 		var tmpPath = "/tmp/";
 		
 		var fs = require('fs');

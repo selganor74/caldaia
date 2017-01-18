@@ -78,9 +78,8 @@ const char outRotexReset = 11;       // Output per reset Rotex. L'output agisce 
 // const char ainTempCamino = 0 ;    // M9 Input analogico NTC Temperatura Camino 
 const char ainTempCamino = 1 ;    // M10 Input analogico NTC Temperatura Camino 
 
-// 2017 01 12 - Visto che per un po' il camino non si potrà usare, dobbiamo tenere più alta la temperatura nell'accumulo.
-const char rotexTermoMin = 43;      // Temperatura di accensione delle caldaia
-const char rotexTermoMax = 45;      // Temperatura di spegnimento della caldaia
+const char rotexTermoMin = 42;      // Temperatura di accensione delle caldaia
+const char rotexTermoMax = 44;      // Temperatura di spegnimento della caldaia
 const char deltaSolare   = 1;       // Quando i pannelli sono in funzione la temperatura di soglia della caldaia (rotexTermoMin) scende di deltaSolare Gradi.
 SoftwareSerial rotexSerial = SoftwareSerial(serialRotexRX,serialRotexTX); //Initialize 2nd serial port (rx,tx)
 
@@ -580,12 +579,11 @@ void doReadInputs() {
   static char minIndex = 0;
   static int maxTemp = 0;
   static int minTemp = 1023;
-  static float lastValidAinTempCaminoValueCentigradi = 0.0;
   if (  calcolaIntervallo( lastTempAcquired, millis() ) >= TEMP_SAMPLING_INTERVAL ) {
     lastTempAcquired = millis();
 //    ainTempCaminoValue = analogRead( ainTempCamino );
 //    ainTempCaminoValueCentigradi = (float)getTempFromAin( ainTempCaminoValue );
-    if ( tempIndex >= CB_VALUES ) {
+    if ( tempIndex == CB_VALUES ) {
       tempIndex = 0;
       ainTempCaminoValue = 0;
       for ( char i = 0; i < CB_VALUES; i++ ) {
@@ -597,17 +595,7 @@ void doReadInputs() {
       // 2016 10 12 - Compensazione linearizzazione sonda NTC. Dalle ultime misurazioni pare che la lookup legga
       // almeno 4 gradi in più rispetto alla realtà. Il risultato è che la pompa parte quando il camino è ancora troppo freddo
       // causando condensa.
-      // 2017 01 12 - Visto l'incendio della canna fumaria, riduciamo l'offset a 2 gradi
-      ainTempCaminoValueCentigradi = ainTempCaminoValueCentigradi > 2 ? ainTempCaminoValueCentigradi - 2 : 0 ;
-      
-      // 2017 01 16 - Per evitare i valori a zero che ogni tanto capitano, faccio in modo che se la lettura analogica 
-      //              è zero, prendo l'ultima lettura valida. 
-      if (ainTempCaminoValueCentigradi == 0) {
-        ainTempCaminoValueCentigradi = lastValidAinTempCaminoValueCentigradi;
-      } else {
-        lastValidAinTempCaminoValueCentigradi = ainTempCaminoValueCentigradi;
-      }
-      // infine resetta i valori minimo e massimo e l'indice corrente per il prossimo giro
+      ainTempCaminoValueCentigradi = ainTempCaminoValueCentigradi > 4 ? ainTempCaminoValueCentigradi - 4 : 0 ;
       tempIndex = 0;
       maxIndex = 0;
       minIndex = 0;
