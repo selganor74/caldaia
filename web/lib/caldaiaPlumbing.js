@@ -45,6 +45,18 @@ jsPlumb.ready(function () {
 				strokeStyle: "red",
 				lineWidth: 7
 			}
+		},
+		pompaAccesaConOverride: {
+			connector: "Flowchart",
+			overlays: [
+				["Arrow", {
+					location: 30
+				}]
+			],
+			paintStyle: {
+				strokeStyle: "orange",
+				lineWidth: 7
+			}
 		}
 	});
 	jsPlumb.draggable($(".draggable"));

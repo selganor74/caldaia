@@ -9,6 +9,13 @@ angular
 			$scope.showDetails = !$scope.showDetails;
 		}
 
+		function getTypeForPompaRiscaldamento() {
+			var toReturn = '';
+			toReturn = $scope.current.inTermoAmbienteValue === 1 ? 'pompaAccesa' : 'pompaSpenta';
+			toReturn = $scope.current.outOverrideTermoAmbienteValue === 1 ? 'pompaAccesaConOverride' : toReturn;
+			return toReturn;
+		}
+
 		function setConnectionStyle() {
 			var current = $scope.current;
 			plumbConnections.pompaCamino.setType(current.outPompaCaminoValue === 1 ? 'pompaAccesa' : 'pompaSpenta');
@@ -20,9 +27,9 @@ angular
 			plumbConnections.pompaPannelli.setType(current.rotexP1 !== 0 ? 'pompaAccesa' : 'pompaSpenta');
 			plumbConnections.pompaPannelli.endpoints[0].setType(current.rotexP1 !== 0 ? 'pompaAccesa' : 'pompaSpenta');
 			plumbConnections.pompaPannelli.endpoints[1].setType(current.rotexP1 !== 0 ? 'pompaAccesa' : 'pompaSpenta');
-			plumbConnections.pompaRiscaldamento.setType(current.inTermoAmbienteValue === 1 ? 'pompaAccesa' : 'pompaSpenta');
-			plumbConnections.pompaRiscaldamento.endpoints[0].setType(current.inTermoAmbienteValue === 1 ? 'pompaAccesa' : 'pompaSpenta');
-			plumbConnections.pompaRiscaldamento.endpoints[1].setType(current.inTermoAmbienteValue === 1 ? 'pompaAccesa' : 'pompaSpenta');
+			plumbConnections.pompaRiscaldamento.setType(getTypeForPompaRiscaldamento());
+			plumbConnections.pompaRiscaldamento.endpoints[0].setType(getTypeForPompaRiscaldamento());
+			plumbConnections.pompaRiscaldamento.endpoints[1].setType(getTypeForPompaRiscaldamento());
 		};
 
 		$scope.gotoDashboard = function () {
