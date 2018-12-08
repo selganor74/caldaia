@@ -1,0 +1,91 @@
+#!/bin/bash
+
+trap stop INT TERM EXIT
+
+function stop() {
+	echo Exiting!
+	kill -9 $WRITER_PID $READER_PID $HTTP_SERVER_PID 
+	exit
+}
+
+READER_PID=0
+
+ARDUINO_USB=/dev/$(dmesg | grep FTDI | grep attached | grep -o 'ttyUSB[0-9]*')
+
+if [ "$ARDUINO_USB" == "" ]; then
+	echo Unable to find Arduino Board on any USB
+fi
+
+# Setup ARDUINO SERIAL
+# sudo stty -F $ARDUINO_USB -hupcl 4:0:cbd:0:3:1c:7f:15:4:0:1:0:11:13:1a:0:12:f:17:16:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0
+sudo stty -F $ARDUINO_USB 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke noflsh -ixon -crtscts -hupcl
+
+# Verify file environment
+if [[ ! -e /run/caldaia/CURRENT.json ]] ; then
+        sudo mkdir -p /run/caldaia
+        sudo chown pi:root /run/caldaia
+        touch /run/caldaia/CURRENT.json
+fi
+
+if [[ ! -e /tmp/CURRENT ]]; then
+        mkdir -p /tmp/CURRENT
+fi
+
+# Setup web environment and startup of the http-server
+pushd /tmp/CURRENT >/dev/null
+rm CURRENT.json
+ln -s /run/caldaia/CURRENT.json CURRENT.json
+
+if [[ ! -e index.html ]]; then
+        ln -s /home/pi/caldaia/web/index.html index.html
+fi
+if [[ ! -e lib ]]; then
+        ln -s /home/pi/caldaia/web/lib lib
+fi
+
+(http-server) & HTTP_SERVER_PID=$!
+popd >/dev/null
+
+# Serial Reader start
+(
+JSON_TEMP=/run/caldaia/CURRENT-tmp.json
+JSON_ACTUAL=/run/caldaia/CURRENT.json
+while read -r -d } line < $ARDUINO_USB; do
+	pushd /run/caldaia/ >/dev/null
+	# Extracts a timestamp in the form YYYY-MM-DDThh:mm:ss.000Z fitting json format
+	TIMESTAMP=$(date -u +"%FT%T.000Z")
+	# Takes the first 10 char of TIMESTAMP ( YYYY-MM-DD )
+	echo $line, "\""@timestamp"\"": "\""$TIMESTAMP"\"" } | tee $JSON_TEMP
+	# Validates the outputted json. 
+	cat $JSON_TEMP | python -m json.tool  >> /dev/null && IS_VALID=1 || IS_VALID=0
+	if [ "$IS_VALID" == "1" ]; then
+		cp $JSON_TEMP $JSON_ACTUAL
+		ACCU_RESET=$(grep -c accumulatorReset $JSON_ACTUAL)
+		if [ "$ACCU_RESET" != "0" ]; then
+			# Put data into ES
+			ES_INDEX=caldaia-ra-${TIMESTAMP:0:10}
+			ES_URL=http://es.casa.local:9200/$ES_INDEX/raw-data
+			curl -XPOST $ES_URL --data "@CURRENT.json"
+		fi
+	fi
+	popd > /dev/null
+done) & READER_PID=$!
+
+(COMMAND=GET
+STATUS_LOOP_PERIOD=30
+ACCU_RESET_LOOP_PERIOD=600
+ELAPSED_FROM_ACCU_RESET=0
+while sleep $STATUS_LOOP_PERIOD; do
+	let ELAPSED_FROM_ACCU_RESET=$ELAPSED_FROM_ACCU_RESET+$STATUS_LOOP_PERIOD
+	if [[ $ELAPSED_FROM_ACCU_RESET -ge $ACCU_RESET_LOOP_PERIOD ]]; then
+		ELAPSED_FROM_ACCU_RESET=0
+		COMMAND=GET-RA
+	fi
+	echo $COMMAND$'\r' > $ARDUINO_USB
+	if [ "$COMMAND" != "GET" ]; then
+		COMMAND=GET
+	fi
+done
+) & WRITER_PID=$!
+
+wait
