@@ -561,7 +561,6 @@ void serialCmdSetup () {
 
 
   // Setup dei comandi via Seriale
-  //SCmd.addCommand( "GET", cmdGetStatus ); // Restituisce lo stato delle variabili interne
   SCmd.addCommand( "GET", cmdGetStatus ); // Restituisce lo stato delle variabili interne
   SCmd.addCommand( "GET-RA", cmdGetStatusRA ); // Restituisce lo stato delle variabili interne e resetta gli accumulatori
   SCmd.addDefaultHandler( dummyMethod ); // Handler for command that isn't matched (says "What?")
@@ -898,4 +897,3 @@ void loop() {
   // 
   SCmd.readSerial();
 }
-
