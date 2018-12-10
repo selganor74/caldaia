@@ -1,6 +1,6 @@
 #include <SPI.h>
 #include <SoftwareSerial.h>
-#include <SerialCommand.h>
+#include "SerialCommand.h"
 
 #include "ntcTempLookup.c"
 
@@ -135,6 +135,7 @@ unsigned long inTermoAccumulatoreAccu_Off;
 unsigned long timeSinceLastAccuResetMs;
 unsigned long lastAccuResetTime;
 
+unsigned long lastEmittedValues;
 // boolean outRotexResetValue;
 // unsigned long rotexResetCounter;
 
@@ -374,65 +375,65 @@ void doReadRotex() {
  ***************************************/
 
 void statusToSerial ( boolean compactVersion ) {
-  Serial.println( "{" );
+  Serial.println( F("{") );
 //*
-  Serial.print( "  \"loopStartMillis\": " );
+  Serial.print( F("  \"loopStartMillis\": ") );
   Serial.print( loopStartMillis );
-  Serial.println( "," );
-  Serial.print( "  \"outPompaValue\": " );
+  Serial.println( F(",") );
+  Serial.print( F("  \"outPompaValue\": ") );
   Serial.print( outPompaValue );
-  Serial.println( "," );
+  Serial.println( F(",") );
   if (!compactVersion) {
-  Serial.print( "  \"outPompaAccu_On\": " );
+  Serial.print( F("  \"outPompaAccu_On\": ") );
   Serial.print( outPompaAccu_On );
-  Serial.println( "," );
-  Serial.print( "  \"outPompaAccu_Off\": " );
+  Serial.println( F(",") );
+  Serial.print( F("  \"outPompaAccu_Off\": ") );
   Serial.print( outPompaAccu_Off );
-  Serial.println( "," );
+  Serial.println( F("," ));
   }
-  Serial.print( "  \"outPompaCaminoValue\": " );
+  Serial.print( F("  \"outPompaCaminoValue\": ") );
   Serial.print( outPompaCaminoValue );
-  Serial.println( "," );
+  Serial.println( F(",") );
   if (!compactVersion) {
-  Serial.print( "  \"outPompaCaminoAccu_On\": " );
+  Serial.print( F("  \"outPompaCaminoAccu_On\": ") );
   Serial.print( outPompaCaminoAccu_On );
-  Serial.println( "," );
-  Serial.print( "  \"outPompaCaminoAccu_Off\": " );
+  Serial.println( F(",") );
+  Serial.print( F("  \"outPompaCaminoAccu_Off\": ") );
   Serial.print( outPompaCaminoAccu_Off );
-  Serial.println( "," );
+  Serial.println( F(",") );
   }
-  Serial.print( "  \"outCaldaiaValue\": " );
+  Serial.print( F("  \"outCaldaiaValue\": ") );
   Serial.print( outCaldaiaValue );
-  Serial.println( "," );
+  Serial.println( F(",") );
   if (!compactVersion) {
-  Serial.print( "  \"outCaldaiaAccu_On\": " );
+  Serial.print( F("  \"outCaldaiaAccu_On\": ") );
   Serial.print( outCaldaiaAccu_On );
-  Serial.println( "," );
-  Serial.print( "  \"outCaldaiaAccu_Off\": " );
+  Serial.println( F(",") );
+  Serial.print( F("  \"outCaldaiaAccu_Off\": ") );
   Serial.print( outCaldaiaAccu_Off );
-  Serial.println( "," );
+  Serial.println( F(",") );
   }  
-  Serial.print( "  \"inTermoAmbienteValue\": " );
+  Serial.print( F("  \"inTermoAmbienteValue\": ") );
   Serial.print( inTermoAmbienteValue );
-  Serial.println( "," );
+  Serial.println( F(",") );
   if (!compactVersion) {
-  Serial.print( "  \"inTermoAmbienteAccu_On\": " );
+  Serial.print( F("  \"inTermoAmbienteAccu_On\": ") );
   Serial.print( inTermoAmbienteAccu_On );
-  Serial.println( "," );
-  Serial.print( "  \"inTermoAmbienteAccu_Off\": " );
+  Serial.println( F(",") );
+  Serial.print( F("  \"inTermoAmbienteAccu_Off\": ") );
   Serial.print( inTermoAmbienteAccu_Off );
-  Serial.println( "," );
+  Serial.println( F("," ));
   }  
-  Serial.print( "  \"inTermoAccumulatoreValue\": " );
+  Serial.print( F("  \"inTermoAccumulatoreValue\": ") );
   Serial.print(  inTermoAccumulatoreValue);
-  Serial.println( "," );
+  Serial.println( F(",") );
   if (!compactVersion) {
-  Serial.print( "  \"inTermoAccumulatoreAccu_On\": " );
+  Serial.print( F("  \"inTermoAccumulatoreAccu_On\": ") );
   Serial.print( inTermoAccumulatoreAccu_On );
-  Serial.println( "," );
-  Serial.print( "  \"inTermoAccumulatoreAccu_Off\": " );
+  Serial.println( F(",") );
+  Serial.print( F("  \"inTermoAccumulatoreAccu_Off\": ") );
   Serial.print( inTermoAccumulatoreAccu_Off );
-  Serial.println( "," );
+  Serial.println( F(",") );
   
 //  Serial.print( "  \"timeSinceLastAccuResetMs\": " );
 //  Serial.print( timeSinceLastAccuResetMs );  
@@ -449,98 +450,98 @@ void statusToSerial ( boolean compactVersion ) {
 //  Serial.print( rotexResetCounter );
 //  Serial.println( "," );
 
-  Serial.print( "  \"outOverrideTermoAmbienteValue\": " );
+  Serial.print( F("  \"outOverrideTermoAmbienteValue\": ") );
   Serial.print( outOverrideTermoAmbienteValue );
-  Serial.println( "," );
+  Serial.println( F(",") );
  
   if (!compactVersion) {
-  Serial.print( "  \"isteLastOutCaldaia_On\": " );
+  Serial.print( F("  \"isteLastOutCaldaia_On\": ") );
   Serial.print( isteLastOutCaldaia_On );
-  Serial.println( "," );
-  Serial.print( "  \"isteLastOutCaldaia_On_For\": " );
+  Serial.println( F(",") );
+  Serial.print( F("  \"isteLastOutCaldaia_On_For\": ") );
   Serial.print( isteLastOutCaldaia_On_For );
-  Serial.println( "," );
+  Serial.println( F("," ));
 //*/     
       
-  Serial.print( "  \"rotexP1Accu_On\": " );
+  Serial.print( F("  \"rotexP1Accu_On\": ") );
   Serial.print( rotexP1Accu_On );
-  Serial.println( "," );
+  Serial.println( F(",") );
   }
-  Serial.print( "  \"rotexHA\": " );
+  Serial.print( F("  \"rotexHA\": " ));
   Serial.print( rotexValues[ RTX_HA ] );
-  Serial.println( "," );
+  Serial.println( F(",") );
   
-  Serial.print( "  \"rotexBK\": " );
+  Serial.print( F("  \"rotexBK\": ") );
   Serial.print( rotexValues[ RTX_BK ] );
-  Serial.println( "," );
+  Serial.println( F(",") );
   
-  Serial.print( "  \"rotexP1\": " );
+  Serial.print( F("  \"rotexP1\": " ));
   Serial.print( rotexValues[ RTX_P1 ] );
-  Serial.println( "," );
+  Serial.println( F(",") );
   
-  Serial.print( "  \"rotexP2\": " );
+  Serial.print( F("  \"rotexP2\": ") );
   Serial.print( rotexValues[ RTX_P2 ] );
-  Serial.println( "," );
+  Serial.println( F("," ));
    
-  Serial.print( "  \"rotexTK\": " );
+  Serial.print( F("  \"rotexTK\": ") );
   Serial.print( rotexValues[ RTX_TK ] );
-  Serial.println( "," );
+  Serial.println( F(",") );
 
-  Serial.print( "  \"rotexTR\": " );
+  Serial.print( F("  \"rotexTR\": ") );
   Serial.print( rotexValues[ RTX_TR ] );
-  Serial.println( "," );
+  Serial.println( F(",") );
 
-  Serial.print( "  \"rotexTS\": " );
+  Serial.print( F("  \"rotexTS\": ") );
   Serial.print( rotexValues[ RTX_TS ] );
-  Serial.println( "," );
+  Serial.println( F(",") );
 
-  Serial.print( "  \"rotexTV\": " );
+  Serial.print( F("  \"rotexTV\": ") );
   Serial.print( rotexValues[ RTX_TV ] );
-  Serial.println( "," );
+  Serial.println( F(",") );
 
-  Serial.print( "  \"rotexPWR\": " );
+  Serial.print( F("  \"rotexPWR\": ") );
   Serial.print( rotexValues[ RTX_PWR ] );
-  Serial.println( "," );
+  Serial.println( F(",") );
 
-  Serial.print( "  \"rotexQT\": " );
+  Serial.print( F("  \"rotexQT\": ") );
   Serial.print( rotexValues[ RTX_QT ] );
-  Serial.println( "," );
+  Serial.println( F(",") );
 
 
 
-  Serial.print( "  \"rotexPortataTV\": " );
+  Serial.print( F("  \"rotexPortataTV\": ") );
   Serial.print( rotexPortataTV );
-  Serial.println( "," );
+  Serial.println( F(",") );
   
   if (!compactVersion) {
-  Serial.print( "  \"rotexLastRead\": " );
+  Serial.print( F("  \"rotexLastRead\": ") );
   Serial.print( rotexLastRead );
-  Serial.println( "," );
+  Serial.println( F(",") );
   }  
-  Serial.print( "  \"rotexLastReadString\": \"" );
+  Serial.print( F("  \"rotexLastReadString\": \"") );
   Serial.print( rotexLastReadString );
-  Serial.println( "\"," );
+  Serial.println( F("\",") );
   
-  Serial.print( "  \"ainTempCaminoValueCentigradi\": " );
+  Serial.print( F("  \"ainTempCaminoValueCentigradi\": ") );
   Serial.print( ainTempCaminoValueCentigradi );
 /*
   if (!compactVersion) {
 //*/
-  Serial.println( "," );
+  Serial.println( F(",") );
 
-  Serial.print( "  \"ainTempCaminoValue\": " );
+  Serial.print( F("  \"ainTempCaminoValue\": ") );
   Serial.print( ainTempCaminoValue );
-  Serial.println( "," );
+  Serial.println( F(",") );
   
-  Serial.print( "  \"rotexHasFailed\": " );
+  Serial.print( F("  \"rotexHasFailed\": ") );
   Serial.println( rotexHasFailed );
 /*
   }
 //*/
   if (compactVersion) {
-    Serial.println("");
+    Serial.println(F(""));
   }
-  Serial.println( "}" ); 
+  Serial.println( F("}") ); 
   
 }
 
@@ -554,6 +555,7 @@ void cmdGetStatusRA() {
 }
 
 void dummyMethod() {
+  Serial.println(F("What?!"));
   return;
 }
 
@@ -895,7 +897,11 @@ void loop() {
   doSetOutputs();
   // gestione degli accumulatori
   doManageAccumulators();
+
+  if(calcolaIntervallo(lastEmittedValues, loopStartMillis) >= 5000) {
+    lastEmittedValues = loopStartMillis;
+    //statusToSerial(false);
+  }
   // 
   SCmd.readSerial();
 }
-
