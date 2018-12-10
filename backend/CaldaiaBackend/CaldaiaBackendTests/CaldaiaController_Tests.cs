@@ -29,7 +29,7 @@ namespace CaldaiaBackendTests
             {
                 sut.Start();
                 sut.SendGetCommand();
-                Thread.Sleep(10000);
+                Thread.Sleep(40000);
                 sut.Dispose();
             }
         }

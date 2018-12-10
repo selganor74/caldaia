@@ -899,7 +899,7 @@ void loop() {
 
   if(calcolaIntervallo(lastEmittedValues, loopStartMillis) >= 5000) {
     lastEmittedValues = loopStartMillis;
-    //statusToSerial(false);
+    statusToSerial(false);
   }
   // 
   SCmd.readSerial();
