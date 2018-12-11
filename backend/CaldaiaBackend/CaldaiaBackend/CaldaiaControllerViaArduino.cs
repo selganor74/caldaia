@@ -20,7 +20,7 @@ namespace CaldaiaBackend
         private readonly Queue<string> readQueue = new Queue<string>(10);
         private string _parsingState = "searchingStart";
 
-        public DataFromArduino Latest { get; private set; }
+        public DataFromArduino Latest { get; private set; } = new DataFromArduino();
 
         public CaldaiaControllerViaArduino(string serialPort = "COM5")
         {
@@ -74,24 +74,28 @@ namespace CaldaiaBackend
                                     _currentJson += current.Substring(0, endPos + 1);
                                     current = current.Substring(endPos + 1);
 
-                                    Trace.TraceInformation("Found full json: " + _currentJson);
-                                    try
-                                    {
-                                        Latest = JsonConvert.DeserializeObject<DataFromArduino>(_currentJson);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Trace.TraceWarning("Error parsing string: {0} - Exception: {1}", _currentJson, ex);
-                                    }
+                                    FoundNewJson();
 
                                     _currentJson = "";
                                     _parsingState = "searchingStart";
                                 }
                                 break;
                             }
-
                     }
                 }
+            }
+        }
+
+        private void FoundNewJson()
+        {
+            Trace.TraceInformation("Found full json: " + _currentJson);
+            try
+            {
+                Latest = JsonConvert.DeserializeObject<DataFromArduino>(_currentJson);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Error parsing string: {0} - Exception: {1}", _currentJson, ex);
             }
         }
 
