@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using NUnit.Framework;
 
 using CaldaiaBackend;
+using CaldaiaBackend.ArduinoCommunication;
 
 namespace CaldaiaBackendTests
 {
@@ -23,14 +26,86 @@ namespace CaldaiaBackendTests
         }
 
         [Test]
-        public void MustBePossibleToSendACommand()
+        public void MustBePossibleToSendA_GET_Command()
         {
             using (var sut = CreateSerial())
             {
+                var locker = true;
+                var timeout = 10000;
+                var sw = new Stopwatch();
+                sw.Start();
+
+                sut.RegisterObserver((data) =>
+                {
+                    Assert.IsInstanceOf<DataFromArduino>(data);
+                    locker = false;
+                });
+
                 sut.Start();
                 sut.SendGetCommand();
-                Thread.Sleep(40000);
-                sut.Dispose();
+                while (locker && sw.ElapsedMilliseconds <= timeout)
+                {
+                    Thread.Sleep(100);
+                }
+
+                sw.Stop();
+                Assert.IsFalse(locker);
+            }
+        }
+
+        [Test]
+        public void MustBePossibleToSendA_GET_RA_Command()
+        {
+            using (var sut = CreateSerial())
+            {
+                var locker = true;
+                var timeout = 10000;
+                var sw = new Stopwatch();
+                sw.Start();
+
+                sut.RegisterObserver((data) =>
+                {
+                    Assert.IsInstanceOf<DataFromArduino>(data);
+                    locker = false;
+                });
+
+                sut.Start();
+                sut.SendGetAndResetAccumulatorsCommand();
+                while (locker && sw.ElapsedMilliseconds <= timeout)
+                {
+                    Thread.Sleep(100);
+                }
+
+                sw.Stop();
+                Assert.IsFalse(locker);
+            }
+        }
+
+        [Test]
+        public void MustBePossibleToSendA_GET_RS_Command()
+        {
+            using (var sut = CreateSerial())
+            {
+                var locker = true;
+                var timeout = 10000;
+                var sw = new Stopwatch();
+                sw.Start();
+
+                sut.RegisterSettingsObserver((data) =>
+                {
+                    Assert.IsInstanceOf<SettingsFromArduino>(data);
+                    locker = false;
+                });
+
+                sut.Start();
+                sut.SendGetRunTimeSettingsCommand();
+                while (locker && sw.ElapsedMilliseconds <= timeout)
+                {
+                    Thread.Sleep(100);
+                }
+
+                sw.Stop();
+                Assert.IsFalse(locker);
             }
         }
 

@@ -3,12 +3,15 @@
 #include "SerialCommand.h"
 
 #include "ntcTempLookup.c"
+#include "Settings.cpp"
 
 // Numero di campioni memorizzati nel buffer circolare
 #define  CB_VALUES  5
 
 //..#define  CB_AVG_REBUILD_AFTER 1
 //..#include <CircularBuffer.h>
+
+Settings currentSettings;
 
 // Abilita o disabilita il debug tramite seriale
 boolean serialDebug;
@@ -89,9 +92,9 @@ const char ainTempCamino = 1 ;    // M10 Input analogico NTC Temperatura Camino
 const char rotexTermoMin = 43;      // Temperatura di accensione delle caldaia
 const char rotexTermoMax = 45;      // Temperatura di spegnimento della caldaia
 const char deltaSolare   = 1;       // Quando i pannelli sono in funzione la temperatura di soglia della caldaia (rotexTermoMin) scende di deltaSolare Gradi.
-const char rotexMaxTempConCamino = 63; // Se la temperatura dell'accumulo rotex è maggiore o uguale a rotexMaxTempConCamino viene attivato l'override 
+const char rotexMaxTempConCamino = 71; // Se la temperatura dell'accumulo rotex è maggiore o uguale a rotexMaxTempConCamino viene attivato l'override 
                                        // del termostato ambiente mandando in circolo in impianto.
-const char rotexMinTempConCamino = 60; // L'override viene sganciato quando la temperatura dell'accumulo scende sotto rotexMinTempConCamino.
+const char rotexMinTempConCamino = 69; // L'override viene sganciato quando la temperatura dell'accumulo scende sotto rotexMinTempConCamino.
 
 SoftwareSerial rotexSerial = SoftwareSerial(serialRotexRX,serialRotexTX); //Initialize 2nd serial port (rx,tx)
 
@@ -373,6 +376,31 @@ void doReadRotex() {
 /***************************************
  * DEFINIZIONE DEI COMANDI VIA SERIALE *
  ***************************************/
+void settingsToSerial() {
+  Serial.println( F("{") );
+  Serial.print( F("  \"rotexTermoMin\": ") );
+  Serial.print( int(currentSettings.rotexTermoMin) );
+  Serial.println( F(",") );
+  Serial.print( F("  \"rotexTermoMax\": ") );
+  Serial.print( int(currentSettings.rotexTermoMax) );
+  Serial.println( F(",") );
+  Serial.print( F("  \"deltaSolare\": ") );
+  Serial.print( int(currentSettings.deltaSolare) );
+  Serial.println( F(",") );
+  Serial.print( F("  \"rotexMaxTempConCamino\": ") );
+  Serial.print( int(currentSettings.rotexMaxTempConCamino) );
+  Serial.println( F(",") );
+  Serial.print( F("  \"rotexMinTempConCamino\": ") );
+  Serial.print( int(currentSettings.rotexMinTempConCamino) );
+  Serial.println( F(",") );
+  Serial.print( F("  \"T_ISTERESI_CALDAIA\": ") );
+  Serial.print( currentSettings.T_ISTERESI_CALDAIA );
+  Serial.println( F(",") );
+  Serial.print( F("  \"TEMP_SAMPLING_INTERVAL\": ") );
+  Serial.print( currentSettings.TEMP_SAMPLING_INTERVAL );
+  Serial.println();
+  Serial.print( F("}") );
+}
 
 void statusToSerial ( boolean compactVersion ) {
   Serial.println( F("{") );
@@ -554,6 +582,10 @@ void cmdGetStatusRA() {
   resetAccumulators();
 }
 
+void cmdGetRuntimeSettings() {
+  settingsToSerial();
+}
+
 void dummyMethod() {
   Serial.println(F("What?!"));
   return;
@@ -565,15 +597,23 @@ void serialCmdSetup () {
   // Setup dei comandi via Seriale
   SCmd.addCommand( "GET", cmdGetStatus ); // Restituisce lo stato delle variabili interne
   SCmd.addCommand( "GET-RA", cmdGetStatusRA ); // Restituisce lo stato delle variabili interne e resetta gli accumulatori
+  SCmd.addCommand( "GET-RS", cmdGetRuntimeSettings ); // Restituisce lo stato delle impostazioni
+  SCmd.addCommand( "HELP", printHelp ); // Stampa un piccolo messaggio di Help
   SCmd.addDefaultHandler( dummyMethod ); // Handler for command that isn't matched (says "What?")
   
-  SCmdRotex.addCommand( "dummycommand", dummyMethod );
   // Legge effettivamente l'output dell Rotex
   SCmdRotex.addDefaultHandler( doReadRotex );
 
-  // Serial.println( "Ready" );
-  
+  Serial.println( F("Ready.") );  
 }
+
+void printHelp() {
+  Serial.println(F("Available Commands:"));
+  Serial.println(F("  GET      Obtains the status of the system."));
+  Serial.println(F("  GET-RA   Same as GET plus some values and Resets all the Accumulatros variables."));
+  Serial.println(F("  GET-RS   Returns a json with the runtime settings."));
+  Serial.println(F("  HELP     Print these informations."));
+};
 
 void ioSetup() {
   pinMode( outPompaCamino, OUTPUT );
@@ -899,7 +939,7 @@ void loop() {
 
   if(calcolaIntervallo(lastEmittedValues, loopStartMillis) >= 5000) {
     lastEmittedValues = loopStartMillis;
-    statusToSerial(false);
+    // statusToSerial(false);
   }
   // 
   SCmd.readSerial();
