@@ -5,6 +5,7 @@ using System.Threading;
 using NUnit.Framework;
 
 using CaldaiaBackend;
+using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.ArduinoCommunication;
 
 namespace CaldaiaBackendTests

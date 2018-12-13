@@ -1,4 +1,4 @@
-﻿namespace CaldaiaBackend
+﻿namespace CaldaiaBackend.Application.DataModels
 {
     public class SettingsFromArduino
     {

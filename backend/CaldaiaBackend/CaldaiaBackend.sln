@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaldaiaBackend", "CaldaiaBa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaldaiaBackendTests", "CaldaiaBackendTests\CaldaiaBackendTests.csproj", "{F49422BE-3E92-46A7-B258-D6B41464EEF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaldaiaBackend.SelfHosted", "CaldaiaBackend.SelfHosted\CaldaiaBackend.SelfHosted.csproj", "{8EDBDB62-278C-4157-A7BA-B679CD4CAC2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F49422BE-3E92-46A7-B258-D6B41464EEF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F49422BE-3E92-46A7-B258-D6B41464EEF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F49422BE-3E92-46A7-B258-D6B41464EEF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EDBDB62-278C-4157-A7BA-B679CD4CAC2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EDBDB62-278C-4157-A7BA-B679CD4CAC2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EDBDB62-278C-4157-A7BA-B679CD4CAC2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EDBDB62-278C-4157-A7BA-B679CD4CAC2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

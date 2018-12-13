@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading;
+using CaldaiaBackend.Application.DataModels;
+using CaldaiaBackend.Application.Interfaces;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace CaldaiaBackend.ArduinoCommunication
 {
-    public class CaldaiaControllerViaArduino : IDisposable
+    public class CaldaiaControllerViaArduino : IDisposable, IArduinoDataReader, IArduinoCommandIssuer
     {
         private readonly string _serialPort;
         private Timer _timer;
@@ -61,6 +63,7 @@ namespace CaldaiaBackend.ArduinoCommunication
             while (readQueue.Count > 0)
             {
                 var current = readQueue.Dequeue();
+                if (current == null) continue;
 
                 while (current.Length != 0)
                 {
@@ -116,8 +119,15 @@ namespace CaldaiaBackend.ArduinoCommunication
                 return;
             }
 
-            Latest = JsonConvert.DeserializeObject<DataFromArduino>(_currentJson);
-            NotifyObservers(Latest);
+            try
+            {
+                Latest = JsonConvert.DeserializeObject<DataFromArduino>(_currentJson);
+                NotifyObservers(Latest);
+            }
+            catch (Exception x)
+            {
+                Trace.TraceWarning($"Errors while parsing {_currentJson}: {x}");
+            }
         }
 
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CaldaiaBackend
+namespace CaldaiaBackend.Application.DataModels
 {
     public class DataFromArduino
     {
