@@ -10,8 +10,8 @@ namespace CaldaiaBackend.Application
 {
     public class ArduinoBackendApplication : BaseApplication
     {
-        private IArduinoDataReader _dataReader;
-        private INotificationPublisher _publisher;
+        private readonly IArduinoDataReader _dataReader;
+        private readonly INotificationPublisher _publisher;
 
         public ArduinoBackendApplication(
             IArduinoDataReader dataReader,

@@ -2,8 +2,10 @@
 using System.Threading.Tasks;
 using CaldaiaBackend.Application;
 using CaldaiaBackend.Application.Commands;
+using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.Application.Interfaces;
 using CaldaiaBackend.ArduinoCommunication;
+using CaldaiaBackend.SelfHosted.Owin.SignalR;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Infrastructure.Actions;
@@ -11,6 +13,7 @@ using Infrastructure.Actions.Command.Handler;
 using Infrastructure.Actions.Query.Handler;
 using Infrastructure.Hosting.IoC.CastleWindsor;
 using Infrastructure.Logging;
+using Infrastructure.MiscPatterns.Notification;
 using Topshelf;
 
 namespace CaldaiaBackend.SelfHosted

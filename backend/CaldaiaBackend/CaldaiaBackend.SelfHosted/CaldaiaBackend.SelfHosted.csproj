@@ -128,6 +128,7 @@
   <ItemGroup>
     <Compile Include="Controllers\ArduinoController.cs" />
     <Compile Include="Owin\IoC\WindsorControllerActivator.cs" />
+    <Compile Include="Owin\SignalR\NotificationHub.cs" />
     <Compile Include="Owin\Startup.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
