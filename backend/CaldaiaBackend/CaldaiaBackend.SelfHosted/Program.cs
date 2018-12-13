@@ -19,13 +19,14 @@ namespace CaldaiaBackend.SelfHosted
     {
         public static IWindsorContainer Container = new WindsorContainer();
         private static ILogger log;
+        private static CaldaiaControllerViaArduino controller;
 
         static void Main(string[] args)
         {
 
             // TODO: Read Com Configuration from AppSettings
-            var controller = new CaldaiaControllerViaArduino("COM5");
-            // controller.Start();
+            controller = new CaldaiaControllerViaArduino("COM5");
+            controller.Start();
 
             Container.Register(
                 Component
@@ -44,8 +45,6 @@ namespace CaldaiaBackend.SelfHosted
 
             var application = Container.Resolve<ArduinoBackendApplication>();
             application.Start();
-
-            var test = Container.Resolve<ICommandHandler<ReadDataFromArduinoCommand>>();
 
             var tsh = HostFactory.Run(hc =>
             {

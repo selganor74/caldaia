@@ -2,24 +2,27 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.Application.Interfaces;
 using Newtonsoft.Json;
-using NUnit.Framework;
 
 namespace CaldaiaBackend.ArduinoCommunication
 {
     public class CaldaiaControllerViaArduino : IDisposable, IArduinoDataReader, IArduinoCommandIssuer
     {
+        private static bool _debouncing = false;
+
         private readonly string _serialPort;
         private Timer _timer;
         private SerialPort _physicalPort;
         private string _currentJson;
-        private readonly Queue<string> readQueue = new Queue<string>(10);
+        private readonly Queue<string> _readQueue = new Queue<string>(1024);
 
-        private event Action<DataFromArduino> observers;
-        private event Action<SettingsFromArduino> settingsObservers;
+        private event Action<DataFromArduino> Observers;
+        private event Action<SettingsFromArduino> SettingsObservers;
 
         private string _parsingState = "searchingStart";
 
@@ -33,6 +36,21 @@ namespace CaldaiaBackend.ArduinoCommunication
 
         public void Start()
         {
+            SetupSerialPort();
+
+            _timer = new Timer(state => ParseReadString(), null, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(1));
+        }
+
+        private void SetupSerialPort()
+        {
+            try
+            {
+                _physicalPort?.Dispose();
+            }
+            catch (Exception)
+            {
+            }
+
             _physicalPort = new SerialPort(_serialPort, 9600);
             _physicalPort.ReceivedBytesThreshold = 1;
             _physicalPort.DataReceived += PhysicalPort_DataReceived;
@@ -41,28 +59,38 @@ namespace CaldaiaBackend.ArduinoCommunication
             _physicalPort.WriteTimeout = 500;
 
             _physicalPort.Open();
-
-            _timer = new Timer((object state) => { ParseReadString(); });
-            _timer.Change(TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(1));
         }
 
         public Action RegisterObserver(Action<DataFromArduino> observer)
         {
-            observers += observer;
-            return () => { observers -= observer; };
+            Observers += observer;
+            return () => { Observers -= observer; };
         }
 
         public Action RegisterSettingsObserver(Action<SettingsFromArduino> observer)
         {
-            settingsObservers += observer;
-            return () => { settingsObservers -= observer; };
+            SettingsObservers += observer;
+            return () => { SettingsObservers -= observer; };
         }
 
+        private void Debounce()
+        {
+            Task.Run(() =>
+            {
+                _debouncing = true;
+                Thread.Sleep(2000);
+                _debouncing = false;
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
         private void ParseReadString()
         {
-            while (readQueue.Count > 0)
+            if (_readQueue.Count == 0) return;
+
+            while (_readQueue.Count > 0)
             {
-                var current = readQueue.Dequeue();
+                var current = _readQueue.Dequeue();
                 if (current == null) continue;
 
                 while (current.Length != 0)
@@ -111,16 +139,16 @@ namespace CaldaiaBackend.ArduinoCommunication
         {
             Trace.TraceInformation("Found full json: " + _currentJson);
 
-            if (_currentJson.Contains("rotexTermoMin"))
-            {
-                // Settings
-                LatestSettings = JsonConvert.DeserializeObject<SettingsFromArduino>(_currentJson);
-                NotifySettingsObservers(LatestSettings);
-                return;
-            }
-
             try
             {
+                if (_currentJson.Contains("rotexTermoMin"))
+                {
+                    // Settings
+                    LatestSettings = JsonConvert.DeserializeObject<SettingsFromArduino>(_currentJson);
+                    NotifySettingsObservers(LatestSettings);
+                    return;
+                }
+
                 Latest = JsonConvert.DeserializeObject<DataFromArduino>(_currentJson);
                 NotifyObservers(Latest);
             }
@@ -130,8 +158,10 @@ namespace CaldaiaBackend.ArduinoCommunication
             }
         }
 
-
-        private void PhysicalPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void PhysicalPort_DataReceived(
+            object sender,
+            SerialDataReceivedEventArgs e
+            )
         {
             var readData = "";
             if (e.EventType == SerialData.Eof) return;
@@ -140,7 +170,7 @@ namespace CaldaiaBackend.ArduinoCommunication
                 readData += _physicalPort.ReadExisting();
 
                 Trace.TraceInformation("DataReceived: " + readData);
-                readQueue.Enqueue(readData);
+                _readQueue.Enqueue(readData);
             }
             catch (Exception ex)
             {
@@ -151,17 +181,40 @@ namespace CaldaiaBackend.ArduinoCommunication
 
         public void SendGetCommand()
         {
-            _physicalPort.Write("GET\r");
+            WriteString("GET\r");
         }
 
         public void SendGetAndResetAccumulatorsCommand()
         {
-            _physicalPort.Write("GET-RA\r");
+            WriteString("GET-RA\r");
         }
 
         public void SendGetRunTimeSettingsCommand()
         {
-            _physicalPort.Write("GET-RS\r");
+            WriteString("GET-RS\r");
+        }
+
+        private void WriteString(string toWrite)
+        {
+            if (_debouncing) return;
+            try
+            {
+                _physicalPort.Write(toWrite);
+            }
+            catch (Exception)
+            {
+                TryToRecover();
+                _physicalPort.Write(toWrite);
+            }
+            finally
+            {
+                Debounce();
+            }
+        }
+
+        private void TryToRecover()
+        {
+            SetupSerialPort();
         }
 
         public void Dispose()
@@ -172,11 +225,12 @@ namespace CaldaiaBackend.ArduinoCommunication
 
         protected virtual void NotifyObservers(DataFromArduino data)
         {
-            observers?.Invoke(data);
+            Observers?.Invoke(data);
         }
+
         protected virtual void NotifySettingsObservers(SettingsFromArduino data)
         {
-            settingsObservers?.Invoke(data);
+            SettingsObservers?.Invoke(data);
         }
 
     }

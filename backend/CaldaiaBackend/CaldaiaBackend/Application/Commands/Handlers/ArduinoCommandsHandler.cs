@@ -15,7 +15,11 @@ namespace CaldaiaBackend.Application.Commands.Handlers
 
         public Task Execute(ReadDataFromArduinoCommand Action)
         {
-            return Task.Run(() => _arduino.SendGetCommand());
+            var toReturn = Task.Run(() => { });
+
+            _arduino.SendGetCommand();
+
+            return toReturn;
         }
     }
 }
