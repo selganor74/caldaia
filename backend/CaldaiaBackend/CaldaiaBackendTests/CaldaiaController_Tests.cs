@@ -113,7 +113,7 @@ namespace CaldaiaBackendTests
         private static CaldaiaControllerViaArduino CreateSerial()
         {
             var serial = new SerialEnumerator().GetSerialPorts().First();
-            var sut = new CaldaiaControllerViaArduino(serial);
+            var sut = new CaldaiaControllerViaArduino(serial, null);
             return sut;
         }
     }

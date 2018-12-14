@@ -74,6 +74,7 @@
     <Compile Include="Application\ArduinoBackendApplication.cs" />
     <Compile Include="Application\Commands\Handlers\ArduinoCommandsHandler.cs" />
     <Compile Include="Application\Commands\ReadDataFromArduinoCommand.cs" />
+    <Compile Include="Application\Interfaces\Mocks\ArduinoMock.cs" />
     <Compile Include="Application\Queries\GetLatestDataQuery.cs" />
     <Compile Include="Application\Queries\Handlers\ArduinoQueriesHandler.cs" />
     <Compile Include="ArduinoCommunication\CaldaiaControllerViaArduino.cs" />

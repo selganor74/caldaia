@@ -1,28 +1,65 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Infrastructure.Logging;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 
 namespace CaldaiaBackend.SelfHosted.Owin.SignalR
 {
-    public class NotificationHub : Hub
+    [HubName("data")]
+    public class DataHub : Hub
     {
-        public static ILogger _log = new NullLogger();
-
-        public NotificationHub(ILoggerFactory loggerFactory)
+        private readonly ILogger _log;
+        public DataHub(ILoggerFactory loggerFactory)
         {
             _log = (loggerFactory ?? new NullLoggerFactory()).CreateNewLogger(GetType().Name);
         }
-        public static void NotifyToChannel<T>(string channel, T data)
+
+        public override Task OnConnected()
         {
-            try
-            {
-                var channelNotifier = GlobalHost.ConnectionManager.GetHubContext(channel);
-                channelNotifier?.Clients.All.notify(data);
-            }
-            catch (Exception e)
-            {
-                _log.Warning("Errors in Hub.", e);
-            }
+            _log.Info($"Client connected to {nameof(DataHub)}");
+            return base.OnConnected();
+        }
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            _log.Info($"Client disconnected to {nameof(DataHub)}", stopCalled);
+            return base.OnDisconnected(stopCalled);
+        }
+
+        public override Task OnReconnected()
+        {
+            _log.Info($"Client reconnected to {nameof(DataHub)}");
+            return base.OnReconnected();
         }
     }
+
+    [HubName("settings")]
+    public class SettingsHub : Hub
+    {
+        private readonly ILogger _log;
+        public SettingsHub(ILoggerFactory loggerFactory)
+        {
+            _log = (loggerFactory ?? new NullLoggerFactory()).CreateNewLogger(GetType().Name);
+        }
+        public override Task OnConnected()
+        {
+            _log.Info($"Client connected to {nameof(SettingsHub)}");
+            return base.OnConnected();
+        }
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            _log.Info($"Client disconnected to {nameof(SettingsHub)}", stopCalled);
+            return base.OnDisconnected(stopCalled);
+        }
+
+        public override Task OnReconnected()
+        {
+            _log.Info($"Client reconnected to {nameof(SettingsHub)}");
+            return base.OnReconnected();
+        }
+
+    }
+
 }

@@ -16,6 +16,12 @@ namespace CaldaiaBackend.SelfHosted.Owin
 {
     public class Startup
     {
+        private static ILogger _log;
+
+        public Startup()
+        {
+            _log = Program.Container.Resolve<ILoggerFactory>().CreateNewLogger(GetType().Name);
+        }
         // This code configures Web API. The Startup class is specified as a type
         // parameter in the WebApp.Start method.
         public void Configuration(IAppBuilder appBuilder)
@@ -69,17 +75,29 @@ namespace CaldaiaBackend.SelfHosted.Owin
 
         private static void SetupSignalR(IAppBuilder appBuilder)
         {
-            NotificationHub._log = Program.Container.Resolve<ILoggerFactory>().CreateNewLogger(nameof(NotificationHub));
             var appObservable = Program.Container.Resolve<INotificationSubscriber>();
 
-            appObservable.Subscribe("data", (DataFromArduino data) => { NotificationHub.NotifyToChannel("data", data); });
-            appObservable.Subscribe("settings", (SettingsFromArduino settings) => { NotificationHub.NotifyToChannel("settings", settings); });
+            appObservable.Subscribe("data", (DataFromArduino data) => { NotifyToChannel("data", data); });
+            appObservable.Subscribe("settings", (SettingsFromArduino settings) => { NotifyToChannel("settings", settings); });
 
             appBuilder.MapSignalR("/signalr", new HubConfiguration
             {
                 EnableDetailedErrors = true,
                 EnableJavaScriptProxies = true
             });
+        }
+
+        public static void NotifyToChannel<T>(string channel, T data)
+        {
+            try
+            {
+                var channelNotifier = GlobalHost.ConnectionManager.GetHubContext(channel);
+                channelNotifier?.Clients.All.notify(data);
+            }
+            catch (Exception e)
+            {
+                _log.Warning("Errors in Hub.", e);
+            }
         }
     }
 }

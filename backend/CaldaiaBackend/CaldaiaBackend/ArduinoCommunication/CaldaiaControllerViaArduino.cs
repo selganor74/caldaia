@@ -4,16 +4,16 @@ using System.Diagnostics;
 using System.IO.Ports;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.Application.Interfaces;
+using Infrastructure.Logging;
 using Newtonsoft.Json;
 
 namespace CaldaiaBackend.ArduinoCommunication
 {
     public class CaldaiaControllerViaArduino : IDisposable, IArduinoDataReader, IArduinoCommandIssuer
     {
-        private static bool _debouncing = false;
+        private static bool _recovering = false;
 
         private readonly string _serialPort;
         private Timer _timer;
@@ -25,20 +25,35 @@ namespace CaldaiaBackend.ArduinoCommunication
         private event Action<SettingsFromArduino> SettingsObservers;
 
         private string _parsingState = "searchingStart";
+        private ILogger _log;
 
         public DataFromArduino Latest { get; private set; } = new DataFromArduino();
         public SettingsFromArduino LatestSettings { get; set; }
 
-        public CaldaiaControllerViaArduino(string serialPort = "COM5")
+        /// <summary>
+        /// Builds a new CaldaiaControllerViaArduino
+        /// </summary>
+        /// <param name="serialPort">Eg.: COM5</param>
+        /// <param name="loggerFactory">a logger Factory</param>
+        public CaldaiaControllerViaArduino(
+            string serialPort,
+            ILoggerFactory loggerFactory
+            )
         {
-            this._serialPort = serialPort;
+            _serialPort = serialPort;
+            _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
         }
 
         public void Start()
         {
             SetupSerialPort();
 
-            _timer = new Timer(state => ParseReadString(), null, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(1));
+            _timer = new Timer(
+                state => ParseReadString(),
+                null,
+                TimeSpan.FromSeconds(0),
+                TimeSpan.FromSeconds(1)
+                );
         }
 
         private void SetupSerialPort()
@@ -73,15 +88,6 @@ namespace CaldaiaBackend.ArduinoCommunication
             return () => { SettingsObservers -= observer; };
         }
 
-        private void Debounce()
-        {
-            Task.Run(() =>
-            {
-                _debouncing = true;
-                Thread.Sleep(2000);
-                _debouncing = false;
-            });
-        }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         private void ParseReadString()
@@ -105,6 +111,9 @@ namespace CaldaiaBackend.ArduinoCommunication
                                     current = current.Substring(startPos);
                                     _parsingState = "searchingEnd";
                                 }
+
+                                if (startPos == -1)
+                                    current = "";
                                 break;
                             }
 
@@ -125,7 +134,8 @@ namespace CaldaiaBackend.ArduinoCommunication
 
                                     FoundNewJson();
 
-                                    _currentJson = "";
+                                    _currentJson = current;
+                                    current = "";
                                     _parsingState = "searchingStart";
                                 }
                                 break;
@@ -137,7 +147,7 @@ namespace CaldaiaBackend.ArduinoCommunication
 
         private void FoundNewJson()
         {
-            Trace.TraceInformation("Found full json: " + _currentJson);
+            _log.Info("Found full json", _currentJson);
 
             try
             {
@@ -154,7 +164,7 @@ namespace CaldaiaBackend.ArduinoCommunication
             }
             catch (Exception x)
             {
-                Trace.TraceWarning($"Errors while parsing {_currentJson}: {x}");
+                _log.Warning($"Errors while parsing {_currentJson}", x);
             }
         }
 
@@ -169,12 +179,12 @@ namespace CaldaiaBackend.ArduinoCommunication
             {
                 readData += _physicalPort.ReadExisting();
 
-                Trace.TraceInformation("DataReceived: " + readData);
+                _log.Info("DataReceived", readData);
                 _readQueue.Enqueue(readData);
             }
             catch (Exception ex)
             {
-                Trace.TraceError("DataReceived error: " + ex);
+                _log.Error("DataReceived error", ex);
                 throw;
             }
         }
@@ -196,7 +206,7 @@ namespace CaldaiaBackend.ArduinoCommunication
 
         private void WriteString(string toWrite)
         {
-            if (_debouncing) return;
+            if (_recovering) return;
             try
             {
                 _physicalPort.Write(toWrite);
@@ -206,15 +216,28 @@ namespace CaldaiaBackend.ArduinoCommunication
                 TryToRecover();
                 _physicalPort.Write(toWrite);
             }
-            finally
-            {
-                Debounce();
-            }
         }
 
         private void TryToRecover()
         {
-            SetupSerialPort();
+            Int32 trial = 0;
+
+            bool thrownException = true;
+            while (thrownException && trial < Int32.MaxValue)
+            {
+                try
+                {
+                    trial++;
+                    _log.Info($"Recovering Connection to {_serialPort}. Attempt {trial}");
+                    SetupSerialPort();
+                    thrownException = false;
+                }
+                catch (Exception e)
+                {
+                    _log.Warning("Unable to recover Connection.", e);
+                    Thread.Sleep(2000);
+                }
+            }
         }
 
         public void Dispose()

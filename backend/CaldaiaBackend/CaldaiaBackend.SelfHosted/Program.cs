@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Threading.Tasks;
 using CaldaiaBackend.Application;
-using CaldaiaBackend.Application.Commands;
-using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.Application.Interfaces;
+using CaldaiaBackend.Application.Interfaces.Mocks;
 using CaldaiaBackend.ArduinoCommunication;
-using CaldaiaBackend.SelfHosted.Owin.SignalR;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using Infrastructure.Actions;
-using Infrastructure.Actions.Command.Handler;
-using Infrastructure.Actions.Query.Handler;
 using Infrastructure.Hosting.IoC.CastleWindsor;
 using Infrastructure.Logging;
-using Infrastructure.MiscPatterns.Notification;
 using Topshelf;
 
 namespace CaldaiaBackend.SelfHosted
@@ -28,13 +21,23 @@ namespace CaldaiaBackend.SelfHosted
         {
 
             // TODO: Read Com Configuration from AppSettings
-            controller = new CaldaiaControllerViaArduino("COM5");
-            controller.Start();
 
             Container.Register(
                 Component
                     .For<IArduinoDataReader, IArduinoCommandIssuer>()
-                    .Instance( controller )
+                    //*
+                    .ImplementedBy<ArduinoMock>()
+                    //*/
+                    /*
+                    .ImplementedBy<CaldaiaControllerViaArduino>()
+                    .UsingFactoryMethod((kernel) =>
+                    {
+                        controller = new CaldaiaControllerViaArduino("COM5", kernel.Resolve<ILoggerFactory>());
+                        controller.Start();
+                        return controller;
+                    })
+                    //*/
+                    .LifestyleSingleton()
                 );
 
             var factory = new CastleApplicationFactory(Container);
