@@ -6,7 +6,7 @@ namespace CaldaiaBackend.SelfHosted.Owin.SignalR
 {
     public class NotificationHub : Hub
     {
-        private static ILogger _log;
+        public static ILogger _log = new NullLogger();
 
         public NotificationHub(ILoggerFactory loggerFactory)
         {

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using CaldaiaBackend.Application;
@@ -11,8 +7,7 @@ using CaldaiaBackend.SelfHosted.Owin.IoC;
 using CaldaiaBackend.SelfHosted.Owin.SignalR;
 using Castle.MicroKernel.Registration;
 using Infrastructure.Actions;
-using Infrastructure.Actions.Command;
-using Infrastructure.Actions.Query;
+using Infrastructure.Logging;
 using Infrastructure.MiscPatterns.Notification;
 using Microsoft.AspNet.SignalR;
 using Owin;
@@ -74,20 +69,13 @@ namespace CaldaiaBackend.SelfHosted.Owin
 
         private static void SetupSignalR(IAppBuilder appBuilder)
         {
-            Program.Container.Register(
-                Component
-                    .For<NotificationHub>()
-                    .ImplementedBy<NotificationHub>()
-                    .LifestyleSingleton()
-                );
-
-            var signalrHub = Program.Container.Resolve<NotificationHub>();
+            NotificationHub._log = Program.Container.Resolve<ILoggerFactory>().CreateNewLogger(nameof(NotificationHub));
             var appObservable = Program.Container.Resolve<INotificationSubscriber>();
 
             appObservable.Subscribe("data", (DataFromArduino data) => { NotificationHub.NotifyToChannel("data", data); });
             appObservable.Subscribe("settings", (SettingsFromArduino settings) => { NotificationHub.NotifyToChannel("settings", settings); });
 
-            appBuilder.MapSignalR("/signalr", new HubConfiguration()
+            appBuilder.MapSignalR("/signalr", new HubConfiguration
             {
                 EnableDetailedErrors = true,
                 EnableJavaScriptProxies = true
