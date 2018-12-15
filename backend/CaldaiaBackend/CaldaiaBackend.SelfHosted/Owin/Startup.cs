@@ -10,6 +10,8 @@ using Infrastructure.Logging;
 using Infrastructure.MiscPatterns.Notification;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Cors;
+using Microsoft.Owin.FileSystems;
+using Microsoft.Owin.StaticFiles;
 using Owin;
 
 namespace CaldaiaBackend.SelfHosted.Owin
@@ -28,8 +30,6 @@ namespace CaldaiaBackend.SelfHosted.Owin
         {
             try
             {
-                appBuilder.UseCors(CorsOptions.AllowAll);
-                
                 // Configure Web API for self-host. 
                 HttpConfiguration config = new HttpConfiguration();
 
@@ -60,6 +60,15 @@ namespace CaldaiaBackend.SelfHosted.Owin
                 config.Formatters.Remove(config.Formatters.XmlFormatter);
 
                 config.EnsureInitialized();
+
+                appBuilder.UseCors(CorsOptions.AllowAll);
+
+                appBuilder.UseStaticFiles(new StaticFileOptions
+                {
+                    FileSystem = new PhysicalFileSystem("./AngularAppDist/caldaia-frontend"),
+                    RequestPath = new Microsoft.Owin.PathString("/app"),
+                    ServeUnknownFileTypes = true
+                });
 
                 SetupSignalR(appBuilder);
                 appBuilder.UseWebApi(config);
