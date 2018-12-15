@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  signalrBaseUrl: 'http://localhost:32767/signalr',
+  apiBaseUrl: 'http://localhost:32767/api'
 };
 
 /*

@@ -57,6 +57,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppComponent", function() { return AppComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _backend_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./backend.service */ "./src/app/backend.service.ts");
+/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../environments/environment */ "./src/environments/environment.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -68,16 +69,18 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 };
 
 
+
 var AppComponent = /** @class */ (function () {
     function AppComponent(_backend) {
         this._backend = _backend;
+        this.signalrBaseUrl = _environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].signalrBaseUrl;
         this.data = {};
         this.settings = {};
         this.msgs = [];
     }
     AppComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this._hubConnection = $.hubConnection('http://localhost:32767/signalr');
+        this._hubConnection = $.hubConnection(this.signalrBaseUrl);
         this.dataProxy = this._hubConnection.createHubProxy('data');
         this.settingsProxy = this._hubConnection.createHubProxy('settings');
         this._hubConnection
@@ -210,6 +213,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BackendService", function() { return BackendService; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../environments/environment */ "./src/environments/environment.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -221,21 +225,23 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 };
 
 
+
 var httpOptions = {
     headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json' })
 };
 var BackendService = /** @class */ (function () {
     function BackendService(http) {
         this.http = http;
+        this.apiBaseUrl = _environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiBaseUrl;
     }
     BackendService.prototype.getLatestData = function () {
-        return this.http.get('http://localhost:32767/api/queries/latestdata');
+        return this.http.get(this.apiBaseUrl + '/queries/latestdata');
     };
     BackendService.prototype.updateLatestData = function () {
-        return this.http.get('http://localhost:32767/api/commands/get');
+        return this.http.get(this.apiBaseUrl + '/commands/get');
     };
     BackendService.prototype.updateLatestSettings = function () {
-        return this.http.get('http://localhost:32767/api/commands/reloadsettings');
+        return this.http.get(this.apiBaseUrl + '/commands/reloadsettings');
     };
     BackendService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
@@ -262,7 +268,9 @@ __webpack_require__.r(__webpack_exports__);
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 var environment = {
-    production: false
+    production: false,
+    signalrBaseUrl: 'http://localhost:32767/signalr',
+    apiBaseUrl: 'http://localhost:32767/api'
 };
 /*
  * In development mode, to ignore zone related error stack frames such as

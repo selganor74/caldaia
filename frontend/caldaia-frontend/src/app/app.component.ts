@@ -5,6 +5,8 @@ import { Message } from 'primeng/api';
 import {IDataFromArduino} from './idata-from-arduino';
 import { ISettingsFromArduino } from './isettings-from-arduino';
 
+import { environment } from '../environments/environment';
+
 declare var $: any; // JQueryStatic;
 @Component({
   selector: 'app-root',
@@ -18,6 +20,8 @@ export class AppComponent implements OnInit {
   private dataProxy: any; // SignalR.Hub.Proxy;
   private settingsProxy: any; // SignalR.Hub.Proxy;
 
+  private signalrBaseUrl = environment.signalrBaseUrl;
+
   @Output() data: IDataFromArduino = {};
   @Input() settings: ISettingsFromArduino = {};
   @Output() msgs: Message[] = [];
@@ -25,7 +29,7 @@ export class AppComponent implements OnInit {
   constructor(private _backend: BackendService) { }
 
   ngOnInit(): void {
-    this._hubConnection = $.hubConnection('http://localhost:32767/signalr');
+    this._hubConnection = $.hubConnection(this.signalrBaseUrl);
     this.dataProxy = this._hubConnection.createHubProxy('data');
     this.settingsProxy = this._hubConnection.createHubProxy('settings');
 
@@ -52,5 +56,4 @@ export class AppComponent implements OnInit {
   public refreshSettings() {
     this._backend.updateLatestSettings().subscribe();
   }
-
 }

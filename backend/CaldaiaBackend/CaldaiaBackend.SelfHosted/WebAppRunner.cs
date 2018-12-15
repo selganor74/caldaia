@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -24,7 +25,8 @@ namespace CaldaiaBackend.SelfHosted
 
         public void Start()
         {
-            const string baseAddress = "http://localhost:32767/";
+            var baseAddress = ConfigurationManager.AppSettings["BaseAddress"];
+            
 
             // Start OWIN host 
             _webApp = WebApp.Start<Startup>(url: baseAddress);

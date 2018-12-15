@@ -4,23 +4,26 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {IDataFromArduino} from './idata-from-arduino';
 import { Observable } from 'rxjs';
 
+import { environment } from '../environments/environment';
+
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 @Injectable()
 export class BackendService {
 
+  apiBaseUrl: string = environment.apiBaseUrl;
   constructor(private http: HttpClient) { }
 
   public getLatestData(): Observable<IDataFromArduino> {
-    return <Observable<IDataFromArduino>>this.http.get('http://localhost:32767/api/queries/latestdata');
+    return <Observable<IDataFromArduino>>this.http.get(this.apiBaseUrl + '/queries/latestdata');
   }
 
   public updateLatestData() {
-    return this.http.get('http://localhost:32767/api/commands/get');
+    return this.http.get(this.apiBaseUrl + '/commands/get');
   }
 
   public updateLatestSettings() {
-    return this.http.get('http://localhost:32767/api/commands/reloadsettings');
+    return this.http.get(this.apiBaseUrl + '/commands/reloadsettings');
   }
 }
