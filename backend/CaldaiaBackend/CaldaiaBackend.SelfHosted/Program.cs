@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using CaldaiaBackend.Application;
 using CaldaiaBackend.Application.Interfaces;
 using CaldaiaBackend.Application.Interfaces.Mocks;
@@ -20,19 +21,18 @@ namespace CaldaiaBackend.SelfHosted
         static void Main(string[] args)
         {
 
-            // TODO: Read Com Configuration from AppSettings
-
             Container.Register(
                 Component
                     .For<IArduinoDataReader, IArduinoCommandIssuer>()
-                    //*
+                    /*
                     .ImplementedBy<ArduinoMock>()
                     //*/
-                    /*
+                    //*
                     .ImplementedBy<CaldaiaControllerViaArduino>()
                     .UsingFactoryMethod((kernel) =>
                     {
-                        controller = new CaldaiaControllerViaArduino("COM5", kernel.Resolve<ILoggerFactory>());
+                        var serialPort = ConfigurationManager.AppSettings["ArduinoComPort"];
+                        controller = new CaldaiaControllerViaArduino(serialPort, kernel.Resolve<ILoggerFactory>());
                         controller.Start();
                         return controller;
                     })
