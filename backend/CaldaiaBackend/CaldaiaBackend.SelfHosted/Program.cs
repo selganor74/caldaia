@@ -44,7 +44,7 @@ namespace CaldaiaBackend.SelfHosted
             factory.BuildApplication<ArduinoBackendApplication>();
 
             var logWriter = Container.Resolve<ILogWriter>();
-            logWriter.SetLogLevel(LogLevel.Info);
+            logWriter.SetLogLevel(LogLevel.Trace);
 
             var loggerFactory = Container.Resolve<ILoggerFactory>();
             log = loggerFactory.CreateNewLogger(nameof(Program));

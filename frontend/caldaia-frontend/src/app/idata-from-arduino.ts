@@ -1,0 +1,40 @@
+// represents data transmitted by the backend
+export interface IDataFromArduino {
+    timestamp?: Date;
+    loopStartMillis?: number;
+    outPompaValue?: number;
+    outPompaAccu_On?: number;
+    outPompaAccu_Off?: number;
+    outPompaCaminoValue?: number;
+    outPompaCaminoAccu_On?: number;
+    outPompaCaminoAccu_Off?: number;
+    outCaldaiaValue?: number;
+    outCaldaiaAccu_On?: number;
+    outCaldaiaAccu_Off?: number;
+    inTermoAmbienteValue?: number;
+    inTermoAmbienteAccu_On?: number;
+    inTermoAmbienteAccu_Off?: number;
+    inTermoAccumulatoreValue?: number;
+    inTermoAccumulatoreAccu_On?: number;
+    inTermoAccumulatoreAccu_Off?: number;
+    outOverrideTermoAmbienteValue?: number;
+    isteLastOutCaldaia_On?: number;
+    isteLastOutCaldaia_On_For?: number;
+    rotexP1Accu_On?: number;
+    rotexHA?: number;
+    rotexBK?: number;
+    rotexP1?: number;
+    rotexP2?: number;
+    rotexTK?: number;
+    rotexTR?: number;
+    rotexTS?: number;
+    rotexTV?: number;
+    rotexPWR?: number;
+    rotexQT?: number;
+    rotexPortataTV?: number;
+    rotexLastRead?: number;
+    rotexLastReadString?: string;
+    ainTempCaminoValueCentigradi?: number;
+    ainTempCaminoValue?: number;
+    rotexHasFailed?: number;
+  }

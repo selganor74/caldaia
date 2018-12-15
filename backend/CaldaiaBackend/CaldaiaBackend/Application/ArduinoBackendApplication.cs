@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using CaldaiaBackend.Application.Commands;
 using CaldaiaBackend.Application.Interfaces;
 using Infrastructure.Actions.Command.Executor;
 using Infrastructure.Actions.Query.Executor;
@@ -12,6 +14,9 @@ namespace CaldaiaBackend.Application
     {
         private readonly IArduinoDataReader _dataReader;
         private readonly INotificationPublisher _publisher;
+        private Timer _backgroundJob;
+        private readonly int _pollIntervalMilliseconds = 5000;
+        private readonly ILogger _log;
 
         public ArduinoBackendApplication(
             IArduinoDataReader dataReader,
@@ -34,6 +39,7 @@ namespace CaldaiaBackend.Application
         {
             _dataReader = dataReader;
             _publisher = theNotificationPublisher;
+            _log = theLoggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
         }
 
         protected override void onAppStarting()
@@ -45,6 +51,21 @@ namespace CaldaiaBackend.Application
             _dataReader.RegisterSettingsObserver(
                 settings => _publisher.Notify("settings", settings)
                 );
+
+            _backgroundJob = new Timer(pollData, null, _pollIntervalMilliseconds, _pollIntervalMilliseconds);
+        }
+
+        private void pollData(object state)
+        {
+            try
+            {
+                var cmd = new ReadDataFromArduinoCommand();
+                commandExecutor.Execute(cmd);
+            }
+            catch (Exception e)
+            {
+                _log.Error("Errors while polling data from Arduino", e);
+            }
         }
     }
 }

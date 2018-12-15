@@ -4,12 +4,12 @@ using System.Web.Http.Dispatcher;
 using CaldaiaBackend.Application;
 using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.SelfHosted.Owin.IoC;
-using CaldaiaBackend.SelfHosted.Owin.SignalR;
 using Castle.MicroKernel.Registration;
 using Infrastructure.Actions;
 using Infrastructure.Logging;
 using Infrastructure.MiscPatterns.Notification;
 using Microsoft.AspNet.SignalR;
+using Microsoft.Owin.Cors;
 using Owin;
 
 namespace CaldaiaBackend.SelfHosted.Owin
@@ -28,6 +28,8 @@ namespace CaldaiaBackend.SelfHosted.Owin
         {
             try
             {
+                appBuilder.UseCors(CorsOptions.AllowAll);
+                
                 // Configure Web API for self-host. 
                 HttpConfiguration config = new HttpConfiguration();
 
@@ -55,12 +57,11 @@ namespace CaldaiaBackend.SelfHosted.Owin
 
                 config.MapHttpAttributeRoutes();
 
-                SetupSignalR(appBuilder);
-
                 config.Formatters.Remove(config.Formatters.XmlFormatter);
 
                 config.EnsureInitialized();
 
+                SetupSignalR(appBuilder);
                 appBuilder.UseWebApi(config);
             }
             catch (Exception e)

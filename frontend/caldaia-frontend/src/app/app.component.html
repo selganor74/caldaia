@@ -1,12 +1,54 @@
+<div class="fluid-container">
+    <div class="row layout-topbar">
+        <div class="col-md-12">
+            <div class="col-md-3">&nbsp;</div>
+        </div>
+    </div>
+    <div class="row">
+        <p-toolbar class="col-md-12">
+            <div class="ui-toolbar-group-left">
+                <button pButton type="button" class="ui-button-success" icon="pi pi-reload" label="Refresh Data"
+                    (click)="refreshData()"></button>
+                <button pButton type="button" class="ui-button-success" icon="pi pi-reload" label="Refresh Runtime Settings"
+                    (click)="refreshSettings()"></button>
+            </div>
 
-<div class="layout-topbar">
-  <div class="fluid-container">
-      <div class="row">
-          <div class="col-md-10">
-              <div style="color:white" class="col-md-3">Angular 5+ SignalR Notifications</div>
-          </div>
-      </div>
-  </div>
+            <div class="ui-toolbar-group-right">
+                <button pButton type="button" icon="pi pi-search"></button>
+                <button pButton type="button" icon="pi pi-calendar" class="ui-button-success"></button>
+                <button pButton type="button" icon="pi pi-times" class="ui-button-danger"></button>
+            </div>
+        </p-toolbar>
+    </div>
+    <div class="row justify-content-center main-content">
+        <div class="col-md-3 col-lg-3 device">
+            <p-panel header="Pannelli Solari">
+                <div class="monitor">{{data.rotexTK}}&deg;C<i [ngClass]="{'pi-spin': data.rotexP1}" [ngStyle]="{'color': data.rotexP1 ? 'green' : 'gray'}"
+                        class="pi pi-cog"></i></div>
+            </p-panel>
+        </div>
+        <div class="col-md-3 col-lg-3 device">
+            <p-panel header="Accumulo Rotex">
+                <div class="monitor">{{data.rotexTS}}&deg;C</div>
+            </p-panel>
+        </div>
+        <div class="col-md-3 col-lg-3 device">
+            <p-panel header="Stato Caldaia">
+                <div class="monitor"><i [ngClass]="{'pi-spin': data.outCaldaiaValue}" [ngStyle]="{'color': data.outCaldaiaValue ? 'green' : 'gray'}"
+                        class="pi pi-cog"></i></div>
+            </p-panel>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2">
+            <pre>{{data | json}}</pre>
+        </div>
+        <div class="col-md-2">
+            <pre>{{settings | json}}</pre>
+        </div>
+    </div>
+
 </div>
 
 <p-growl [(value)]="msgs"></p-growl>
