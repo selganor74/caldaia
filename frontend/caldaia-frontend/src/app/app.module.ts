@@ -12,6 +12,7 @@ import { GrowlModule } from 'primeng/primeng';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TabViewModule } from 'primeng/tabview';
 import { CardModule } from 'primeng/card';
+import { DialogModule } from 'primeng/dialog';
 
 import { AppComponent } from './app.component';
 import { BackendService } from './backend.service';
@@ -32,7 +33,8 @@ import { BackendService } from './backend.service';
     GrowlModule,
     ToolbarModule,
     TabViewModule,
-    CardModule
+    CardModule,
+    DialogModule
   ],
   providers: [HttpClient, BackendService],
   bootstrap: [AppComponent]

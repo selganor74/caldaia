@@ -1,3 +1,8 @@
+<p-dialog header="Errore" dismissableMask="false" closeOnEscape="false" modal="true" [(visible)]="showDisconnectedDialog" >
+    <span>Il backend non è collegato</span><br/>
+    <span>{{signalrStatus}}</span>
+</p-dialog>
+
 <div class="fluid-container">
     <div class="row">
         <p-tabView class="col-md-12">

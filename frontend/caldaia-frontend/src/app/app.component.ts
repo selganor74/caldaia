@@ -22,9 +22,10 @@ export class AppComponent implements OnInit {
 
   private signalrBaseUrl = environment.signalrBaseUrl;
 
-  @Output() data: IDataFromArduino = {};
-  @Input()  settings: ISettingsFromArduino = {};
-  @Output() msgs: Message[] = [];
+  public data: IDataFromArduino = {};
+  public settings: ISettingsFromArduino = {};
+  public signalrStatus: string;
+  public showDisconnectedDialog = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -32,18 +33,25 @@ export class AppComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
+    this.configSignalR();
+    this.startSignalR();
+  }
+
+  private configSignalR() {
     this._hubConnection = $.hubConnection(this.signalrBaseUrl);
     this._hubConnection.reconnectDelay = 2000;
+    this._hubConnection.stateChanged((state) => {
+      const stateConversion = {0: 'connecting', 1: 'connected', 2: 'reconnecting', 4: 'disconnected'};
+      this.signalrStatus = stateConversion[state.newState];
+      console.log('SignalR: Connection status changed', this.signalrStatus);
+
+      if (state.newState !== 1) { this.showDisconnectedDialog = true; }
+      if (state.newState === 1) { this.showDisconnectedDialog = false; }
+      this.cdr.detectChanges();
+    });
+
     this.dataProxy = this._hubConnection.createHubProxy('data');
     this.settingsProxy = this._hubConnection.createHubProxy('settings');
-
-    this._hubConnection
-      .start()
-      .done(() => {
-        console.log('Connection started!');
-        this.refreshSettings();
-      })
-      .catch(err => console.log('Error while establishing connection :(', err));
 
     this.dataProxy.on('notify', (payload: any) => {
       console.log('SignalR: Received data on dataProxy', payload);
@@ -56,6 +64,27 @@ export class AppComponent implements OnInit {
       this.settings = payload;
       this.cdr.detectChanges();
     });
+
+    this._hubConnection
+      .disconnected(() => {
+        // when disconnected we should display a message and block any user request
+       console.log('SignalR Connection lost! Trying to reconnect');
+       this.startSignalR();
+      });
+  }
+
+  private startSignalR() {
+
+    this._hubConnection
+      .start()
+      .done(() => {
+        console.log('SignalR: Connection started!');
+        this.refreshSettings();
+      })
+      .catch(err => {
+        console.log('SignalR: Error while establishing connection :(', err);
+      });
+
   }
 
   public refreshData() {
