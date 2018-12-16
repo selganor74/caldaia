@@ -1,4 +1,8 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Web;
+using System.Web.Http;
 using CaldaiaBackend.Application.Commands;
 using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.Application.Queries;
@@ -19,6 +23,15 @@ namespace CaldaiaBackend.SelfHosted.Controllers
         }
 
         [HttpGet]
+        [Route("")]
+        public HttpResponseMessage RedirectToApp()
+        {
+            var response = Request.CreateResponse(HttpStatusCode.Moved);
+            response.Headers.Location = new Uri(Request.RequestUri, "app/index.html");
+            return response;
+        }
+
+        [HttpGet]
         [Route("api/queries/latestdata")]
         public IHttpActionResult LatestData()
         {
@@ -36,7 +49,7 @@ namespace CaldaiaBackend.SelfHosted.Controllers
             return Ok(data);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("api/commands/get")]
         public IHttpActionResult UpdateLatestData()
         {
@@ -46,7 +59,7 @@ namespace CaldaiaBackend.SelfHosted.Controllers
             return Ok();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("api/commands/get-ra")]
         public IHttpActionResult ResetAccumulators()
         {
@@ -56,7 +69,7 @@ namespace CaldaiaBackend.SelfHosted.Controllers
             return Ok();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("api/commands/reloadsettings")]
         public IHttpActionResult ReloadSettings()
         {

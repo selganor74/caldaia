@@ -1,1 +1,60 @@
 /* You can add global styles to this file, and also import other style files */
+html {
+    min-width: 20rem;
+    font-size: 0.7rem;
+}
+
+.ui-tabview-title,
+.ui-panel-titlebar {
+    font-weight: bold;
+}
+
+.layout-topbar {
+    height: 55px;
+    background-color: black;
+    color: white;
+    -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 1px 10px 0          rgba(0, 0, 0, 0.12), 0 4px 5px 0 rgba(0, 0, 0, 0.14);
+    -moz-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 4px 5px 0 rgba(0, 0, 0, 0.14);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 4px 5px 0 rgba(0, 0, 0, 0.14);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  
+  .main-content{
+    background-color: white;
+    margin-top: 2rem;
+  }
+  
+  .device {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .monitor {
+    display: inline-block;
+    font-family: 'Major Mono Display', monospace;
+    font-size: 3rem;
+    width: 100%;
+    text-align: center;
+    vertical-align: bottom;
+  }
+  
+  .parameter-block {
+    display: inline-block; 
+    width: 100%; 
+    text-align: center;
+  }
+
+  .parameter-block button {
+    display:block;
+    width: 100%
+  }
+  .parameter-value {
+    font-family: 'Major Mono Display', monospace;
+    font-size: 3rem;
+    width: 100%;
+    text-align: center;
+    vertical-align: bottom;
+  }
+  

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, Input } from '@angular/core';
+import { Component, OnInit, Output, Input, ChangeDetectorRef } from '@angular/core';
 import { BackendService } from './backend.service';
 import { Message } from 'primeng/api';
 
@@ -23,29 +23,38 @@ export class AppComponent implements OnInit {
   private signalrBaseUrl = environment.signalrBaseUrl;
 
   @Output() data: IDataFromArduino = {};
-  @Input() settings: ISettingsFromArduino = {};
+  @Input()  settings: ISettingsFromArduino = {};
   @Output() msgs: Message[] = [];
 
-  constructor(private _backend: BackendService) { }
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private _backend: BackendService
+    ) { }
 
   ngOnInit(): void {
     this._hubConnection = $.hubConnection(this.signalrBaseUrl);
+    this._hubConnection.reconnectDelay = 2000;
     this.dataProxy = this._hubConnection.createHubProxy('data');
     this.settingsProxy = this._hubConnection.createHubProxy('settings');
 
     this._hubConnection
       .start()
-      .done(() => console.log('Connection started!'))
-      .catch(err => console.log('Error while establishing connection :('));
+      .done(() => {
+        console.log('Connection started!');
+        this.refreshSettings();
+      })
+      .catch(err => console.log('Error while establishing connection :(', err));
 
     this.dataProxy.on('notify', (payload: any) => {
       console.log('SignalR: Received data on dataProxy', payload);
       this.data = payload;
+      this.cdr.detectChanges();
     });
 
     this.settingsProxy.on('notify', (payload: any) => {
       console.log('SignalR: Received data on settingsProxy', payload);
       this.settings = payload;
+      this.cdr.detectChanges();
     });
   }
 
@@ -55,5 +64,37 @@ export class AppComponent implements OnInit {
 
   public refreshSettings() {
     this._backend.updateLatestSettings().subscribe();
+  }
+
+  public incrementMaxTempConCamino() {
+    this._backend.incrementMaxTempConCamino();
+  }
+
+  public decrementMaxTempConCamino() {
+    this._backend.decrementMaxTempConCamino();
+  }
+
+  public incrementMinTempConCamino() {
+    this._backend.incrementMinTempConCamino();
+  }
+
+  public decrementMinTempConCamino() {
+    this._backend.decrementMinTempConCamino();
+  }
+
+  public incrementTempSamplingInterval() {
+    this._backend.incrementTempSamplingInterval();
+  }
+
+  public decrementTempSamplingInterval() {
+    this._backend.decrementTempSamplingInterval();
+  }
+
+  public incrementTIsteresiCaldaia() {
+    this._backend.incrementTIsteresiCaldaia();
+  }
+
+  public decrementTIsteresiCaldaia() {
+    this._backend.decrementTIsteresiCaldaia();
   }
 }

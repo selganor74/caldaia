@@ -9,7 +9,9 @@ import { PanelModule } from 'primeng/primeng';
 import { ButtonModule } from 'primeng/primeng';
 import { RadioButtonModule } from 'primeng/primeng';
 import { GrowlModule } from 'primeng/primeng';
-import {ToolbarModule} from 'primeng/toolbar';
+import { ToolbarModule } from 'primeng/toolbar';
+import { TabViewModule } from 'primeng/tabview';
+import { CardModule } from 'primeng/card';
 
 import { AppComponent } from './app.component';
 import { BackendService } from './backend.service';
@@ -28,7 +30,9 @@ import { BackendService } from './backend.service';
     ButtonModule,
     RadioButtonModule,
     GrowlModule,
-    ToolbarModule
+    ToolbarModule,
+    TabViewModule,
+    CardModule
   ],
   providers: [HttpClient, BackendService],
   bootstrap: [AppComponent]

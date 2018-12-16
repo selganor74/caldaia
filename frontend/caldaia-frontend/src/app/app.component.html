@@ -1,69 +1,125 @@
 <div class="fluid-container">
-    <div class="row layout-topbar">
-        <div class="col-md-12">
-            <div class="col-md-3">&nbsp;</div>
-        </div>
-    </div>
     <div class="row">
-        <p-toolbar class="col-md-12">
-            <div class="ui-toolbar-group-left">
-                <button pButton type="button" class="ui-button-success" icon="pi pi-reload" label="Refresh Data"
-                    (click)="refreshData()"></button>
-                <button pButton type="button" class="ui-button-success" icon="pi pi-reload" label="Refresh Runtime Settings"
-                    (click)="refreshSettings()"></button>
-            </div>
-        </p-toolbar>
-    </div>
-    <div class="row justify-content-center main-content">
-        <div class="col-md-3 col-lg-3 device">
-            <p-panel header="Camino">
-                <div class="monitor">
-                    {{data.ainTempCaminoValueCentigradi}}&deg;C
-                    <i [ngClass]="{'pi-spin': data.outPompaCaminoValue}" [ngStyle]="{'color': data.outPompaCaminoValue ? 'green' : 'gray'}"
-                        class="pi pi-cog"></i>
-                    <i *ngIf="data.outOverrideTermoAmbienteValue" style="vertical-align: center; font-size: 1.5rem; color: orange"
-                        class="pi pi-exclamation-triangle"></i>
+        <p-tabView class="col-md-12">
+            <p-tabPanel header="Dispositivi">
 
+                <div class="row">
+                    <p-toolbar class="col-md-12 col-lg-12">
+                        <div class="ui-toolbar-group-left">
+                            <button pButton type="button" class="ui-button-success" icon="pi pi-refresh" label="letto alle: {{data.timestamp | date:'HH:mm:ss' }}"
+                                (click)="refreshData()"></button>
+                        </div>
+                    </p-toolbar>
                 </div>
-            </p-panel>
-        </div>
-        <div class="col-md-3 col-lg-3 device">
-            <p-panel header="Accumulo Rotex">
-                <div class="monitor">{{data.rotexTS}}&deg;C</div>
-            </p-panel>
-        </div>
-        <div class="col-md-3 col-lg-3 device">
-            <p-panel header="Pannelli Solari">
-                <div class="monitor">
-                    {{data.rotexTK}}&deg;C
-                    <i [ngClass]="{'pi-spin': data.rotexP1}" [ngStyle]="{'color': data.rotexP1 ? 'green' : 'gray'}"
-                        class="pi pi-cog"></i>
+
+                <div class="row justify-content-center main-content">
+                    <div class="col-md-4 col-lg-3 device">
+                        <p-panel header="Camino">
+                            <div class="monitor">
+                                <i *ngIf="data.outOverrideTermoAmbienteValue" style="vertical-align: center; font-size: 0.8em; color: orange"
+                                    class="pi pi-exclamation-triangle"></i>
+                                <span>{{data.ainTempCaminoValueCentigradi}}&deg;C</span>
+                                <i [ngClass]="{'pi-spin': data.outPompaCaminoValue}" [ngStyle]="{'color': data.outPompaCaminoValue ? 'green' : 'gray'}"
+                                    class="pi pi-cog"></i>
+
+                            </div>
+                        </p-panel>
+                    </div>
+                    <div class="col-md-4 col-lg-3 device">
+                        <p-panel header="Accumulo Rotex">
+                            <div class="monitor">{{data.rotexTS}}&deg;C</div>
+                        </p-panel>
+                    </div>
+                    <div class="col-md-4 col-lg-3 device">
+                        <p-panel header="Pannelli Solari">
+                            <div class="monitor">
+                                {{data.rotexTK}}&deg;C
+                                <i [ngClass]="{'pi-spin': data.rotexP1}" [ngStyle]="{'color': data.rotexP1 ? 'green' : 'gray'}"
+                                    class="pi pi-cog"></i>
+                            </div>
+                        </p-panel>
+                    </div>
+                    <div class="col-md-4 col-lg-3 device">
+                        <p-panel header="Caldaia">
+                            <div class="monitor"><i [ngClass]="{'pi-spin': data.outCaldaiaValue}" [ngStyle]="{'color': data.outCaldaiaValue ? 'green' : 'gray'}"
+                                    class="pi pi-cog"></i></div>
+                        </p-panel>
+                    </div>
+                    <div class="col-md-4 col-lg-3 device">
+                        <p-panel header="Riscaldamento">
+                            <div class="monitor">
+                                <i *ngIf="data.outOverrideTermoAmbienteValue" style="vertical-align: center; font-size: 0.8em; color: orange"
+                                    class="pi pi-exclamation-triangle"></i>
+                                <i [ngClass]="{'pi-spin': data.outPompaValue}" [ngStyle]="{'color': data.outPompaValue ? 'green' : 'gray'}"
+                                    class="pi pi-cog"></i></div>
+                        </p-panel>
+                    </div>
                 </div>
-            </p-panel>
-        </div>
-        <div class="col-md-3 col-lg-3 device">
-            <p-panel header="Caldaia">
-                <div class="monitor"><i [ngClass]="{'pi-spin': data.outCaldaiaValue}" [ngStyle]="{'color': data.outCaldaiaValue ? 'green' : 'gray'}"
-                        class="pi pi-cog"></i></div>
-            </p-panel>
-        </div>
-        <div class="col-md-3 col-lg-3 device">
-            <p-panel header="Riscaldamento">
-                <div class="monitor"><i [ngClass]="{'pi-spin': data.outPompaValue}" [ngStyle]="{'color': data.outPompaValue ? 'green' : 'gray'}"
-                        class="pi pi-cog"></i></div>
-            </p-panel>
-        </div>
+            </p-tabPanel>
+
+            <p-tabPanel header="Impostazioni">
+                <div class="row">
+                    <p-toolbar class="col-md-12">
+                        <div class="ui-toolbar-group-left">
+                            <button pButton type="button" class="ui-button-success" icon="pi pi-refresh" label="letto alle: {{data.timestamp | date:'HH:mm:ss' }}"
+                                (click)="refreshSettings()"></button>
+                        </div>
+                    </p-toolbar>
+                </div>
+
+                <div class="row main-content">
+                    <div class="col-md-6 col-lg-4 device">
+                        <p-panel header="Bypass Termostato Riscaldamento">
+                            <p-panel header="Attiva se Accumulo Rotex raggiunge">
+                                <div class="parameter-block">
+                                    <button pButton icon="pi pi-angle-up" (click)="incrementMaxTempConCamino()"></button>
+                                    <div class="parameter-value">{{settings.rotexMaxTempConCamino}} &deg;C</div>
+                                    <button pButton icon="pi pi-angle-down" (click)="decrementMaxTempConCamino()"></button>
+                                </div>
+                            </p-panel>
+                            <p-panel header="Disattiva se Accumulo Rotex scende sotto">
+                                <div class="parameter-block">
+                                    <button pButton icon="pi pi-angle-up" (click)="incrementMinTempConCamino()"></button>
+                                    <div class="parameter-value">{{settings.rotexMinTempConCamino}} &deg;C</div>
+                                    <button pButton icon="pi pi-angle-down" (click)="decrementMinTempConCamino()"></button>
+                                </div>
+                            </p-panel>
+                        </p-panel>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 device">
+                        <p-panel header="Temperatura Camino">
+                            <p-panel header="La temperatura del camino viene acquisita ogni">
+                                <div class="parameter-block">
+                                    <button pButton icon="pi pi-angle-up" (click)="incrementTempSamplingInterval()"></button>
+                                    <div class="parameter-value">{{settings.TEMP_SAMPLING_INTERVAL}} ms</div>
+                                    <button pButton icon="pi pi-angle-down" (click)="decrementTempSamplingInterval()"></button>
+                                </div>
+                            </p-panel>
+                        </p-panel>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 device">
+                        <p-panel header="Isteresi Caldaia">
+                            <p-panel header="Se la caldaia parte, rimane accesa almeno per">
+                                <div class="parameter-block">
+                                    <button pButton icon="pi pi-angle-up" (click)="incrementTIsteresiCaldaia()"></button>
+                                    <div class="parameter-value">{{settings.T_ISTERESI_CALDAIA}} ms</div>
+                                    <button pButton icon="pi pi-angle-up" (click)="decrementTIsteresiCaldaia()"></button>
+                                </div>
+                            </p-panel>
+                        </p-panel>
+                    </div>
+                </div>
+            </p-tabPanel>
+        </p-tabView>
     </div>
 
     <div class="row">
-        <div class="col-md-2">
+        <p-panel header="Raw Data" class="col-md-12 col-lg-6" toggler="header" toggleable="true" collapsed="true">
             <pre>{{data | json}}</pre>
-        </div>
-        <div class="col-md-2">
+        </p-panel>
+        <p-panel header="Raw Settings" class="col-md-12 col-lg-6" toggler="header" toggleable="true" collapsed="true">
             <pre>{{settings | json}}</pre>
-        </div>
+        </p-panel>
     </div>
-
-</div>
-
-<p-growl [(value)]="msgs"></p-growl>
