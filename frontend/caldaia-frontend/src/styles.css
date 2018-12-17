@@ -1,8 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 html {
     min-width: 20rem;
-    font-size: 0.7rem;
+    font-size: 1rem;
 }
+
 
 .ui-tabview-title,
 .ui-panel-titlebar {

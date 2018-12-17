@@ -1,6 +1,10 @@
-<p-dialog header="Errore" dismissableMask="false" closeOnEscape="false" modal="true" [(visible)]="showDisconnectedDialog" >
-    <span>Il backend non è collegato</span><br/>
-    <span>{{signalrStatus}}</span>
+<p-dialog header="Errore" [dismissableMask]="false" [closable]="false" [closeOnEscape]="false" [modal]="true" [(visible)]="showDisconnectedDialog" [blockScroll]="true" >
+    <p-panel>
+        <p-header>
+            <span>Il backend non è raggiungibile.</span>
+        </p-header>
+        <span>{{signalrStatus}} </span> <i class="pi pi-refresh pi-spin"></i>
+    </p-panel>
 </p-dialog>
 
 <div class="fluid-container">
@@ -66,7 +70,7 @@
                 <div class="row">
                     <p-toolbar class="col-md-12">
                         <div class="ui-toolbar-group-left">
-                            <button pButton type="button" class="ui-button-success" icon="pi pi-refresh" label="letto alle: {{data.timestamp | date:'HH:mm:ss' }}"
+                            <button pButton type="button" class="ui-button-success" icon="pi pi-refresh" label="letto alle: {{settings.timestamp | date:'HH:mm:ss' }}"
                                 (click)="refreshSettings()"></button>
                         </div>
                     </p-toolbar>

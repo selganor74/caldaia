@@ -24,10 +24,10 @@ namespace CaldaiaBackend.SelfHosted
             Container.Register(
                 Component
                     .For<IArduinoDataReader, IArduinoCommandIssuer>()
-                    /*
+#if DEBUG
                     .ImplementedBy<ArduinoMock>()
-                    //*/
-                    //*
+#endif
+#if RELEASE
                     .ImplementedBy<CaldaiaControllerViaArduino>()
                     .UsingFactoryMethod((kernel) =>
                     {
@@ -36,7 +36,7 @@ namespace CaldaiaBackend.SelfHosted
                         controller.Start();
                         return controller;
                     })
-                    //*/
+#endif
                     .LifestyleSingleton()
                 );
 

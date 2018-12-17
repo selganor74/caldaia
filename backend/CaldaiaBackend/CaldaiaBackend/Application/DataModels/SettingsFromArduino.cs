@@ -1,7 +1,10 @@
-﻿namespace CaldaiaBackend.Application.DataModels
+﻿using System;
+
+namespace CaldaiaBackend.Application.DataModels
 {
     public class SettingsFromArduino
     {
+        public string timestamp { get; set; } = DateTime.UtcNow.ToString("o");
         public int rotexTermoMin { get; set; }
         public int rotexTermoMax { get; set; }
         public int deltaSolare { get; set; }

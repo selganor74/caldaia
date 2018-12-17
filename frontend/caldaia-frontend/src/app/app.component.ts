@@ -1,9 +1,10 @@
-import { Component, OnInit, Output, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { BackendService } from './backend.service';
-import { Message } from 'primeng/api';
 
-import {IDataFromArduino} from './idata-from-arduino';
+import { IDataFromArduino } from './idata-from-arduino';
 import { ISettingsFromArduino } from './isettings-from-arduino';
+
+import { SignalRIntegration } from './signalr-integration';
 
 import { environment } from '../environments/environment';
 
@@ -16,12 +17,7 @@ declare var $: any; // JQueryStatic;
 })
 export class AppComponent implements OnInit {
 
-  private _hubConnection: any; // SignalR.Hub.Connection;
-  private dataProxy: any; // SignalR.Hub.Proxy;
-  private settingsProxy: any; // SignalR.Hub.Proxy;
-
   private signalrBaseUrl = environment.signalrBaseUrl;
-
   public data: IDataFromArduino = {};
   public settings: ISettingsFromArduino = {};
   public signalrStatus: string;
@@ -30,61 +26,40 @@ export class AppComponent implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private _backend: BackendService
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.configSignalR();
-    this.startSignalR();
   }
 
   private configSignalR() {
-    this._hubConnection = $.hubConnection(this.signalrBaseUrl);
-    this._hubConnection.reconnectDelay = 2000;
-    this._hubConnection.stateChanged((state) => {
-      const stateConversion = {0: 'connecting', 1: 'connected', 2: 'reconnecting', 4: 'disconnected'};
-      this.signalrStatus = stateConversion[state.newState];
-      console.log('SignalR: Connection status changed', this.signalrStatus);
+    const _hubConnection = $.hubConnection(this.signalrBaseUrl);
 
-      if (state.newState !== 1) { this.showDisconnectedDialog = true; }
-      if (state.newState === 1) { this.showDisconnectedDialog = false; }
-      this.cdr.detectChanges();
-    });
-
-    this.dataProxy = this._hubConnection.createHubProxy('data');
-    this.settingsProxy = this._hubConnection.createHubProxy('settings');
-
-    this.dataProxy.on('notify', (payload: any) => {
-      console.log('SignalR: Received data on dataProxy', payload);
-      this.data = payload;
-      this.cdr.detectChanges();
-    });
-
-    this.settingsProxy.on('notify', (payload: any) => {
-      console.log('SignalR: Received data on settingsProxy', payload);
-      this.settings = payload;
-      this.cdr.detectChanges();
-    });
-
-    this._hubConnection
-      .disconnected(() => {
-        // when disconnected we should display a message and block any user request
-       console.log('SignalR Connection lost! Trying to reconnect');
-       this.startSignalR();
-      });
+    new SignalRIntegration(_hubConnection)
+      .onStateChanged(this.onSignalRStatusChange.bind(this))
+      .onDataReceived(this.onDataReceived.bind(this))
+      .onSettingsReceived(this.onSettingsReceived.bind(this))
+      .start();
   }
 
-  private startSignalR() {
+  private onDataReceived(data: IDataFromArduino) {
+    this.data = data;
+    this.cdr.detectChanges();
+  }
 
-    this._hubConnection
-      .start()
-      .done(() => {
-        console.log('SignalR: Connection started!');
-        this.refreshSettings();
-      })
-      .catch(err => {
-        console.log('SignalR: Error while establishing connection :(', err);
-      });
+  private onSettingsReceived(settings: ISettingsFromArduino) {
+    this.settings = settings;
+    this.cdr.detectChanges();
+  }
 
+  private onSignalRStatusChange(state: number, stateDescription: string) {
+    if (state !== 1) { this.showDisconnectedDialog = true; }
+    if (state === 1) {
+      this.showDisconnectedDialog = false;
+      this.refreshSettings();
+    }
+    this.signalrStatus = stateDescription;
+    this.cdr.detectChanges();
   }
 
   public refreshData() {
