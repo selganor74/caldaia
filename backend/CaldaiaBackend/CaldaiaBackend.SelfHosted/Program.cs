@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Configuration;
+using ArduinoCommunication;
 using CaldaiaBackend.Application;
 using CaldaiaBackend.Application.Interfaces;
-using CaldaiaBackend.Application.Interfaces.Mocks;
-using CaldaiaBackend.ArduinoCommunication;
-using CaldaiaBackend.SelfHosted.Infrastructure;
-using CaldaiaBackend.SelfHosted.Owin.SignalR;
+using CaldaiaBackend.SelfHosted.Infrastructure.SignalRLogging;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Infrastructure.Hosting.IoC.CastleWindsor;
@@ -26,10 +24,10 @@ namespace CaldaiaBackend.SelfHosted
             Container.Register(
                 Component
                     .For<IArduinoDataReader, IArduinoCommandIssuer>()
-#if DEBUG
+#if RELEASE
                     .ImplementedBy<ArduinoMock>()
 #endif
-#if RELEASE
+#if DEBUG
                     .ImplementedBy<CaldaiaControllerViaArduino>()
                     .UsingFactoryMethod((kernel) =>
                     {

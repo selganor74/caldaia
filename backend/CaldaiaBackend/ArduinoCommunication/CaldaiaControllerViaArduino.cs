@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO.Ports;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -9,7 +8,7 @@ using CaldaiaBackend.Application.Interfaces;
 using Infrastructure.Logging;
 using Newtonsoft.Json;
 
-namespace CaldaiaBackend.ArduinoCommunication
+namespace ArduinoCommunication
 {
     public class CaldaiaControllerViaArduino : IDisposable, IArduinoDataReader, IArduinoCommandIssuer
     {
@@ -72,14 +71,15 @@ namespace CaldaiaBackend.ArduinoCommunication
 
         public void Start()
         {
-            SetupSerialPort();
-
             _timer = new Timer(
                 state => ParseReadString(),
                 null,
                 TimeSpan.FromSeconds(0),
                 TimeSpan.FromSeconds(1)
-                );
+            );
+
+            TryToRecover();
+
         }
 
         private void SetupSerialPort()

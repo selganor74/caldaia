@@ -80,11 +80,9 @@
     <Compile Include="Application\Queries\GetRuntimeSettingsQuery.cs" />
     <Compile Include="Application\Queries\GetLatestDataQuery.cs" />
     <Compile Include="Application\Queries\Handlers\ArduinoQueriesHandler.cs" />
-    <Compile Include="ArduinoCommunication\CaldaiaControllerViaArduino.cs" />
     <Compile Include="Application\DataModels\DataFromArduino.cs" />
     <Compile Include="Application\Interfaces\IArduinoCommandIssuer.cs" />
     <Compile Include="Application\Interfaces\IArduinoDataReader.cs" />
-    <Compile Include="SerialEnumerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Application\DataModels\SettingsFromArduino.cs" />
   </ItemGroup>
@@ -92,7 +90,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

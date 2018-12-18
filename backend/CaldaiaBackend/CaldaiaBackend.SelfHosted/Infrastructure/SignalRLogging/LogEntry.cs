@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CaldaiaBackend.SelfHosted.Infrastructure
+namespace CaldaiaBackend.SelfHosted.Infrastructure.SignalRLogging
 {
     internal class LogEntry
     {

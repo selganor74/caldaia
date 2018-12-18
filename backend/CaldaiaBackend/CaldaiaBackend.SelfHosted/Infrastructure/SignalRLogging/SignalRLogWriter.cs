@@ -4,7 +4,7 @@ using Infrastructure.Logging;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 
-namespace CaldaiaBackend.SelfHosted.Infrastructure
+namespace CaldaiaBackend.SelfHosted.Infrastructure.SignalRLogging
 {
     class SignalRLogWriter : ILogWriter
     {

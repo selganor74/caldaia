@@ -2,11 +2,11 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using ArduinoCommunication;
 using NUnit.Framework;
 
 using CaldaiaBackend;
 using CaldaiaBackend.Application.DataModels;
-using CaldaiaBackend.ArduinoCommunication;
 
 namespace CaldaiaBackendTests
 {

@@ -1,3 +1,5 @@
+#ifndef NTCTEMPLOOKUP_H
+#define NTCTEMPLOOKUP_H
 /******************************************
  * VETTORE DI CONVERSIONE TEMPERATURA NTC *
  ******************************************/
@@ -585,4 +587,4 @@
     case 975: return 110;
   }
 }
-
+#endif

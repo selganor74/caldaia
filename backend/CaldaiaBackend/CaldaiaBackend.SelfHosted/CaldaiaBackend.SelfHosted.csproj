@@ -143,11 +143,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApiController.cs" />
-    <Compile Include="Infrastructure\SignalRLogWriter.cs" />
+    <Compile Include="Infrastructure\SignalRLogging\SignalRLogsHub.cs" />
+    <Compile Include="Infrastructure\SignalRLogging\SignalRLogWriter.cs" />
     <Compile Include="Owin\IoC\WindsorControllerActivator.cs" />
-    <Compile Include="Infrastructure\LogEntry.cs" />
+    <Compile Include="Infrastructure\SignalRLogging\LogEntry.cs" />
     <Compile Include="Owin\SignalR\DataHub.cs" />
-    <Compile Include="Owin\SignalR\LogsHub.cs" />
     <Compile Include="Owin\SignalR\SettingsHub.cs" />
     <Compile Include="Owin\Startup.cs" />
     <Compile Include="Program.cs" />
@@ -159,6 +159,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ArduinoCommunication\ArduinoCommunication.csproj">
+      <Project>{42b784be-893e-4698-bbe5-6eb50a0e339b}</Project>
+      <Name>ArduinoCommunication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CaldaiaBackend\CaldaiaBackend.csproj">
       <Project>{2acf8772-0238-4790-b4c6-8ec4a09e8e1d}</Project>
       <Name>CaldaiaBackend</Name>
