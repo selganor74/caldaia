@@ -4,6 +4,8 @@ using CaldaiaBackend.Application;
 using CaldaiaBackend.Application.Interfaces;
 using CaldaiaBackend.Application.Interfaces.Mocks;
 using CaldaiaBackend.ArduinoCommunication;
+using CaldaiaBackend.SelfHosted.Infrastructure;
+using CaldaiaBackend.SelfHosted.Owin.SignalR;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Infrastructure.Hosting.IoC.CastleWindsor;
@@ -45,6 +47,13 @@ namespace CaldaiaBackend.SelfHosted
 
             var logWriter = Container.Resolve<ILogWriter>();
             logWriter.SetLogLevel(LogLevel.Trace);
+
+            var clw = logWriter as CompositeLogWriter;
+            if (clw != null)
+            {
+                var signalrLogWriter = new SignalRLogWriter(LogLevel.Info);
+                clw.AddLogger(signalrLogWriter, LogLevelMode.Independent);
+            }
 
             var loggerFactory = Container.Resolve<ILoggerFactory>();
             log = loggerFactory.CreateNewLogger(nameof(Program));

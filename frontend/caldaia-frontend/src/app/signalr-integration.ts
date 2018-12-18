@@ -1,13 +1,12 @@
 import { IDataFromArduino } from './idata-from-arduino';
 import { ISettingsFromArduino } from './isettings-from-arduino';
 
-import { environment } from '../environments/environment';
-
 export class SignalRIntegration {
 
 
     private dataProxy: any; // SignalR.Hub.Proxy;
     private settingsProxy: any; // SignalR.Hub.Proxy;
+    private logsProxy: any; // SignalR.Hub.Proxy;
     private _stateChangedHandlers: ((state: number, stateDescription: string) => void)[] = [];
     private _dataReceivedHandlers: ((data: IDataFromArduino) => void)[] = [];
     private _settingsReceivedHandlers: ((settings: ISettingsFromArduino) => void)[] = [];
@@ -83,6 +82,7 @@ export class SignalRIntegration {
 
         this.dataProxy = this._hubConnection.createHubProxy('data');
         this.settingsProxy = this._hubConnection.createHubProxy('settings');
+        this.logsProxy = this._hubConnection.createHubProxy('logs');
 
         this.dataProxy.on('notify', (payload: any) => {
             console.log('SignalR: Received data on dataProxy', payload);
@@ -92,6 +92,23 @@ export class SignalRIntegration {
         this.settingsProxy.on('notify', (payload: any) => {
             console.log('SignalR: Received data on settingsProxy', payload);
             this.fireSettingsReceived(payload);
+        });
+
+        this.logsProxy.on('trace', (payload: any) => {
+            // tslint:disable-next-line:no-console
+            console.log('SignalR-Logs::Trace', payload);
+        });
+
+        this.logsProxy.on('info', (payload: any) => {
+            console.log('SignalR-Logs', payload);
+        });
+
+        this.logsProxy.on('warning', (payload: any) => {
+            console.warn('SignalR-Logs', payload);
+        });
+
+        this.logsProxy.on('error', (payload: any) => {
+            console.error('SignalR-Logs', payload);
         });
 
         this._hubConnection

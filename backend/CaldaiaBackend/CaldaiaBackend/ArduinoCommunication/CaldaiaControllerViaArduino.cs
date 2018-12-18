@@ -13,7 +13,32 @@ namespace CaldaiaBackend.ArduinoCommunication
 {
     public class CaldaiaControllerViaArduino : IDisposable, IArduinoDataReader, IArduinoCommandIssuer
     {
+        private const int CommandToResponseTimeoutMillis = 5000;
         private static bool _recovering = false;
+        private readonly Timer _commandToResponseTimeoutTimer;
+
+        private void TryRecoverConnection(object state)
+        {
+            _log.Warning("Timeout elapsed without response. Trying to recover connection");
+
+            FlashDTR();
+            TryToRecover();
+            FlashDTR();
+        }
+
+        private void FlashDTR()
+        {
+            try
+            {
+                _physicalPort.DtrEnable = true;
+                Thread.Sleep(500);
+                _physicalPort.DtrEnable = false;
+            }
+            catch (Exception e)
+            {
+                _log.Warning("Errors while trying to flash DTR.");
+            }
+        }
 
         private readonly string _serialPort;
         private Timer _timer;
@@ -42,6 +67,7 @@ namespace CaldaiaBackend.ArduinoCommunication
         {
             _serialPort = serialPort;
             _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
+            _commandToResponseTimeoutTimer = new Timer(TryRecoverConnection, null, -1, -1);
         }
 
         public void Start()
@@ -173,6 +199,8 @@ namespace CaldaiaBackend.ArduinoCommunication
             SerialDataReceivedEventArgs e
             )
         {
+            CancelTimeoutCheck();
+
             var readData = "";
             if (e.EventType == SerialData.Eof) return;
             try
@@ -187,6 +215,18 @@ namespace CaldaiaBackend.ArduinoCommunication
                 _log.Error("DataReceived error", ex);
                 throw;
             }
+        }
+
+        private void CancelTimeoutCheck()
+        {
+            _log.Trace("Stopping timeout for command.");
+            _commandToResponseTimeoutTimer.Change(-1, -1);
+        }
+
+        private void StartTimeoutCheck()
+        {
+            _log.Trace("Starting timeout for command.");
+            _commandToResponseTimeoutTimer.Change(CommandToResponseTimeoutMillis, -1);
         }
 
         public void SendGetCommand()
@@ -207,6 +247,9 @@ namespace CaldaiaBackend.ArduinoCommunication
         private void WriteString(string toWrite)
         {
             if (_recovering) return;
+
+            StartTimeoutCheck();
+
             try
             {
                 _physicalPort.Write(toWrite);
