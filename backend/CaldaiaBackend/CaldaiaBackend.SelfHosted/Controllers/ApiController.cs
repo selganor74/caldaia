@@ -111,7 +111,7 @@ namespace CaldaiaBackend.SelfHosted.Controllers
         [HttpPost]
         [Route("api/settings/rotex-termo-max/increment")]
         public IHttpActionResult IncrementRotexTermoMax()
-        {
+        { 
             var cmd = new IncrementRotexTermoMaxCommand();
             // _readDataHandler.Execute(cmd).Wait();
             _arduinoApp.Execute(cmd).Wait();
