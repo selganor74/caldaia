@@ -5,12 +5,16 @@
 #include "ntcTempLookup.h"
 #include "HwSetup.h"
 #include "Settings.h"
+#include "Rotex.h"
 
 // Numero di campioni memorizzati nel buffer circolare
 #define  CB_VALUES  5
 
 //..#define  CB_AVG_REBUILD_AFTER 1
 //..#include <CircularBuffer.h>
+
+// Contiene le impostazioni di runtime. (see Settings.h)
+Settings runtimeSettings;
 
 // Abilita o disabilita il debug tramite seriale
 boolean serialDebug;
@@ -44,19 +48,9 @@ boolean serialDebug;
 //
 // In questa versione mancano:
 
-// 2017 01 12 - Visto che per un po' il camino non si potrà usare, dobbiamo tenere più alta la temperatura nell'accumulo.
-char rotexTermoMin = 43;      // Temperatura di accensione delle caldaia
-char rotexTermoMax = 45;      // Temperatura di spegnimento della caldaia
-char deltaSolare   = 1;       // Quando i pannelli sono in funzione la temperatura di soglia della caldaia (rotexTermoMin) scende di deltaSolare Gradi.
-char rotexMaxTempConCamino = 71; // Se la temperatura dell'accumulo rotex è maggiore o uguale a rotexMaxTempConCamino viene attivato l'override 
-                                       // del termostato ambiente mandando in circolo in impianto.
-char rotexMinTempConCamino = 69; // L'override viene sganciato quando la temperatura dell'accumulo scende sotto rotexMinTempConCamino.
-
-SoftwareSerial rotexSerial = SoftwareSerial(serialRotexRX,serialRotexTX); //Initialize 2nd serial port (rx,tx)
 
 // Oggetto SerialCommand per gestire i comandi da Seriale
 SerialCommand SCmd = SerialCommand(); 
-SerialCommand SCmdRotex = SerialCommand( rotexSerial );
 
 // Millisecondi di isteresi prima che la caldaia possa spegnersi 1h=60*60*1000=3600000  20min = 1200000
 const unsigned long T_ISTERESI_CALDAIA = 1200000 ;
@@ -107,23 +101,6 @@ boolean       outOverrideTermoAmbienteValue;
 unsigned long outOverrideTermoAmbienteAccu_On;
 unsigned long outOverrideTermoAmbienteAccu_Off;
 
-// Variabile usate dal sistema Rotex
-unsigned long rotexHasFailed;
-int rotexValues[12];
-#define RTX_HA     0
-#define RTX_BK     1
-#define RTX_P1     2
-#define RTX_P2     3
-#define RTX_TK     4
-#define RTX_TR     5
-#define RTX_TS     6
-#define RTX_TV     7
-#define RTX_PWR    8 /* Non usato vedi variabile PWR*/
-#define RTX_QT     9 /* ??? */
-float rotexPortataTV;
-unsigned long rotexLastRead;
-#define ROTEX_MAX_STRING_LEN 36
-char rotexLastReadString[ROTEX_MAX_STRING_LEN];
 
 int   ainTempCaminoValue;
 float ainTempCaminoValueCentigradi;
@@ -140,36 +117,7 @@ unsigned long calcolaIntervallo( unsigned long da, unsigned long a ) {
   return a >= da ? a - da : a + (0-1-da);
 }
 
-// Esegue il reset della centralina rotex tenendola spenta per 10 secondi
-// deve essere chiamata finché rotexHasFailed non torna a 0
-//void doRotexReset() {
-//  static boolean rotexIsResetting = false;
-//  static unsigned long resetStartedAtMillis = 0;
-//  const unsigned long resetTimeMs = 10000;
-//  // N.B.: Se l'output è in logica negata, occorre invertire i valori qui sotto:
-//#define RESTVALUE LOW
-//#define ACTIVEVALUE HIGH
-//  
-//  // Se siamo in fase di reset ed il tempo di timeout è passato, ritorno a riposo
-//  if ( rotexIsResetting && ( calcolaIntervallo(resetStartedAtMillis, millis() ) > resetTimeMs ) ) {
-//    rotexHasFailed = false;
-//    rotexIsResetting = false;
-//  }
-//
-//  // Se abbiamo rilevato uno stato di FAIL e non siamo già in fase di reset, avvio la procedura di reset
-//  if ( rotexHasFailed && !rotexIsResetting ) {
-//    rotexResetCounter++;
-//    rotexIsResetting = true;
-//    resetStartedAtMillis = millis();
-//    digitalWrite( outRotexReset, ACTIVEVALUE );
-//  } 
-//
-//  // Se non siamo in una condizione di fail e non stiamo resettando, allora teniamo l'output a RIPOSO (RESTVALUE)
-//  // N.B.: Questa sezione di codice gira anche subito dopo che si è verificata la condizione di TIMEOUT passato.
-//  if ( !rotexHasFailed && !rotexIsResetting ) {
-//        digitalWrite( outRotexReset, RESTVALUE );   
-//  }
-//}
+
 
 // Genera un impulso di lunghezza "milliseconds"
 void pulse( unsigned long outputPin, unsigned long milliseconds ) {
@@ -236,98 +184,9 @@ void initVariables() {
   ainTempCaminoValue=0;
   ainTempCaminoValueCentigradi=0.0;
   lastTempAcquired = 0;
-  rotexLastRead = 0;
-  rotexPortataTV = 0.0;
 }
 
 
-// Appena accesa la centralina R3 restituisce questa stringa:
-//            SOLARIS R3 V.3.1 May 30 2007 14:37:58 ROTEX GmbH Ser.-Nr: 000001******
-// Successivamente:
-// L'output seriale della R3 è un record con i valori separati da ';'
-//            HA;BK;P1 /%;P2;TK /Ã¸C;TR /Ã¸C;TS /Ã¸C;TV /Ã¸C;V /l/min
-void doReadRotex() {
-  boolean tmp_return;
-  int i;
-  int j;
-  int alarmIdx;
-#define MAX_CURR_VAL_LEN 11 
-  char currVal[MAX_CURR_VAL_LEN];
-  int currValIndex = 0;
-
-  char inchar;
-  static int currentCharIndex;
-
-  boolean foundSemicolon;
-
-  i = 0;
-  j = 0;
-  alarmIdx = 0;
-  tmp_return = false;
-
-  foundSemicolon = false;
-  currentCharIndex = 0;
-  
-#define RESET_CURR_VAL  currValIndex=0; for ( j = 0; j < MAX_CURR_VAL_LEN; j++ ) { currVal[j] = 0; }
-  
-  RESET_CURR_VAL;
-  
-  char commandSent[ROTEX_MAX_STRING_LEN];
-  
-  SCmdRotex.getBuffer( commandSent, ROTEX_MAX_STRING_LEN - 1 );
-  strncpy( rotexLastReadString, commandSent, ROTEX_MAX_STRING_LEN - 1 );
-  // Serial.println(commandSent);
-  while ( commandSent[ currentCharIndex ] != 0 && ( currentCharIndex < ROTEX_MAX_STRING_LEN - 1 ) ) {
-    inchar = commandSent[ currentCharIndex ];
-    currentCharIndex++;
-    // Serial.print( inchar );
-    // Esclude i ritorni a capo dalla stringa letta dal rotex
-    inchar == ',' ? inchar = '.' : inchar = inchar;
-    
-    // Serial.print( inchar ) ;
-    // Serial.print( ":" ) ;
-    // Serial.println( i ) ;
-    if ( inchar == ';' || ( ( inchar == 0 ) && ( foundSemicolon == true ) ) ) {
-      foundSemicolon = true;
-      
-      if( i == 9 ) {
-        rotexHasFailed = 0;
-        for ( alarmIdx = 0; alarmIdx < 10 && currVal[alarmIdx] != 0; alarmIdx++ ) {
-          switch ( currVal[alarmIdx] ) {
-            case 'F':
-              rotexHasFailed = 1 ;
-              break;
-            case 'K': // Temperatura pannelli troppo alta
-              break;
-            case 'S': // ???
-              break;
-          }
-        }
-      }
-      if( i == 8 ) { // se i == 8 cioè per la potenza istantanea
-        rotexPortataTV = atof( (char *)currVal );
-        //Serial.println (rotexPortataTV);
-        //.. cbRotexPortataTV.addValue( rotexPortataTV );
-        rotexLastRead = millis();
-      } else {
-        rotexValues[ i ] = atoi( (char *)currVal );
-        switch (i) {
-          case RTX_TS: 
-            //.. cbRotexTS.addValue( rotexValues[RTX_TS] );
-            break;
-        }
-        //Serial.println (rotexValues[i]);
-      }
-      RESET_CURR_VAL;
-      i++;
-    } else {
-      currVal[currValIndex] = inchar;
-      currValIndex++;
-      // Serial.println( currVal );
-    }   
-     
-  }
-}
 
 /***************************************
  * DEFINIZIONE DEI COMANDI VIA SERIALE *
@@ -427,58 +286,58 @@ void statusToSerial ( boolean compactVersion ) {
   Serial.println( F(",") );
   }
   Serial.print( F("  \"rotexHA\": " ));
-  Serial.print( rotexValues[ RTX_HA ] );
+  Serial.print( RotexStatus::rotexValues[ RTX_HA ] );
   Serial.println( F(",") );
   
   Serial.print( F("  \"rotexBK\": ") );
-  Serial.print( rotexValues[ RTX_BK ] );
+  Serial.print( RotexStatus::rotexValues[ RTX_BK ] );
   Serial.println( F(",") );
   
   Serial.print( F("  \"rotexP1\": " ));
-  Serial.print( rotexValues[ RTX_P1 ] );
+  Serial.print( RotexStatus::rotexValues[ RTX_P1 ] );
   Serial.println( F(",") );
   
   Serial.print( F("  \"rotexP2\": ") );
-  Serial.print( rotexValues[ RTX_P2 ] );
+  Serial.print( RotexStatus::rotexValues[ RTX_P2 ] );
   Serial.println( F("," ));
    
   Serial.print( F("  \"rotexTK\": ") );
-  Serial.print( rotexValues[ RTX_TK ] );
+  Serial.print( RotexStatus::rotexValues[ RTX_TK ] );
   Serial.println( F(",") );
 
   Serial.print( F("  \"rotexTR\": ") );
-  Serial.print( rotexValues[ RTX_TR ] );
+  Serial.print( RotexStatus::rotexValues[ RTX_TR ] );
   Serial.println( F(",") );
 
   Serial.print( F("  \"rotexTS\": ") );
-  Serial.print( rotexValues[ RTX_TS ] );
+  Serial.print( RotexStatus::rotexValues[ RTX_TS ] );
   Serial.println( F(",") );
 
   Serial.print( F("  \"rotexTV\": ") );
-  Serial.print( rotexValues[ RTX_TV ] );
+  Serial.print( RotexStatus::rotexValues[ RTX_TV ] );
   Serial.println( F(",") );
 
   Serial.print( F("  \"rotexPWR\": ") );
-  Serial.print( rotexValues[ RTX_PWR ] );
+  Serial.print( RotexStatus::rotexValues[ RTX_PWR ] );
   Serial.println( F(",") );
 
   Serial.print( F("  \"rotexQT\": ") );
-  Serial.print( rotexValues[ RTX_QT ] );
+  Serial.print( RotexStatus::rotexValues[ RTX_QT ] );
   Serial.println( F(",") );
 
 
 
   Serial.print( F("  \"rotexPortataTV\": ") );
-  Serial.print( rotexPortataTV );
+  Serial.print( RotexStatus::rotexPortataTV );
   Serial.println( F(",") );
   
   if (!compactVersion) {
   Serial.print( F("  \"rotexLastRead\": ") );
-  Serial.print( rotexLastRead );
+  Serial.print( RotexStatus::rotexLastRead );
   Serial.println( F(",") );
   }  
   Serial.print( F("  \"rotexLastReadString\": \"") );
-  Serial.print( rotexLastReadString );
+  Serial.print( RotexStatus::rotexLastReadString );
   Serial.println( F("\",") );
   
   Serial.print( F("  \"ainTempCaminoValueCentigradi\": ") );
@@ -493,7 +352,7 @@ void statusToSerial ( boolean compactVersion ) {
   Serial.println( F(",") );
   
   Serial.print( F("  \"rotexHasFailed\": ") );
-  Serial.println( rotexHasFailed );
+  Serial.println( RotexStatus::rotexHasFailed );
 /*
   }
 //*/
@@ -514,7 +373,22 @@ void cmdGetStatusRA() {
 }
 
 void cmdGetRuntimeSettings() {
-  settingsToSerial();
+  settingsToSerial(runtimeSettings);
+}
+
+void cmdLoadRuntimeSettings() {
+  runtimeSettings = loadSettingsFromEEPROM();
+  settingsToSerial( runtimeSettings );
+}
+
+void cmdSaveRuntimeSettings() {
+  saveSettingsToEEPROM(runtimeSettings);
+  cmdLoadRuntimeSettings();
+}
+
+void cmdRestoreSettingsToDefault() {
+  runtimeSettings = getDefaultSettings();
+  settingsToSerial( runtimeSettings );
 }
 
 void dummyMethod() {
@@ -528,13 +402,13 @@ void serialCmdSetup () {
   // Setup dei comandi via Seriale
   SCmd.addCommand( "GET", cmdGetStatus ); // Restituisce lo stato delle variabili interne
   SCmd.addCommand( "GET-RA", cmdGetStatusRA ); // Restituisce lo stato delle variabili interne e resetta gli accumulatori
+  SCmd.addCommand( "RESTORE", cmdRestoreSettingsToDefault ); 
   SCmd.addCommand( "GET-RS", cmdGetRuntimeSettings ); // Restituisce lo stato delle impostazioni
+  SCmd.addCommand( "LOAD-RS", cmdLoadRuntimeSettings ); // Restituisce lo stato delle impostazioni
+  SCmd.addCommand( "SAVE-RS", cmdSaveRuntimeSettings ); // Restituisce lo stato delle impostazioni
   SCmd.addCommand( "HELP", printHelp ); // Stampa un piccolo messaggio di Help
   SCmd.addDefaultHandler( dummyMethod ); // Handler for command that isn't matched (says "What?")
   
-  // Legge effettivamente l'output dell Rotex
-  SCmdRotex.addDefaultHandler( doReadRotex );
-
   Serial.println( F("Ready.") );  
 }
 
@@ -543,7 +417,10 @@ void printHelp() {
   Serial.println(F("  GET      Obtains the status of the system."));
   Serial.println(F("  GET-RA   Same as GET plus some values and Resets all the Accumulatros variables."));
   Serial.println(F("  GET-RS   Returns a json with the runtime settings."));
-  Serial.println(F("  HELP     Print these informations."));
+  Serial.println(F("  LOAD-RS  Loads settings from the EEPROM. Will revert to defaults if not valid."));
+  Serial.println(F("  SAVE-RS  Saves the runtime Settings."));
+  Serial.println(F("  RESTORE  Restores the default Settings."));
+  Serial.println(F("  HELP     Prints this help screen."));
 };
 
 void ioSetup() {
@@ -645,10 +522,10 @@ void doCrunchInputs() {
   char sogliaMax;
 
 //*
-  if ( rotexValues[ RTX_TS ] != 0 ) {
-    sogliaMin = rotexTermoMin; // - ( cbRotexPortataTV.current_avg != 0 ? deltaSolare : 0 );
-    sogliaMax = rotexTermoMax; // - ( cbRotexPortataTV.current_avg != 0 ? deltaSolare : 0 );
-    if( outCaldaiaValue == LOW ? rotexValues[ RTX_TS ] < sogliaMin : rotexValues[ RTX_TS ] > sogliaMax ) {
+  if ( RotexStatus::rotexValues[ RTX_TS ] != 0 ) {
+    sogliaMin = runtimeSettings.rotexTermoMin; 
+    sogliaMax = runtimeSettings.rotexTermoMax; 
+    if( outCaldaiaValue == LOW ? RotexStatus::rotexValues[ RTX_TS ] < sogliaMin : RotexStatus::rotexValues[ RTX_TS ] > sogliaMax ) {
       outCaldaiaValue == HIGH ? outCaldaiaValue = LOW : outCaldaiaValue = HIGH;
     }
   }  else {
@@ -684,33 +561,37 @@ void doCrunchInputs() {
 #define TEMPO_IN_ON ( calcolaIntervallo( tOnPompaCamino, millis() ) )
 #define TEMPO_MINIMO_PER_STATO 60000 
 #define PUO_CAMBIARE_STATO ( outPompaCaminoValue == LOW ? TEMPO_IN_OFF >= TEMPO_MINIMO_PER_STATO : TEMPO_IN_ON >= TEMPO_MINIMO_PER_STATO )
-#define ROTEX_DISPONIBILE ( rotexValues[ RTX_TS ] != 0 )
-#define DELTA_CAMINO_ROTEX ( (int)ainTempCaminoValueCentigradi - (int)rotexValues[ RTX_TS ] )
+#define ROTEX_DISPONIBILE ( RotexStatus::rotexValues[ RTX_TS ] != 0 )
+#define ROTEX_NON_E_DISPONIBILE !ROTEX_DISPONIBILE
+#define DELTA_CAMINO_ROTEX ( (int)ainTempCaminoValueCentigradi - (int)RotexStatus::rotexValues[ RTX_TS ] )
 #define T_CAMINO (int)ainTempCaminoValueCentigradi
 #define ACCENDI_POMPA_CAMINO      tOnPompaCamino  = millis(); outPompaCaminoValue = HIGH;          
 #define SPEGNI_POMPA_CAMINO       tOffPompaCamino = millis(); outPompaCaminoValue = LOW;          
-
+#define POMPA_CAMINO_E_SPENTA     outPompaCaminoValue == LOW
+#define DELTA_CAMINO_ROTEX_SOPRA_SOGLIA_INNESCO     DELTA_CAMINO_ROTEX >= runtimeSettings.deltaTInnescoPompaCamino  /* Ad esempio 3 gradi */
+#define DELTA_CAMINO_ROTEX_SOTTO_SOGLIA_INNESCO     DELTA_CAMINO_ROTEX < runtimeSettings.deltaTInnescoPompaCamino  /* Ad esempio 3 gradi */
+#define T_CAMINO_SOPRA_SOGLIA_INNESCO               T_CAMINO > runtimeSettings.TCaminoPerAccensionePompa            /* Ad esempio 62 gradi */
   //*
   if ( PUO_CAMBIARE_STATO ) {
-    if ( outPompaCaminoValue == LOW ) {
+    if (  POMPA_CAMINO_E_SPENTA ) {
       if ( ROTEX_DISPONIBILE ) {
-        if ( DELTA_CAMINO_ROTEX >= 3 || T_CAMINO > 62 ) {
+        if ( DELTA_CAMINO_ROTEX_SOPRA_SOGLIA_INNESCO || T_CAMINO_SOPRA_SOGLIA_INNESCO ) {
           ACCENDI_POMPA_CAMINO
         }
       }
-      if ( !ROTEX_DISPONIBILE ) {
-        if ( T_CAMINO >= 55 ) {
+      if ( !ROTEX_NON_E_DISPONIBILE ) {
+        if ( T_CAMINO >= runtimeSettings.TInnescoSeRotexNonDisponibile /* Ad esempio 55 */ ) {
           ACCENDI_POMPA_CAMINO
         }  
       } 
     } else {   // if ( outPompaCaminoValue == LOW )
       if ( ROTEX_DISPONIBILE ) {
-        if ( DELTA_CAMINO_ROTEX < 3 ) {
+        if ( DELTA_CAMINO_ROTEX_SOTTO_SOGLIA_INNESCO ) {
           SPEGNI_POMPA_CAMINO
         }
       }
       if ( !ROTEX_DISPONIBILE ) {
-        if ( T_CAMINO < 53 ) {
+        if ( T_CAMINO < runtimeSettings.TDisinnescoSeRotexNonDisponibile /* Ad esempio 52 */ ) {
           SPEGNI_POMPA_CAMINO
         }         
       }     
@@ -720,10 +601,10 @@ void doCrunchInputs() {
   /*
   if ( PUO_CAMBIARE_STATO ) {
     if ( outPompaCaminoValue == LOW ) { // La pompa è spenta vediamo se possiamo accenderla
-      if (rotexValues[ RTX_TS ] != 0 ) {
-        if ((int)ainTempCaminoValueCentigradi - (int)rotexValues[ RTX_TS ] >= 5 ) {
+      if (RotexStatus::rotexValues[ RTX_TS ] != 0 ) {
+        if ((int)ainTempCaminoValueCentigradi - (int)RotexStatus::rotexValues[ RTX_TS ] >= 5 ) {
           if ( ainTempCaminoValueCentigradi <= 53.0 ) {
-            if ( rotexValues[ RTX_TS ] < 45 ) {
+            if ( RotexStatus::rotexValues[ RTX_TS ] < 45 ) {
               tOnPompaCamino = millis();
               outPompaCaminoValue = HIGH;
             }
@@ -741,14 +622,14 @@ void doCrunchInputs() {
       } 
     } else { // La pompa è accesa vediamo se possiamo spegnerla
       // outPompaCaminoValue
-      if (rotexValues[ RTX_TS ] != 0 ) {
+      if (RotexStatus::rotexValues[ RTX_TS ] != 0 ) {
         if ( ainTempCaminoValueCentigradi <= 53.0 ) {
-          if ( ( rotexValues[ RTX_TS ] >= 45 ) || ( (int)ainTempCaminoValueCentigradi - (int)rotexValues[ RTX_TS ] < 5 ) ) {
+          if ( ( RotexStatus::rotexValues[ RTX_TS ] >= 45 ) || ( (int)ainTempCaminoValueCentigradi - (int)RotexStatus::rotexValues[ RTX_TS ] < 5 ) ) {
             tOffPompaCamino = millis();
             outPompaCaminoValue = LOW;
           }
         } else {
-          if (((int)ainTempCaminoValueCentigradi - (int)rotexValues[ RTX_TS ] < 3 ) && ( ainTempCaminoValueCentigradi <= 59.0 ) ) {
+          if (((int)ainTempCaminoValueCentigradi - (int)RotexStatus::rotexValues[ RTX_TS ] < 3 ) && ( ainTempCaminoValueCentigradi <= 59.0 ) ) {
             tOffPompaCamino = millis();
             outPompaCaminoValue = LOW;          
           }
@@ -768,26 +649,37 @@ void doCrunchInputs() {
 }
 
 void doManageOverrideTermostatoAmbiente() {
+#define SE_OVERRIDE_TERMOSTATO_AMBIENTE_NON_E_ATTIVO    outOverrideTermoAmbienteValue == LOW
+
   if (ainTempCaminoValueCentigradi == 0.0) {
     return;
   }
-  
-  if (rotexValues[RTX_TS] == 0) {
+    
+  if (ROTEX_NON_E_DISPONIBILE) {
+    if ( SE_OVERRIDE_TERMOSTATO_AMBIENTE_NON_E_ATTIVO ) {
+      if (ainTempCaminoValueCentigradi > runtimeSettings.TInnescoOverrideTermostatoSeRotexNonDisponibile /* Ad Esempio 65 */ ) {
+        outOverrideTermoAmbienteValue = HIGH;    
+      }
+    } else {
+      if (ainTempCaminoValueCentigradi <= runtimeSettings.TInnescoOverrideTermostatoSeRotexNonDisponibile  /* Ad Esempio 60 */) {
+        outOverrideTermoAmbienteValue = LOW;    
+      }  
+    }    
     return;
   }
-  
-  if (ainTempCaminoValueCentigradi < 40.0) {
+
+  if (ainTempCaminoValueCentigradi <= runtimeSettings.TDisinnescoOverrideSeRotexDisponibile /* Ad esempio 60 */) {
     outOverrideTermoAmbienteValue = LOW;
     return;
   }
-  
-  // Se la temperatura è maggiore di 40, supponiamo che il camino stia funzionando
+
+  // Se la temperatura è maggiore di 60, supponiamo che il camino stia funzionando
   if ( outOverrideTermoAmbienteValue == LOW ) {
-    if (rotexValues[RTX_TS] >= rotexMaxTempConCamino) {
+    if (RotexStatus::rotexValues[RTX_TS] >= runtimeSettings.rotexMaxTempConCamino) {
       outOverrideTermoAmbienteValue = HIGH;    
     }
   } else {
-    if (rotexValues[RTX_TS] <= rotexMinTempConCamino) {
+    if (RotexStatus::rotexValues[RTX_TS] <= runtimeSettings.rotexMinTempConCamino) {
       outOverrideTermoAmbienteValue = LOW;    
     }  
   }
@@ -812,7 +704,7 @@ void doManageAccumulators() {
   outOverrideTermoAmbienteValue == HIGH ? outOverrideTermoAmbienteAccu_On += Accu_Length : outOverrideTermoAmbienteAccu_Off += Accu_Length;
   
   Accu_LastTS = Accu_ActualTS;
-  rotexP1Accu_On += rotexValues[ RTX_P1 ] != 0 ?  Accu_Length : 0;
+  rotexP1Accu_On += RotexStatus::rotexValues[ RTX_P1 ] != 0 ?  Accu_Length : 0;
 //  timeSinceLastAccuResetMs = calcolaIntervallo( lastAccuResetTime, Accu_ActualTS );
   timeSinceLastAccuResetMs = inTermoAmbienteAccu_On + inTermoAmbienteAccu_Off;
 
@@ -836,11 +728,13 @@ void doSetOutputs() {
 void setup() {
     // Utilizziamo la seriale per fare un po' di debug.
   Serial.begin(9600);
-  rotexSerial.begin(9600);  serialDebug = false;
-
+  serialDebug = false;
+  
+  runtimeSettings = loadSettingsFromEEPROM();
   ioSetup();
   
   serialCmdSetup();
+  rotexSerialSetup();
   
   initVariables();
 
@@ -858,7 +752,7 @@ void loop() {
   // lettura delle variabili.
   doReadInputs();
   // Processa i comandi in arrivo dalla seriale
-  SCmdRotex.readSerial();
+  rotexReadSerial();
   // elaborazione degli ingressi
   doCrunchInputs();
   // Gestione dell'override del termostato

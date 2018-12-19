@@ -1,5 +1,6 @@
 #ifndef HWSETUP_H
 #define HWSETUP_H
+
 // const int outEthReset = 12;  // M19 Pin per reset EthShield - Sembrerebbe utilizzato dall'ethernet shield
 // vedi: http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1286370597/8
 
@@ -43,5 +44,6 @@ const char inTermoAccumulatore = 2; // M2 Input Termostato Accumulatore
 const char outOverrideTermoAmbiente = 11; // Output per Override Termostati Ambiente, [Sostituisce il relay di reset del Rotex]
 // const char ainTempCamino = 0 ;    // M9 Input analogico NTC Temperatura Camino 
 const char ainTempCamino = 1 ;    // M10 Input analogico NTC Temperatura Camino 
+
 
 #endif

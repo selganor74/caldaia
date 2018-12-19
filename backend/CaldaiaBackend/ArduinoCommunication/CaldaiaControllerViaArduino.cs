@@ -12,7 +12,7 @@ namespace ArduinoCommunication
 {
     public class CaldaiaControllerViaArduino : IDisposable, IArduinoDataReader, IArduinoCommandIssuer
     {
-        private const int CommandToResponseTimeoutMillis = 5000;
+        private const int CommandToResponseTimeoutMillis = 15000;
         private static bool _recovering = false;
         private readonly Timer _commandToResponseTimeoutTimer;
 
@@ -49,7 +49,7 @@ namespace ArduinoCommunication
         private event Action<SettingsFromArduino> SettingsObservers;
 
         private string _parsingState = "searchingStart";
-        private ILogger _log;
+        private readonly ILogger _log;
 
         public DataFromArduino Latest { get; private set; } = new DataFromArduino();
         public SettingsFromArduino LatestSettings { get; set; }
@@ -173,7 +173,7 @@ namespace ArduinoCommunication
 
         private void FoundNewJson()
         {
-            _log.Info("Found full json", _currentJson);
+            _log.Trace("Found full json", _currentJson);
 
             try
             {
@@ -207,7 +207,7 @@ namespace ArduinoCommunication
             {
                 readData += _physicalPort.ReadExisting();
 
-                _log.Info("DataReceived", readData);
+                _log.Trace("DataReceived", readData);
                 _readQueue.Enqueue(readData);
             }
             catch (Exception ex)
@@ -277,7 +277,7 @@ namespace ArduinoCommunication
                 }
                 catch (Exception e)
                 {
-                    _log.Warning("Unable to recover Connection.", e);
+                    _log.Warning("Unable to recover Connection. Trying again in 2 seconds", e);
                     Thread.Sleep(2000);
                 }
             }

@@ -12,6 +12,13 @@ namespace CaldaiaBackend.Application.DataModels
         public int rotexMinTempConCamino { get; set; }
         public int T_ISTERESI_CALDAIA { get; set; }
         public int TEMP_SAMPLING_INTERVAL { get; set; }
+        public int deltaTInnescoPompaCamino { get; set; }
+        public int TCaminoPerAccensionePompa { get; set; }
+        public int TInnescoSeRotexNonDisponibile { get; set; }
+        public int TDisinnescoSeRotexNonDisponibile { get; set; }
+        public int TInnescoOverrideTermostatoSeRotexNonDisponibile { get; set; }
+        public int TDisinnescoOverrideTermostatoSeRotexNonDisponibile { get; set; }
+        public int TDisinnescoOverrideSeRotexDisponibile { get; set; }
     }
 
 }

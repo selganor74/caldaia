@@ -1,4 +1,4 @@
-#ifndef NTCTEMPLOOKUP_H
+ #ifndef NTCTEMPLOOKUP_H
 #define NTCTEMPLOOKUP_H
 /******************************************
  * VETTORE DI CONVERSIONE TEMPERATURA NTC *
