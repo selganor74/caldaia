@@ -72,7 +72,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application\ArduinoBackendApplication.cs" />
+    <Compile Include="Application\Commands\DecrementRotexTermoMaxCommand.cs" />
+    <Compile Include="Application\Commands\IncrementRotexTermoMaxCommand.cs" />
+    <Compile Include="Application\Commands\DecrementRotexTermoMinCommand.cs" />
     <Compile Include="Application\Commands\Handlers\ArduinoCommandsHandler.cs" />
+    <Compile Include="Application\Commands\IncrementRotexTermoMinCommand.cs" />
     <Compile Include="Application\Commands\ReadDataAndResetAccumulatorsCommand.cs" />
     <Compile Include="Application\Commands\ReadDataFromArduinoCommand.cs" />
     <Compile Include="Application\Commands\ReadSettingsFromArduinoCommand.cs" />

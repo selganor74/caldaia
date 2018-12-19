@@ -16,47 +16,60 @@ export class BackendService {
 
   constructor(private http: HttpClient) { }
 
-  decrementTIsteresiCaldaia(): any {
-    return this.http.post(this.apiBaseUrl + '/settings/t-isteresi-caldaia/decrement', {});
-  }
-
-  incrementTIsteresiCaldaia(): any {
-    return this.http.post(this.apiBaseUrl + '/settings/t-isteresi-caldaia/increment', {});
-  }
-
-  decrementTempSamplingInterval(): any {
-    return this.http.post(this.apiBaseUrl + '/settings/temp-sampling-interval/decrement', {});
-  }
-
-  incrementTempSamplingInterval(): any {
-    return this.http.post(this.apiBaseUrl + '/settings/temp-sampling-interval/increment', {});
-  }
-
-  decrementMinTempConCamino(): any {
-    return this.http.post(this.apiBaseUrl + '/settings/min-temp-con-camino/decrement', {});
-  }
-
-  incrementMinTempConCamino(): any {
-    return this.http.post(this.apiBaseUrl + '/settings/min-temp-con-camino/increment', {});
-  }
-
-  decrementMaxTempConCamino(): any {
-    return this.http.post(this.apiBaseUrl + '/settings/max-temp-con-camino/decrement', {});
-  }
-
-  incrementMaxTempConCamino(): any {
-    return this.http.post(this.apiBaseUrl + '/settings/max-temp-con-camino/increment', {});
-  }
-
   public getLatestData(): Observable<IDataFromArduino> {
     return <Observable<IDataFromArduino>>this.http.get(this.apiBaseUrl + '/queries/latestdata');
   }
 
   public updateLatestData() {
-    return this.http.post(this.apiBaseUrl + '/commands/get', {});
+    return this.http.post(this.apiBaseUrl + '/commands/get', {}).subscribe();
   }
 
   public updateLatestSettings() {
-    return this.http.post(this.apiBaseUrl + '/commands/reloadsettings', {});
+    return this.http.post(this.apiBaseUrl + '/commands/reloadsettings', {}).subscribe();
+  }
+
+  public decrementRotexTermoMin(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/rotex-termo-min/decrement', {}).subscribe();
+  }
+  public incrementRotexTermoMin(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/rotex-termo-min/increment', {}).subscribe();
+  }
+  public decrementRotexTermoMax(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/rotex-termo-max/decrement', {}).subscribe();
+  }
+  public incrementRotexTermoMax(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/rotex-termo-max/increment', {}).subscribe();
+  }
+
+  decrementTIsteresiCaldaia(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/t-isteresi-caldaia/decrement', {}).subscribe();
+  }
+
+  incrementTIsteresiCaldaia(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/t-isteresi-caldaia/increment', {}).subscribe();
+  }
+
+  decrementTempSamplingInterval(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/temp-sampling-interval/decrement', {}).subscribe();
+  }
+
+  incrementTempSamplingInterval(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/temp-sampling-interval/increment', {}).subscribe();
+  }
+
+  decrementMinTempConCamino(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/min-temp-con-camino/decrement', {}).subscribe();
+  }
+
+  incrementMinTempConCamino(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/min-temp-con-camino/increment', {}).subscribe();
+  }
+
+  decrementMaxTempConCamino(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/max-temp-con-camino/decrement', {}).subscribe();
+  }
+
+  incrementMaxTempConCamino(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/max-temp-con-camino/increment', {}).subscribe();
   }
 }

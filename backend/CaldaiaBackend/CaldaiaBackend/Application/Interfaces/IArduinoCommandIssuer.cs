@@ -2,8 +2,12 @@
 {
     public interface IArduinoCommandIssuer
     {
-        void SendGetCommand();
+        void PullOutData();
         void SendGetAndResetAccumulatorsCommand();
-        void SendGetRunTimeSettingsCommand();
+        void PullOutSettings();
+        void IncrementRotexTermoMax();
+        void DecrementRotexTermoMax();
+        void DecrementRotexTermoMin();
+        void IncrementRotexTermoMin();
     }
 }

@@ -43,7 +43,7 @@ namespace CaldaiaBackendTests
                 });
 
                 sut.Start();
-                sut.SendGetCommand();
+                sut.PullOutData();
                 while (locker && sw.ElapsedMilliseconds <= timeout)
                 {
                     Thread.Sleep(100);
@@ -99,7 +99,7 @@ namespace CaldaiaBackendTests
                 });
 
                 sut.Start();
-                sut.SendGetRunTimeSettingsCommand();
+                sut.PullOutSettings();
                 while (locker && sw.ElapsedMilliseconds <= timeout)
                 {
                     Thread.Sleep(100);

@@ -5,6 +5,11 @@
 
 void settingsToSerial(Settings settings) {
   Serial.println( F("{") );
+  
+  Serial.print( F("  \"_type\": ") );
+  Serial.print( F("\"settings\"") );
+  Serial.println( F(",") );
+
   Serial.print( F("  \"rotexTermoMin\": ") );
   Serial.print( int(settings.rotexTermoMin) );
   Serial.println( F(",") );

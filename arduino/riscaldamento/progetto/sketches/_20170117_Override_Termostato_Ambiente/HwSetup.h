@@ -46,4 +46,7 @@ const char outOverrideTermoAmbiente = 11; // Output per Override Termostati Ambi
 const char ainTempCamino = 1 ;    // M10 Input analogico NTC Temperatura Camino 
 
 
+
+void ioSetup();
+
 #endif

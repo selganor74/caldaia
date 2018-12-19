@@ -63,11 +63,11 @@ export class AppComponent implements OnInit {
   }
 
   public refreshData() {
-    this._backend.updateLatestData().subscribe();
+    this._backend.updateLatestData();
   }
 
   public refreshSettings() {
-    this._backend.updateLatestSettings().subscribe();
+    this._backend.updateLatestSettings();
   }
 
   public incrementMaxTempConCamino() {
@@ -100,5 +100,26 @@ export class AppComponent implements OnInit {
 
   public decrementTIsteresiCaldaia() {
     this._backend.decrementTIsteresiCaldaia();
+  }
+
+
+  public incrementRotexTermoMax() {
+    console.log('incrementRotexTermoMax');
+    this._backend.incrementRotexTermoMax();
+  }
+
+  public decrementRotexTermoMax() {
+    console.log('decrementRotexTermoMax');
+    this._backend.decrementRotexTermoMax();
+  }
+
+  public incrementRotexTermoMin() {
+    console.log('incrementRotexTermoMin');
+    this._backend.incrementRotexTermoMin();
+  }
+
+  public decrementRotexTermoMin() {
+    console.log('incrementRotexTermoMin');
+    this._backend.decrementRotexTermoMin();
   }
 }

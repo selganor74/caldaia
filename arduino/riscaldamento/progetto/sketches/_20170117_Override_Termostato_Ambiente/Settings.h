@@ -7,6 +7,7 @@
 static const char HEADER[5] = "CSV3";
 
 struct Settings {
+
     char header[5] = { HEADER[0], HEADER[1], HEADER[2], HEADER[3], HEADER[4] } ;
     char rotexTermoMin = 43;      // Temperatura di accensione delle caldaia
     char rotexTermoMax = 45;      // Temperatura di spegnimento della caldaia

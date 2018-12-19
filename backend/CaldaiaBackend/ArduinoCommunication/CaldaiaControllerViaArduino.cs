@@ -35,7 +35,7 @@ namespace ArduinoCommunication
             }
             catch (Exception e)
             {
-                _log.Warning("Errors while trying to flash DTR.");
+                _log.Warning("Errors while trying to flash DTR.", e );
             }
         }
 
@@ -229,7 +229,7 @@ namespace ArduinoCommunication
             _commandToResponseTimeoutTimer.Change(CommandToResponseTimeoutMillis, -1);
         }
 
-        public void SendGetCommand()
+        public void PullOutData()
         {
             WriteString("GET\r");
         }
@@ -239,9 +239,29 @@ namespace ArduinoCommunication
             WriteString("GET-RA\r");
         }
 
-        public void SendGetRunTimeSettingsCommand()
+        public void PullOutSettings()
         {
             WriteString("GET-RS\r");
+        }
+
+        public void IncrementRotexTermoMax()
+        {
+            WriteString("+RTM\r");
+        }
+
+        public void DecrementRotexTermoMax()
+        {
+            WriteString("-RTM\r");
+        }
+
+        public void DecrementRotexTermoMin()
+        {
+            WriteString("-RTm\r");
+        }
+
+        public void IncrementRotexTermoMin()
+        {
+            WriteString("+RTm\r");
         }
 
         private void WriteString(string toWrite)

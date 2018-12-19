@@ -3,6 +3,7 @@ using System.Configuration;
 using ArduinoCommunication;
 using CaldaiaBackend.Application;
 using CaldaiaBackend.Application.Interfaces;
+using CaldaiaBackend.Application.Interfaces.Mocks;
 using CaldaiaBackend.SelfHosted.Infrastructure.SignalRLogging;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
@@ -16,7 +17,6 @@ namespace CaldaiaBackend.SelfHosted
     {
         public static IWindsorContainer Container = new WindsorContainer();
         private static ILogger log;
-        private static CaldaiaControllerViaArduino controller;
 
         static void Main(string[] args)
         {
@@ -32,7 +32,7 @@ namespace CaldaiaBackend.SelfHosted
                     .UsingFactoryMethod((kernel) =>
                     {
                         var serialPort = ConfigurationManager.AppSettings["ArduinoComPort"];
-                        controller = new CaldaiaControllerViaArduino(serialPort, kernel.Resolve<ILoggerFactory>());
+                        var controller = new CaldaiaControllerViaArduino(serialPort, kernel.Resolve<ILoggerFactory>());
                         controller.Start();
                         return controller;
                     })
@@ -44,12 +44,12 @@ namespace CaldaiaBackend.SelfHosted
             factory.BuildApplication<ArduinoBackendApplication>();
 
             var logWriter = Container.Resolve<ILogWriter>();
-            logWriter.SetLogLevel(LogLevel.Trace);
+            logWriter.SetLogLevel(LogLevel.Info);
 
             var clw = logWriter as CompositeLogWriter;
             if (clw != null)
             {
-                var signalrLogWriter = new SignalRLogWriter(LogLevel.Info);
+                var signalrLogWriter = new SignalRLogWriter(LogLevel.Warning);
                 clw.AddLogger(signalrLogWriter, LogLevelMode.Independent);
             }
 

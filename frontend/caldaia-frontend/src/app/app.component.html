@@ -72,25 +72,45 @@
                         <div class="ui-toolbar-group-left">
                             <button pButton type="button" class="ui-button-success" icon="pi pi-refresh" label="letto alle: {{settings.timestamp | date:'HH:mm:ss' }}"
                                 (click)="refreshSettings()"></button>
-                        </div>
+                            </div>
                     </p-toolbar>
                 </div>
 
                 <div class="row main-content">
                     <div class="col-md-6 col-lg-4 device">
+                        <p-panel header="Temperature Intervento Caldaia">
+                            <p-card >
+                                <p-header>Spegne la caldaia se l'accumulo ROTEX supera</p-header>
+                                <div class="parameter-block">
+                                    <button pButton type="button" icon="pi pi-angle-up" (click)="incrementRotexTermoMax()"></button>
+                                    <div class="parameter-value">{{settings.rotexTermoMax}} &deg;C</div>
+                                    <button pButton type="button" icon="pi pi-angle-down" (click)="decrementRotexTermoMax()"></button>
+                                </div>
+                            </p-card>
+                            <p-panel header="Accende la caldaia se l'accumulo ROTEX scende sotto a">
+                                <div class="parameter-block">
+                                    <button pButton type="button" icon="pi pi-angle-up" (click)="incrementRotexTermoMin()"></button>
+                                    <div class="parameter-value">{{settings.rotexTermoMin}} &deg;C</div>
+                                    <button pButton type="button" icon="pi pi-angle-down" (click)="decrementRotexTermoMin()"></button>
+                                </div>
+                            </p-panel>
+                        </p-panel>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 device">
                         <p-panel header="Bypass Termostato Riscaldamento">
                             <p-panel header="Attiva se Accumulo Rotex raggiunge">
                                 <div class="parameter-block">
-                                    <button pButton icon="pi pi-angle-up" (click)="incrementMaxTempConCamino()"></button>
+                                    <button pButton type="button" icon="pi pi-angle-up" (click)="incrementMaxTempConCamino()"></button>
                                     <div class="parameter-value">{{settings.rotexMaxTempConCamino}} &deg;C</div>
-                                    <button pButton icon="pi pi-angle-down" (click)="decrementMaxTempConCamino()"></button>
+                                    <button pButton type="button" icon="pi pi-angle-down" (click)="decrementMaxTempConCamino()"></button>
                                 </div>
                             </p-panel>
                             <p-panel header="Disattiva se Accumulo Rotex scende sotto">
                                 <div class="parameter-block">
-                                    <button pButton icon="pi pi-angle-up" (click)="incrementMinTempConCamino()"></button>
+                                    <button pButton type="button" icon="pi pi-angle-up" (click)="incrementMinTempConCamino()"></button>
                                     <div class="parameter-value">{{settings.rotexMinTempConCamino}} &deg;C</div>
-                                    <button pButton icon="pi pi-angle-down" (click)="decrementMinTempConCamino()"></button>
+                                    <button pButton type="button" icon="pi pi-angle-down" (click)="decrementMinTempConCamino()"></button>
                                 </div>
                             </p-panel>
                         </p-panel>
@@ -100,9 +120,9 @@
                         <p-panel header="Temperatura Camino">
                             <p-panel header="La temperatura del camino viene acquisita ogni">
                                 <div class="parameter-block">
-                                    <button pButton icon="pi pi-angle-up" (click)="incrementTempSamplingInterval()"></button>
+                                    <button pButton type="button" icon="pi pi-angle-up" (click)="incrementTempSamplingInterval()"></button>
                                     <div class="parameter-value">{{settings.TEMP_SAMPLING_INTERVAL}} ms</div>
-                                    <button pButton icon="pi pi-angle-down" (click)="decrementTempSamplingInterval()"></button>
+                                    <button pButton type="button" icon="pi pi-angle-down" (click)="decrementTempSamplingInterval()"></button>
                                 </div>
                             </p-panel>
                         </p-panel>
@@ -112,9 +132,9 @@
                         <p-panel header="Isteresi Caldaia">
                             <p-panel header="Se la caldaia parte, rimane accesa almeno per">
                                 <div class="parameter-block">
-                                    <button pButton icon="pi pi-angle-up" (click)="incrementTIsteresiCaldaia()"></button>
+                                    <button pButton type="button" icon="pi pi-angle-up" (click)="incrementTIsteresiCaldaia()"></button>
                                     <div class="parameter-value">{{settings.T_ISTERESI_CALDAIA}} ms</div>
-                                    <button pButton icon="pi pi-angle-up" (click)="decrementTIsteresiCaldaia()"></button>
+                                    <button pButton type="button" icon="pi pi-angle-up" (click)="decrementTIsteresiCaldaia()"></button>
                                 </div>
                             </p-panel>
                         </p-panel>

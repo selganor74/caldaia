@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using System.Web;
 using System.Web.Http;
 using CaldaiaBackend.Application.Commands;
 using CaldaiaBackend.Application.DataModels;
@@ -55,7 +54,7 @@ namespace CaldaiaBackend.SelfHosted.Controllers
         {
             var cmd = new ReadDataFromArduinoCommand();
             // _readDataHandler.Execute(cmd).Wait();
-            _arduinoApp.Execute(cmd);
+            _arduinoApp.Execute(cmd).Wait();
             return Ok();
         }
 
@@ -65,7 +64,7 @@ namespace CaldaiaBackend.SelfHosted.Controllers
         {
             var cmd = new ReadDataAndResetAccumulatorsCommand();
             // _readDataHandler.Execute(cmd).Wait();
-            _arduinoApp.Execute(cmd);
+            _arduinoApp.Execute(cmd).Wait();
             return Ok();
         }
 
@@ -75,9 +74,48 @@ namespace CaldaiaBackend.SelfHosted.Controllers
         {
             var cmd = new ReadSettingsFromArduinoCommand();
             // _readDataHandler.Execute(cmd).Wait();
-            _arduinoApp.Execute(cmd);
+            _arduinoApp.Execute(cmd).Wait();
             return Ok();
         }
 
+        [HttpPost]
+        [Route("api/settings/rotex-termo-min/decrement")]
+        public IHttpActionResult DecrementRotexTermoMin()
+        {
+            var cmd = new DecrementRotexTermoMinCommand();
+            // _readDataHandler.Execute(cmd).Wait();
+            _arduinoApp.Execute(cmd).Wait();
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("api/settings/rotex-termo-min/increment")]
+        public IHttpActionResult IncrementRotexTermoMin()
+        {
+            var cmd = new IncrementRotexTermoMinCommand();
+            // _readDataHandler.Execute(cmd).Wait();
+            _arduinoApp.Execute(cmd).Wait();
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("api/settings/rotex-termo-max/decrement")]
+        public IHttpActionResult DecrementRotexTermoMax()
+        {
+            var cmd = new DecrementRotexTermoMaxCommand();
+            // _readDataHandler.Execute(cmd).Wait();
+            _arduinoApp.Execute(cmd).Wait();
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("api/settings/rotex-termo-max/increment")]
+        public IHttpActionResult IncrementRotexTermoMax()
+        {
+            var cmd = new IncrementRotexTermoMaxCommand();
+            // _readDataHandler.Execute(cmd).Wait();
+            _arduinoApp.Execute(cmd).Wait();
+            return Ok();
+        }
     }
 }
