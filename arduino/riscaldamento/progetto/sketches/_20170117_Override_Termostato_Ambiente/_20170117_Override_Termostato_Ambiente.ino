@@ -7,54 +7,23 @@
 #include "Settings.h"
 #include "Rotex.h"
 #include "State.h"
+#include "Utils.h"
 
 // Numero di campioni memorizzati nel buffer circolare
 #define  CB_VALUES  5
 
+#define MIN_ROTEX_TERMO_MIN 35
+#define MAX_ROTEX_TERMO_MAX 65
+
 // Contiene le impostazioni di runtime. (see Settings.h)
-Settings runtimeSettings;
+static Settings runtimeSettings;
 
 // Contiene lo stato "attuale" del sistema 
-State currentState;
-
-// Abilita o disabilita il debug tramite seriale
-boolean serialDebug;
+static State currentState;
 
 // Oggetto SerialCommand per gestire i comandi da Seriale
-SerialCommand SCmd = SerialCommand(); 
+static SerialCommand SCmd = SerialCommand(); 
 
-
-/************************
- *  FUNZIONI DI UTILITA *
- ************************/
-// Calcola la durata di un intervallo, tenendo conto dell'eventuale ritorno a zero
-// del contatore "millis()"
-unsigned long calcolaIntervallo( unsigned long da, unsigned long a ) {
-  return a >= da ? a - da : a + (0-1-da);
-}
-
-
-
-// Genera un impulso di lunghezza "milliseconds"
-void pulse( unsigned long outputPin, unsigned long milliseconds ) {
-  digitalWrite( outputPin, !bitRead( PORTD, outputPin ) );
-  unsigned long startedAt = millis();
-  while ( calcolaIntervallo( startedAt, millis() ) < milliseconds ) {
-    // Attende che passino milliseconds millisecondi
-  }
-  digitalWrite( outputPin, !bitRead( PORTD, outputPin ) );
-}
-
-void blinkOutput( unsigned long outputId, unsigned long blinkInterval ) {
-  static unsigned long last_millis[8] = {0,0,0,0,0,0,0,0};
-  static boolean  last_values[8] = {false,false,false,false,false,false,false,false};
-
-  if (calcolaIntervallo( last_millis[ outputId ], millis() ) > blinkInterval ) {
-    last_values[ outputId ] = !last_values[ outputId ];
-    last_millis[ outputId ] = millis();
-    digitalWrite( outputId, !bitRead( PORTD, outputId ) );
-  }
-}
 
 
 /***************************************
@@ -103,14 +72,14 @@ void cmdIncRotexTermoMin() {
 }
 
 void cmdDecRotexTermoMin() {
-  if (runtimeSettings.rotexTermoMin - 1 > 35)
+  if (runtimeSettings.rotexTermoMin - 1 > MIN_ROTEX_TERMO_MIN)
     runtimeSettings.rotexTermoMin--;  
 
   settingsToSerial(runtimeSettings);
 }
 
 void cmdIncRotexTermoMax() {
-  if (runtimeSettings.rotexTermoMax - 1 < 65)
+  if (runtimeSettings.rotexTermoMax - 1 < MAX_ROTEX_TERMO_MAX)
     runtimeSettings.rotexTermoMax++;  
 
   settingsToSerial(runtimeSettings);
@@ -176,12 +145,13 @@ void doReadInputs() {
   static char minIndex = 0;
   static int maxTemp = 0;
   static int minTemp = 1023;
-  int valuesToAverage = 0;
   static float lastValidAinTempCaminoValueCentigradi = 0.0;
+  
+  int valuesToAverage = 0;
+
   if (  calcolaIntervallo( currentState.lastTempAcquired, millis() ) >= runtimeSettings.TEMP_SAMPLING_INTERVAL ) {
     currentState.lastTempAcquired = millis();
-//    ainTempCaminoValue = analogRead( ainTempCamino );
-//    ainTempCaminoValueCentigradi = (float)getTempFromAin( ainTempCaminoValue );
+
     if ( tempIndex >= CB_VALUES ) {
       tempIndex = 0;
       currentState.ainTempCaminoValue = 0;
@@ -406,7 +376,6 @@ void doSetOutputs() {
 void setup() {
     // Utilizziamo la seriale per fare un po' di debug.
   Serial.begin(9600);
-  serialDebug = false;
   
   runtimeSettings = loadSettingsFromEEPROM();
   ioSetup();

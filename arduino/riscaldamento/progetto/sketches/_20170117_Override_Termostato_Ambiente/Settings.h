@@ -3,7 +3,6 @@
 
 #include <SPI.h>
 
-
 static const char HEADER[5] = "CSV3";
 
 struct Settings {

@@ -54,7 +54,10 @@ void settingsToSerial(Settings settings) {
 
 
 bool headerIsValid(char *header) {
-  return header[0] == HEADER[0]/*'C'*/ && header[1] == HEADER[1]/*'S'*/ && header[2] == HEADER[2]/*'V'*/ && header[3] == HEADER[3]/*'3'*/;
+  return  header[0] == HEADER[0]/*'C'*/ && 
+          header[1] == HEADER[1]/*'S'*/ && 
+          header[2] == HEADER[2]/*'V'*/ && 
+          header[3] == HEADER[3]/*'3'*/;
 }
 
 Settings getDefaultSettings() {
@@ -63,7 +66,6 @@ Settings getDefaultSettings() {
 }
 
 Settings loadSettingsFromEEPROM() {
-  bool toReturn = false;
   static Settings loadedSettings;
   EEPROM.get(0, loadedSettings);
   if(headerIsValid(loadedSettings.header)) {
