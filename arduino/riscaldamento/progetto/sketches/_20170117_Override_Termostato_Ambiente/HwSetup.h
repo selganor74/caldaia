@@ -31,19 +31,19 @@ J1
 2 1 (TXD)
 1 0 (RXD)
 */
-const int outPompa = 5;      // M22 Relay Pompa. M22
-const int outCaldaia = 6;    // M23 Relay Caldaia. M23
+#define outPompa                  5     // M22 Relay Pompa. M22
+#define outCaldaia                6     // M23 Relay Caldaia. M23
 // Utilizzando lo shield ETHERNET i pin 11, 12, 13 vengono utilizzati per gestire la
 // scheda ethernet stessa quindi non devono essere utilizzati.
-const char outPompaCamino = 12;     // Pin 12 -> Evaristo Out-5 -> M19
-const char serialRotexRX = 4;       // Pin 4  -> Evaristo In-3 -> M3
-const char serialRotexTX = 10;      // Pin 10 -> Evaristo Out-3 -> M21
-const char inTermoAmbiente = 3;     // M1 Input Termostati Ambiente
-const char inTermoAccumulatore = 2; // M2 Input Termostato Accumulatore
+#define outPompaCamino            12    // Pin 12 -> Evaristo Out-5 -> M19
+#define serialRotexRX             4     // Pin 4  -> Evaristo In-3 -> M3
+#define serialRotexTX             10    // Pin 10 -> Evaristo Out-3 -> M21
+#define inTermoAmbiente           3     // M1 Input Termostati Ambiente
+#define inTermoAccumulatore       2     // M2 Input Termostato Accumulatore
 // const char outRotexReset = 11;       // Output per reset Rotex. L'output agisce su un Rele' NC
-const char outOverrideTermoAmbiente = 11; // Output per Override Termostati Ambiente, [Sostituisce il relay di reset del Rotex]
-// const char ainTempCamino = 0 ;    // M9 Input analogico NTC Temperatura Camino 
-const char ainTempCamino = 1 ;    // M10 Input analogico NTC Temperatura Camino 
+#define outOverrideTermoAmbiente  11    // Output per Override Termostati Ambiente, [Sostituisce il relay di reset del Rotex]
+// const char ainTempCamino = 0 ;       // M9 Input analogico NTC Temperatura Camino 
+#define ainTempCamino             1     // M10 Input analogico NTC Temperatura Camino 
 
 
 

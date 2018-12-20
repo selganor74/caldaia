@@ -4,7 +4,9 @@
 
 #include "Rotex.h"
 
-static RotexStatus rotexStatus;
+static SoftwareSerial   rotexSerial = SoftwareSerial(serialRotexRX,serialRotexTX); //Initialize 2nd serial port (rx,tx)
+
+static SerialCommand SCmdRotex = SerialCommand( rotexSerial );
 
 unsigned long RotexStatus::rotexHasFailed = 0;
 int RotexStatus::rotexValues[12];
@@ -12,8 +14,6 @@ float RotexStatus::rotexPortataTV = 0.0f;
 unsigned long RotexStatus::rotexLastRead = 0;
 char RotexStatus::rotexLastReadString[ROTEX_MAX_STRING_LEN];
 
-static SoftwareSerial rotexSerial = SoftwareSerial(serialRotexRX,serialRotexTX); //Initialize 2nd serial port (rx,tx)
-static SerialCommand SCmdRotex = SerialCommand( rotexSerial );
 
 #define MAX_CURR_VAL_LEN 11 
 #define RESET_CURR_VAL  currValIndex=0; for ( j = 0; j < MAX_CURR_VAL_LEN; j++ ) { currVal[j] = 0; }
@@ -97,6 +97,7 @@ void doReadRotex() {
 
 void rotexSerialSetup() {
   rotexSerial.begin(9600); 
+  
   SCmdRotex.addDefaultHandler( doReadRotex );
 }
 

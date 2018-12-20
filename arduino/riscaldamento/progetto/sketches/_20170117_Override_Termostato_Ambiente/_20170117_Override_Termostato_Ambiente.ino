@@ -121,7 +121,8 @@ void serialCmdSetup () {
   SCmd.addCommand( "RST", cmdRestoreSettingsToDefault ); 
   SCmd.addCommand( "ST-RS", cmdSaveRuntimeSettings ); // Restituisce lo stato delle impostazioni
   SCmd.addDefaultHandler( dummyMethod ); // Handler for command that isn't matched (says "What?")
-  
+
+  printHelp();
   Serial.println( F("Ready.") );  
 }
 
