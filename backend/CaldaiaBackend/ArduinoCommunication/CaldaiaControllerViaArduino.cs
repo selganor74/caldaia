@@ -15,29 +15,8 @@ namespace ArduinoCommunication
         private const int CommandToResponseTimeoutMillis = 15000;
         private static bool _recovering = false;
         private readonly Timer _commandToResponseTimeoutTimer;
-
-        private void TryRecoverConnection(object state)
-        {
-            _log.Warning("Timeout elapsed without response. Trying to recover connection");
-
-            FlashDTR();
-            TryToRecover();
-            FlashDTR();
-        }
-
-        private void FlashDTR()
-        {
-            try
-            {
-                _physicalPort.DtrEnable = true;
-                Thread.Sleep(500);
-                _physicalPort.DtrEnable = false;
-            }
-            catch (Exception e)
-            {
-                _log.Warning("Errors while trying to flash DTR.", e );
-            }
-        }
+        private readonly Timer _commandSender;
+        private readonly Queue<string> _commandQueue = new Queue<string>(12);
 
         private readonly string _serialPort;
         private Timer _timer;
@@ -50,6 +29,8 @@ namespace ArduinoCommunication
 
         private string _parsingState = "searchingStart";
         private readonly ILogger _log;
+        private bool _dequeuing = false;
+        private bool _sendingOrReceiving = false;
 
         public DataFromArduino Latest { get; private set; } = new DataFromArduino();
         public SettingsFromArduino LatestSettings { get; set; }
@@ -67,6 +48,7 @@ namespace ArduinoCommunication
             _serialPort = serialPort;
             _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
             _commandToResponseTimeoutTimer = new Timer(TryRecoverConnection, null, -1, -1);
+            _commandSender = new Timer(DequeueCommand, null, -1, -1);
         }
 
         public void Start()
@@ -81,6 +63,19 @@ namespace ArduinoCommunication
             TryToRecover();
 
         }
+
+        public Action RegisterObserver(Action<DataFromArduino> observer)
+        {
+            Observers += observer;
+            return () => { Observers -= observer; };
+        }
+
+        public Action RegisterSettingsObserver(Action<SettingsFromArduino> observer)
+        {
+            SettingsObservers += observer;
+            return () => { SettingsObservers -= observer; };
+        }
+
 
         private void SetupSerialPort()
         {
@@ -102,18 +97,28 @@ namespace ArduinoCommunication
             _physicalPort.Open();
         }
 
-        public Action RegisterObserver(Action<DataFromArduino> observer)
+        private void TryRecoverConnection(object state)
         {
-            Observers += observer;
-            return () => { Observers -= observer; };
+            _log.Warning("Timeout elapsed without response. Trying to recover connection");
+
+            FlashDTR();
+            TryToRecover();
+            FlashDTR();
         }
 
-        public Action RegisterSettingsObserver(Action<SettingsFromArduino> observer)
+        private void FlashDTR()
         {
-            SettingsObservers += observer;
-            return () => { SettingsObservers -= observer; };
+            try
+            {
+                _physicalPort.DtrEnable = true;
+                Thread.Sleep(500);
+                _physicalPort.DtrEnable = false;
+            }
+            catch (Exception e)
+            {
+                _log.Warning("Errors while trying to flash DTR.", e);
+            }
         }
-
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         private void ParseReadString()
@@ -201,6 +206,8 @@ namespace ArduinoCommunication
         {
             CancelTimeoutCheck();
 
+            _sendingOrReceiving = true;
+
             var readData = "";
             if (e.EventType == SerialData.Eof) return;
             try
@@ -214,6 +221,10 @@ namespace ArduinoCommunication
             {
                 _log.Error("DataReceived error", ex);
                 throw;
+            }
+            finally
+            {
+                _sendingOrReceiving = false;
             }
         }
 
@@ -231,42 +242,76 @@ namespace ArduinoCommunication
 
         public void PullOutData()
         {
-            WriteString("GET\r");
+            EnqueueCommand("GET\r");
         }
 
         public void SendGetAndResetAccumulatorsCommand()
         {
-            WriteString("GET-RA\r");
+            EnqueueCommand("GET-RA\r");
         }
 
         public void PullOutSettings()
         {
-            WriteString("GET-RS\r");
+            EnqueueCommand("GET-RS\r");
         }
 
         public void IncrementRotexTermoMax()
         {
-            WriteString("+RTM\r");
+            EnqueueCommand("+RTM\r");
         }
 
         public void DecrementRotexTermoMax()
         {
-            WriteString("-RTM\r");
+            EnqueueCommand("-RTM\r");
         }
 
         public void DecrementRotexTermoMin()
         {
-            WriteString("-RTm\r");
+            EnqueueCommand("-RTm\r");
         }
 
         public void IncrementRotexTermoMin()
         {
-            WriteString("+RTm\r");
+            EnqueueCommand("+RTm\r");
+        }
+
+        private void EnqueueCommand(string command)
+        {
+            _commandQueue.Enqueue(command);
+            StartDequeuingTask();
+        }
+
+        private void StartDequeuingTask()
+        {
+            if (_dequeuing) return;
+            _commandSender.Change(0, -1);
+        }
+
+        private void DequeueCommand(object state)
+        {
+            _dequeuing = true;
+            _log.Trace("Starting Command Dequeue");
+            while (_commandQueue.Count > 0)
+            {
+                if (!_sendingOrReceiving)
+                {
+                    var toSend = _commandQueue.Dequeue();
+                    _log.Trace("Sending string: " + toSend);
+                    WriteString(toSend);
+                }
+
+                Thread.Sleep(500);
+            }
+
+            _log.Trace("Queue emptied");
+            _commandSender.Change(-1, -1);
+            _dequeuing = false;
         }
 
         private void WriteString(string toWrite)
         {
             if (_recovering) return;
+            _sendingOrReceiving = true;
 
             StartTimeoutCheck();
 
@@ -278,6 +323,10 @@ namespace ArduinoCommunication
             {
                 TryToRecover();
                 _physicalPort.Write(toWrite);
+            }
+            finally
+            {
+                _sendingOrReceiving = false;
             }
         }
 
