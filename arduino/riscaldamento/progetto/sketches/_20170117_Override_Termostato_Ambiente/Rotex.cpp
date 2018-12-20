@@ -4,6 +4,7 @@
 
 #include "Rotex.h"
 
+static RotexStatus rotexStatus;
 
 unsigned long RotexStatus::rotexHasFailed = 0;
 int RotexStatus::rotexValues[12];
@@ -11,8 +12,11 @@ float RotexStatus::rotexPortataTV = 0.0f;
 unsigned long RotexStatus::rotexLastRead = 0;
 char RotexStatus::rotexLastReadString[ROTEX_MAX_STRING_LEN];
 
-SoftwareSerial rotexSerial = SoftwareSerial(serialRotexRX,serialRotexTX); //Initialize 2nd serial port (rx,tx)
-SerialCommand SCmdRotex = SerialCommand( rotexSerial );
+static SoftwareSerial rotexSerial = SoftwareSerial(serialRotexRX,serialRotexTX); //Initialize 2nd serial port (rx,tx)
+static SerialCommand SCmdRotex = SerialCommand( rotexSerial );
+
+#define MAX_CURR_VAL_LEN 11 
+#define RESET_CURR_VAL  currValIndex=0; for ( j = 0; j < MAX_CURR_VAL_LEN; j++ ) { currVal[j] = 0; }
 
 // Legge effettivamente l'output dell Rotex
 // Appena accesa la centralina R3 restituisce questa stringa:
@@ -25,7 +29,6 @@ void doReadRotex() {
   int i;
   int j;
   int alarmIdx;
-#define MAX_CURR_VAL_LEN 11 
   char currVal[MAX_CURR_VAL_LEN];
   int currValIndex = 0;
 
@@ -41,9 +44,7 @@ void doReadRotex() {
 
   foundSemicolon = false;
   currentCharIndex = 0;
-  
-#define RESET_CURR_VAL  currValIndex=0; for ( j = 0; j < MAX_CURR_VAL_LEN; j++ ) { currVal[j] = 0; }
-  
+    
   RESET_CURR_VAL;
   
   char commandSent[ROTEX_MAX_STRING_LEN];
@@ -54,13 +55,8 @@ void doReadRotex() {
   while ( commandSent[ currentCharIndex ] != 0 && ( currentCharIndex < ROTEX_MAX_STRING_LEN - 1 ) ) {
     inchar = commandSent[ currentCharIndex ];
     currentCharIndex++;
-    // Serial.print( inchar );
-    // Esclude i ritorni a capo dalla stringa letta dal rotex
     inchar == ',' ? inchar = '.' : inchar = inchar;
     
-    // Serial.print( inchar ) ;
-    // Serial.print( ":" ) ;
-    // Serial.println( i ) ;
     if ( inchar == ';' || ( ( inchar == 0 ) && ( foundSemicolon == true ) ) ) {
       foundSemicolon = true;
       
@@ -80,17 +76,13 @@ void doReadRotex() {
       }
       if( i == 8 ) { // se i == 8 cioè per la potenza istantanea
         RotexStatus::rotexPortataTV = atof( (char *)currVal );
-        //Serial.println (RotexStatus::rotexPortataTV);
-        //.. cbRotexPortataTV.addValue( RotexStatus::rotexPortataTV );
         RotexStatus::rotexLastRead = millis();
       } else {
         RotexStatus::rotexValues[ i ] = atoi( (char *)currVal );
         switch (i) {
           case RTX_TS: 
-            //.. cbRotexTS.addValue( RotexStatus::rotexValues[RTX_TS] );
             break;
         }
-        //Serial.println (RotexStatus::rotexValues[i]);
       }
       RESET_CURR_VAL;
       i++;
