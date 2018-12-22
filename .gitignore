@@ -240,3 +240,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/backend/CaldaiaBackend/CaldaiaBackend.SelfHosted/DeployScripts/Deploy_Prod.bat

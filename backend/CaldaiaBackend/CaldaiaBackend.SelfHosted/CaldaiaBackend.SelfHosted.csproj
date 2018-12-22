@@ -159,6 +159,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="DeployScripts\Build.bat" />
+    <None Include="DeployScripts\Deploy.ps1" />
+    <None Include="DeployScripts\Deploy_Prod.bat" />
+    <None Include="DeployScripts\Deploy_Sample.bat" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +176,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DeployScripts\PsExec.exe" />
     <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />

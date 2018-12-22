@@ -26,8 +26,7 @@ namespace CaldaiaBackend.SelfHosted
                     .For<IArduinoDataReader, IArduinoCommandIssuer>()
 #if DEBUG
                     .ImplementedBy<ArduinoMock>()
-#endif
-#if RELEASE
+#else
                     .ImplementedBy<CaldaiaControllerViaArduino>()
                     .UsingFactoryMethod((kernel) =>
                     {
