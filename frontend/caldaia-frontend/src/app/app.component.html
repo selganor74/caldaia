@@ -1,4 +1,5 @@
-<p-dialog header="Errore" [dismissableMask]="false" [closable]="false" [closeOnEscape]="false" [modal]="true" [(visible)]="showDisconnectedDialog" [blockScroll]="true" >
+<p-dialog header="Errore" [dismissableMask]="false" [closable]="false" [closeOnEscape]="false" [modal]="true"
+    [(visible)]="showDisconnectedDialog" [blockScroll]="true">
     <p-panel>
         <p-header>
             <span>Il backend non è raggiungibile.</span>
@@ -9,7 +10,7 @@
 
 <div class="fluid-container">
     <div class="row">
-        <p-tabView class="col-md-12">
+        <p-tabView class="col-md-12" (onChange)="onTabViewChange($event)">
             <p-tabPanel header="Dispositivi">
 
                 <div class="row">
@@ -70,16 +71,18 @@
                 <div class="row">
                     <p-toolbar class="col-md-12">
                         <div class="ui-toolbar-group-left">
-                            <button pButton type="button" class="ui-button-success" icon="pi pi-refresh" label="letto alle: {{settings.timestamp | date:'HH:mm:ss' }}"
+                            <button pButton type="button" icon="pi pi-refresh" label="{{settings.timestamp | date:'HH:mm:ss' }}"
                                 (click)="refreshSettings()"></button>
-                            </div>
+                            <span> </span>
+                            <button pButton type="button" icon="pi pi-save" label="Salva impostazioni" (click)="saveSettings()"></button>
+                        </div>
                     </p-toolbar>
                 </div>
 
                 <div class="row main-content">
                     <div class="col-md-6 col-lg-4 device">
                         <p-panel header="Temperature Intervento Caldaia">
-                            <p-card >
+                            <p-card>
                                 <p-header>Spegne la caldaia se l'accumulo ROTEX supera</p-header>
                                 <div class="parameter-block">
                                     <button pButton type="button" icon="pi pi-angle-up" (click)="incrementRotexTermoMax()"></button>
@@ -87,13 +90,14 @@
                                     <button pButton type="button" icon="pi pi-angle-down" (click)="decrementRotexTermoMax()"></button>
                                 </div>
                             </p-card>
-                            <p-panel header="Accende la caldaia se l'accumulo ROTEX scende sotto a">
+                            <p-card>
+                                <p-header>Accende la caldaia se l'accumulo ROTEX scende sotto a</p-header>
                                 <div class="parameter-block">
                                     <button pButton type="button" icon="pi pi-angle-up" (click)="incrementRotexTermoMin()"></button>
                                     <div class="parameter-value">{{settings.rotexTermoMin}} &deg;C</div>
                                     <button pButton type="button" icon="pi pi-angle-down" (click)="decrementRotexTermoMin()"></button>
                                 </div>
-                            </p-panel>
+                            </p-card>
                         </p-panel>
                     </div>
 
@@ -101,16 +105,12 @@
                         <p-panel header="Bypass Termostato Riscaldamento">
                             <p-panel header="Attiva se Accumulo Rotex raggiunge">
                                 <div class="parameter-block">
-                                    <button pButton type="button" icon="pi pi-angle-up" (click)="incrementMaxTempConCamino()"></button>
                                     <div class="parameter-value">{{settings.rotexMaxTempConCamino}} &deg;C</div>
-                                    <button pButton type="button" icon="pi pi-angle-down" (click)="decrementMaxTempConCamino()"></button>
                                 </div>
                             </p-panel>
                             <p-panel header="Disattiva se Accumulo Rotex scende sotto">
                                 <div class="parameter-block">
-                                    <button pButton type="button" icon="pi pi-angle-up" (click)="incrementMinTempConCamino()"></button>
                                     <div class="parameter-value">{{settings.rotexMinTempConCamino}} &deg;C</div>
-                                    <button pButton type="button" icon="pi pi-angle-down" (click)="decrementMinTempConCamino()"></button>
                                 </div>
                             </p-panel>
                         </p-panel>
@@ -120,9 +120,7 @@
                         <p-panel header="Temperatura Camino">
                             <p-panel header="La temperatura del camino viene acquisita ogni">
                                 <div class="parameter-block">
-                                    <button pButton type="button" icon="pi pi-angle-up" (click)="incrementTempSamplingInterval()"></button>
                                     <div class="parameter-value">{{settings.TEMP_SAMPLING_INTERVAL}} ms</div>
-                                    <button pButton type="button" icon="pi pi-angle-down" (click)="decrementTempSamplingInterval()"></button>
                                 </div>
                             </p-panel>
                         </p-panel>
@@ -132,14 +130,25 @@
                         <p-panel header="Isteresi Caldaia">
                             <p-panel header="Se la caldaia parte, rimane accesa almeno per">
                                 <div class="parameter-block">
-                                    <button pButton type="button" icon="pi pi-angle-up" (click)="incrementTIsteresiCaldaia()"></button>
                                     <div class="parameter-value">{{settings.T_ISTERESI_CALDAIA}} ms</div>
-                                    <button pButton type="button" icon="pi pi-angle-up" (click)="decrementTIsteresiCaldaia()"></button>
                                 </div>
                             </p-panel>
                         </p-panel>
                     </div>
                 </div>
+            </p-tabPanel>
+            <p-tabPanel header="Terminale">
+                <div class="row">
+                    <p-toolbar class="col-md-12 col-lg-12">
+                        <div class="ui-toolbar-group-left">
+                            <button pButton type="button" class="ui-button-success" icon="pi pi-caret-right" label="poller"
+                                (click)="pausePoller()"></button>
+                        </div>
+                    </p-toolbar>
+                </div>
+
+                <app-terminal *ngIf="selectedTab ? selectedTab.index == 2 : false"></app-terminal>
+
             </p-tabPanel>
 
         </p-tabView>

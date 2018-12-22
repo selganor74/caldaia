@@ -3,13 +3,15 @@ import { ISettingsFromArduino } from './isettings-from-arduino';
 
 export class SignalRIntegration {
 
-
     private dataProxy: any; // SignalR.Hub.Proxy;
     private settingsProxy: any; // SignalR.Hub.Proxy;
     private logsProxy: any; // SignalR.Hub.Proxy;
+    private rawProxy: any; // SignalR.Hub.Proxy
+
     private _stateChangedHandlers: ((state: number, stateDescription: string) => void)[] = [];
     private _dataReceivedHandlers: ((data: IDataFromArduino) => void)[] = [];
     private _settingsReceivedHandlers: ((settings: ISettingsFromArduino) => void)[] = [];
+    private _rawReceivedHandlers: ((data: string) => void)[] = [];
 
 
     constructor(
@@ -23,6 +25,22 @@ export class SignalRIntegration {
             this._settingsReceivedHandlers.push(handler);
         }
         return this;
+    }
+
+    public unregisterHandler(handler: Function) {
+        const handlersArray: Array<Array<Function>> = [
+            this._settingsReceivedHandlers,
+            this._stateChangedHandlers,
+            this._dataReceivedHandlers
+        ];
+
+        for (const ha of handlersArray) {
+            const toRemove = ha.indexOf(handler);
+            if ( toRemove !== -1 ) {
+                console.log('unregistering handler', handler);
+                ha.splice(toRemove, 1);
+            }
+        }
     }
 
     private fireSettingsReceived(settings: ISettingsFromArduino) {
@@ -48,6 +66,23 @@ export class SignalRIntegration {
                 handler(data);
             } catch (err) {
                 console.error('fireDataReceived: Errors while executing handler', handler.toString());
+            }
+        }
+    }
+
+    public onRawReceived(handler: (raw: string) => void) {
+        if (handler) {
+            this._rawReceivedHandlers.push(handler);
+        }
+        return this;
+    }
+
+    private fireRawReceived(raw: string) {
+        for (const handler of this._rawReceivedHandlers) {
+            try {
+                handler(raw);
+            } catch (err) {
+                console.error('fireRawReceived: Errors while executing handler', handler.toString());
             }
         }
     }
@@ -83,6 +118,12 @@ export class SignalRIntegration {
         this.dataProxy = this._hubConnection.createHubProxy('data');
         this.settingsProxy = this._hubConnection.createHubProxy('settings');
         this.logsProxy = this._hubConnection.createHubProxy('logs');
+        this.rawProxy = this._hubConnection.createHubProxy('raw');
+
+        this.rawProxy.on('notify', (raw: string) => {
+            console.log('SignalR: Received raw string on rawProxy', raw );
+            this.fireRawReceived(raw);
+        });
 
         this.dataProxy.on('notify', (payload: any) => {
             console.log('SignalR: Received data on dataProxy', payload);

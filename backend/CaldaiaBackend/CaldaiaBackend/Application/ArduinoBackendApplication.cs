@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using CaldaiaBackend.Application.Commands;
 using CaldaiaBackend.Application.Interfaces;
 using Infrastructure.Actions.Command.Executor;
@@ -52,6 +53,10 @@ namespace CaldaiaBackend.Application
                 settings => _publisher.Notify("settings", settings)
                 );
 
+            _dataReader.RegisterRawDataObserver(
+                rawString => _publisher.Notify("raw", rawString)
+                );
+
             _backgroundJob = new Timer(pollData, null, _pollIntervalMilliseconds, _pollIntervalMilliseconds);
         }
 
@@ -66,6 +71,11 @@ namespace CaldaiaBackend.Application
             {
                 _log.Error("Errors while polling data from Arduino", e);
             }
+        }
+
+        public void PausePollerForSeconds(int seconds)
+        {
+            _backgroundJob.Change(seconds * 1000, _pollIntervalMilliseconds);
         }
     }
 }

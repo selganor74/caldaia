@@ -67,6 +67,16 @@ namespace CaldaiaBackend.Application.Interfaces.Mocks
             _rotexTermoMin = _rotexTermoMin + 1 < _rotexTermoMax ? _rotexTermoMin + 1 : _rotexTermoMin;
         }
 
+        public void SaveSettings()
+        {
+            
+        }
+
+        public void SendString(string toSend)
+        {
+            
+        }
+
         public DataFromArduino Latest => RandomData;
         public SettingsFromArduino LatestSettings => RandomSettings;
 
@@ -79,6 +89,11 @@ namespace CaldaiaBackend.Application.Interfaces.Mocks
         public Action RegisterSettingsObserver(Action<SettingsFromArduino> observer)
         {
             _settingsObserver = observer;
+            return () => { };
+        }
+
+        public Action RegisterRawDataObserver(Action<string> observer)
+        {
             return () => { };
         }
     }

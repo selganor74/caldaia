@@ -147,8 +147,11 @@
     <Compile Include="Infrastructure\SignalRLogging\SignalRLogWriter.cs" />
     <Compile Include="Owin\IoC\WindsorControllerActivator.cs" />
     <Compile Include="Infrastructure\SignalRLogging\LogEntry.cs" />
-    <Compile Include="Owin\SignalR\DataHub.cs" />
-    <Compile Include="Owin\SignalR\SettingsHub.cs" />
+    <Compile Include="Owin\SignalRHubs\BaseHub.cs" />
+    <Compile Include="Owin\SignalRHubs\DataHub.cs" />
+    <Compile Include="Owin\SignalRHubs\RawStringsHub.cs" />
+    <Compile Include="Owin\SignalRHubs\SettingsHub.cs" />
+    <Compile Include="Owin\SignalRNotificationAdapter.cs" />
     <Compile Include="Owin\Startup.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

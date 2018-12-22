@@ -26,6 +26,7 @@ namespace ArduinoCommunication
 
         private event Action<DataFromArduino> Observers;
         private event Action<SettingsFromArduino> SettingsObservers;
+        private event Action<string> RawDataObservers;
 
         private string _parsingState = "searchingStart";
         private readonly ILogger _log;
@@ -76,6 +77,11 @@ namespace ArduinoCommunication
             return () => { SettingsObservers -= observer; };
         }
 
+        public Action RegisterRawDataObserver(Action<string> observer)
+        {
+            RawDataObservers += observer;
+            return () => { RawDataObservers -= observer; };
+        }
 
         private void SetupSerialPort()
         {
@@ -85,6 +91,7 @@ namespace ArduinoCommunication
             }
             catch (Exception)
             {
+                /* We don't care about these errors */
             }
 
             _physicalPort = new SerialPort(_serialPort, 9600);
@@ -130,6 +137,8 @@ namespace ArduinoCommunication
                 var current = _readQueue.Dequeue();
                 if (current == null) continue;
 
+                NotifyRawDataObservers(current);
+
                 while (current.Length != 0)
                 {
                     switch (_parsingState)
@@ -150,7 +159,7 @@ namespace ArduinoCommunication
 
                         case "searchingEnd":
                             {
-                                var endPos = current.IndexOf('}');
+                                var endPos = current.LastIndexOf('}');
 
                                 if (endPos == -1)
                                 {
@@ -275,6 +284,16 @@ namespace ArduinoCommunication
             EnqueueCommand("+RTm\r");
         }
 
+        public void SaveSettings()
+        {
+            EnqueueCommand("ST-RS\r");
+        }
+
+        public void SendString(string toSend)
+        {
+            EnqueueCommand(toSend + "\r");
+        }
+
         private void EnqueueCommand(string command)
         {
             _commandQueue.Enqueue(command);
@@ -368,5 +387,9 @@ namespace ArduinoCommunication
             SettingsObservers?.Invoke(data);
         }
 
+        protected virtual void NotifyRawDataObservers(string raw)
+        {
+            RawDataObservers?.Invoke(raw);
+        }
     }
 }

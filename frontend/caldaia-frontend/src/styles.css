@@ -59,3 +59,11 @@ html {
     vertical-align: bottom;
   }
   
+  .ui-terminal {
+    height: 50rem !important;
+  }
+
+  .ui-terminal-content {
+    white-space: pre;
+    font-family: monospace;
+  }

@@ -19,10 +19,29 @@ namespace CaldaiaBackend.SelfHosted.Owin
     public class Startup
     {
         private static ILogger _log;
+        private SignalRNotificationAdapter _signalRNotificationHub;
 
         public Startup()
         {
+            Program.Container.Register(
+                Classes.FromAssemblyContaining<Startup>()
+                    .BasedOn<ApiController>()
+                    .LifestyleTransient(),
+
+                Classes.FromAssemblyContaining<ArduinoBackendApplication>()
+                    .BasedOn<IAction>()
+                    .WithServiceAllInterfaces()
+                    .LifestyleSingleton(),
+
+                Component
+                    .For<SignalRNotificationAdapter>()
+                    .ImplementedBy<SignalRNotificationAdapter>()
+                    .LifestyleSingleton()
+
+            );
+
             _log = Program.Container.Resolve<ILoggerFactory>().CreateNewLogger(GetType().Name);
+            _signalRNotificationHub = Program.Container.Resolve<SignalRNotificationAdapter>();
         }
         // This code configures Web API. The Startup class is specified as a type
         // parameter in the WebApp.Start method.
@@ -30,19 +49,11 @@ namespace CaldaiaBackend.SelfHosted.Owin
         {
             try
             {
+                appBuilder.UseCors(CorsOptions.AllowAll);
+
                 // Configure Web API for self-host. 
                 HttpConfiguration config = new HttpConfiguration();
 
-                Program.Container.Register(
-                    Classes.FromAssemblyContaining<Startup>()
-                        .BasedOn<ApiController>()
-                        .LifestyleTransient(),
-
-                    Classes.FromAssemblyContaining<ArduinoBackendApplication>()
-                        .BasedOn<IAction>()
-                        .WithServiceAllInterfaces()
-                        .LifestyleSingleton()
-                    );
                 // Setup IoC 
                 config.Services.Replace(
                     typeof(IHttpControllerActivator),
@@ -61,8 +72,6 @@ namespace CaldaiaBackend.SelfHosted.Owin
 
                 config.EnsureInitialized();
 
-                appBuilder.UseCors(CorsOptions.AllowAll);
-
                 appBuilder.UseStaticFiles(new StaticFileOptions
                 {
                     FileSystem = new PhysicalFileSystem("./AngularAppDist/caldaia-frontend"),
@@ -70,7 +79,7 @@ namespace CaldaiaBackend.SelfHosted.Owin
                     ServeUnknownFileTypes = true
                 });
 
-                SetupSignalR(appBuilder);
+                _signalRNotificationHub.SetupSignalR(appBuilder);
                 appBuilder.UseWebApi(config);
             }
             catch (Exception e)
@@ -79,34 +88,6 @@ namespace CaldaiaBackend.SelfHosted.Owin
                 Console.WriteLine("*** PRESS A KEY TO EXIT ***");
                 Console.ReadKey();
                 throw;
-            }
-
-        }
-
-        private static void SetupSignalR(IAppBuilder appBuilder)
-        {
-            var appObservable = Program.Container.Resolve<INotificationSubscriber>();
-
-            appObservable.Subscribe("data", (DataFromArduino data) => { NotifyToChannel("data", data); });
-            appObservable.Subscribe("settings", (SettingsFromArduino settings) => { NotifyToChannel("settings", settings); });
-
-            appBuilder.MapSignalR("/signalr", new HubConfiguration
-            {
-                EnableDetailedErrors = true,
-                EnableJavaScriptProxies = true
-            });
-        }
-
-        public static void NotifyToChannel<T>(string channel, T data)
-        {
-            try
-            {
-                var channelNotifier = GlobalHost.ConnectionManager.GetHubContext(channel);
-                channelNotifier?.Clients.All.notify(data);
-            }
-            catch (Exception e)
-            {
-                _log.Warning("Errors in Hub.", e);
             }
         }
     }

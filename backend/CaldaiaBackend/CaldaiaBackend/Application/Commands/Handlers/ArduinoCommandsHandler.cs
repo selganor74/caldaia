@@ -10,10 +10,13 @@ namespace CaldaiaBackend.Application.Commands.Handlers
                                             ICommandHandler<IncrementRotexTermoMinCommand>,
                                             ICommandHandler<DecrementRotexTermoMinCommand>,
                                             ICommandHandler<IncrementRotexTermoMaxCommand>,
-                                            ICommandHandler<DecrementRotexTermoMaxCommand>
+                                            ICommandHandler<DecrementRotexTermoMaxCommand>,
+                                            ICommandHandler<SaveSettingsCommand>,
+                                            ICommandHandler<SendStringCommand>
     {
-        private IArduinoCommandIssuer _arduino;
+        private readonly IArduinoCommandIssuer _arduino;
 
+        private Task EmptyTask => Task.Run(() => { });
         public ArduinoCommandsHandler(IArduinoCommandIssuer arduino)
         {
             _arduino = arduino;
@@ -21,57 +24,59 @@ namespace CaldaiaBackend.Application.Commands.Handlers
 
         public Task Execute(ReadDataFromArduinoCommand Action)
         {
-            var toReturn = Task.Run(() => { });
-
             _arduino.PullOutData();
 
-            return toReturn;
+            return EmptyTask;
         }
 
 
         public Task Execute(ReadSettingsFromArduinoCommand Action)
         {
-            var toReturn = Task.Run(() => { });
-
             _arduino.PullOutSettings();
 
-            return toReturn;
+            return EmptyTask;
         }
 
         public Task Execute(IncrementRotexTermoMaxCommand Action)
         {
-            var toReturn = Task.Run(() => { });
-
             _arduino.IncrementRotexTermoMax();
 
-            return toReturn;
+            return EmptyTask;
         }
 
         public Task Execute(DecrementRotexTermoMaxCommand Action)
         {
-            var toReturn = Task.Run(() => { });
-
             _arduino.DecrementRotexTermoMax();
 
-            return toReturn;
+            return EmptyTask;
         }
 
         public Task Execute(DecrementRotexTermoMinCommand Action)
         {
-            var toReturn = Task.Run(() => { });
-
             _arduino.DecrementRotexTermoMin();
 
-            return toReturn;
+            return EmptyTask;
         }
 
         public Task Execute(IncrementRotexTermoMinCommand Action)
         {
-            var toReturn = Task.Run(() => { });
-
             _arduino.IncrementRotexTermoMin();
 
-            return toReturn;
+            return EmptyTask;
+        }
+
+        public Task Execute(SaveSettingsCommand Action)
+        {
+            _arduino.SaveSettings();
+
+            return EmptyTask;
+        }
+
+        public Task Execute(SendStringCommand Action)
+        {
+            _arduino.SendString(Action.ToSend);
+
+            return EmptyTask;
         }
     }
 }

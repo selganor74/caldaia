@@ -9,5 +9,6 @@ namespace CaldaiaBackend.Application.Interfaces
         SettingsFromArduino LatestSettings { get; }
         Action RegisterObserver(Action<DataFromArduino> observer);
         Action RegisterSettingsObserver(Action<SettingsFromArduino> observer);
+        Action RegisterRawDataObserver(Action<string> observer);
     }
 }

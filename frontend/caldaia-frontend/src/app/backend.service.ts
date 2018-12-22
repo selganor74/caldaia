@@ -16,6 +16,11 @@ export class BackendService {
 
   constructor(private http: HttpClient) { }
 
+  public sendString(command: string) {
+    const cmd = { ToSend: command };
+    return this.http.post(this.apiBaseUrl + '/commands/send-string', cmd).subscribe();
+  }
+
   public getLatestData(): Observable<IDataFromArduino> {
     return <Observable<IDataFromArduino>>this.http.get(this.apiBaseUrl + '/queries/latestdata');
   }
@@ -26,6 +31,10 @@ export class BackendService {
 
   public updateLatestSettings() {
     return this.http.post(this.apiBaseUrl + '/commands/reloadsettings', {}).subscribe();
+  }
+
+  saveSettings(): any {
+    return this.http.post(this.apiBaseUrl + '/settings/save', {}).subscribe();
   }
 
   public decrementRotexTermoMin(): any {
@@ -71,5 +80,10 @@ export class BackendService {
 
   incrementMaxTempConCamino(): any {
     return this.http.post(this.apiBaseUrl + '/settings/max-temp-con-camino/increment', {}).subscribe();
+  }
+
+  /** pauses the poller for "seconds" seconds */
+  pausePoller(seconds: number): any {
+    return this.http.post(this.apiBaseUrl + '/commands/pause-poller', {PauseForSeconds: seconds}).subscribe();
   }
 }

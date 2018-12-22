@@ -79,6 +79,16 @@ namespace CaldaiaBackend.SelfHosted.Controllers
         }
 
         [HttpPost]
+        [Route("api/settings/save")]
+        public IHttpActionResult SaveSettings()
+        {
+            var cmd = new SaveSettingsCommand();
+            // _readDataHandler.Execute(cmd).Wait();
+            _arduinoApp.Execute(cmd).Wait();
+            return Ok();
+        }
+
+        [HttpPost]
         [Route("api/settings/rotex-termo-min/decrement")]
         public IHttpActionResult DecrementRotexTermoMin()
         {
@@ -117,5 +127,23 @@ namespace CaldaiaBackend.SelfHosted.Controllers
             _arduinoApp.Execute(cmd).Wait();
             return Ok();
         }
+
+        [HttpPost]
+        [Route("api/commands/pause-poller")]
+        public IHttpActionResult PausePoller([FromBody] PausePollerCommand cmd)
+        {
+            // _readDataHandler.Execute(cmd).Wait();
+            _arduinoApp.Execute(cmd).Wait();
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("api/commands/send-string")]
+        public IHttpActionResult SendString([FromBody] SendStringCommand cmd)
+        {
+            _arduinoApp.Execute(cmd).Wait();
+            return Ok();
+        }
+
     }
 }

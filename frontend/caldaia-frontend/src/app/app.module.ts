@@ -2,8 +2,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpClientModule
+} from '@angular/common/http';
 
+import { TerminalModule } from 'primeng/terminal';
 import { AccordionModule } from 'primeng/primeng';
 import { PanelModule } from 'primeng/primeng';
 import { ButtonModule } from 'primeng/primeng';
@@ -16,10 +20,12 @@ import { DialogModule } from 'primeng/dialog';
 
 import { AppComponent } from './app.component';
 import { BackendService } from './backend.service';
+import { TerminalComponent } from './terminal/terminal.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    TerminalComponent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +40,8 @@ import { BackendService } from './backend.service';
     ToolbarModule,
     TabViewModule,
     CardModule,
-    DialogModule
+    DialogModule,
+    TerminalModule
   ],
   providers: [HttpClient, BackendService],
   bootstrap: [AppComponent]

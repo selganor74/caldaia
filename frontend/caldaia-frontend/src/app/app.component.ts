@@ -4,7 +4,7 @@ import { BackendService } from './backend.service';
 import { IDataFromArduino } from './idata-from-arduino';
 import { ISettingsFromArduino } from './isettings-from-arduino';
 
-import { SignalRIntegration } from './signalr-integration';
+import { SignalrHandlerService } from './signalr-handler.service';
 
 import { environment } from '../environments/environment';
 
@@ -13,7 +13,7 @@ declare var $: any; // JQueryStatic;
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [BackendService]
+  providers: [BackendService, SignalrHandlerService]
 })
 export class AppComponent implements OnInit {
 
@@ -23,23 +23,29 @@ export class AppComponent implements OnInit {
   public signalrStatus: string;
   public showDisconnectedDialog = false;
 
+  public isTerminalVisible = false;
+  public selectedTab;
+
   constructor(
     private cdr: ChangeDetectorRef,
-    private _backend: BackendService
+    private _backend: BackendService,
+    private _signalrHandler: SignalrHandlerService
   ) { }
 
   ngOnInit(): void {
     this.configSignalR();
   }
 
-  private configSignalR() {
-    const _hubConnection = $.hubConnection(this.signalrBaseUrl);
+  public onTabViewChange(e: any) {
+    this.selectedTab = e;
+  }
 
-    new SignalRIntegration(_hubConnection)
-      .onStateChanged(this.onSignalRStatusChange.bind(this))
-      .onDataReceived(this.onDataReceived.bind(this))
-      .onSettingsReceived(this.onSettingsReceived.bind(this))
-      .start();
+  private configSignalR() {
+    this._signalrHandler.registerHandlerForOnStateChanged(this.onSignalRStatusChange.bind(this));
+    this._signalrHandler.registerHandlerForOnDataFromArduino(this.onDataReceived.bind(this));
+    this._signalrHandler.registerHandlerForOnSettingsFromArduino(this.onSettingsReceived.bind(this));
+
+    this._signalrHandler.start();
   }
 
   private onDataReceived(data: IDataFromArduino) {
@@ -68,6 +74,10 @@ export class AppComponent implements OnInit {
 
   public refreshSettings() {
     this._backend.updateLatestSettings();
+  }
+
+  public saveSettings() {
+    this._backend.saveSettings();
   }
 
   public incrementMaxTempConCamino() {
@@ -119,7 +129,12 @@ export class AppComponent implements OnInit {
   }
 
   public decrementRotexTermoMin() {
-    console.log('incrementRotexTermoMin');
+    console.log('decrementRotexTermoMin');
     this._backend.decrementRotexTermoMin();
+  }
+
+  public pausePoller() {
+    console.log('pausePoller for 12 seconds');
+    this._backend.pausePoller(12);
   }
 }

@@ -24,10 +24,10 @@ namespace CaldaiaBackend.SelfHosted
             Container.Register(
                 Component
                     .For<IArduinoDataReader, IArduinoCommandIssuer>()
-#if RELEASE
+#if DEBUG
                     .ImplementedBy<ArduinoMock>()
 #endif
-#if DEBUG
+#if RELEASE
                     .ImplementedBy<CaldaiaControllerViaArduino>()
                     .UsingFactoryMethod((kernel) =>
                     {
@@ -44,7 +44,7 @@ namespace CaldaiaBackend.SelfHosted
             factory.BuildApplication<ArduinoBackendApplication>();
 
             var logWriter = Container.Resolve<ILogWriter>();
-            logWriter.SetLogLevel(LogLevel.Info);
+            logWriter.SetLogLevel(LogLevel.Trace);
 
             var clw = logWriter as CompositeLogWriter;
             if (clw != null)

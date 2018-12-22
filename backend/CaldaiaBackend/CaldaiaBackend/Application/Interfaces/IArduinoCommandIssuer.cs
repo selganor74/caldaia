@@ -9,5 +9,7 @@
         void DecrementRotexTermoMax();
         void DecrementRotexTermoMin();
         void IncrementRotexTermoMin();
+        void SaveSettings();
+        void SendString(string toSend);
     }
 }
