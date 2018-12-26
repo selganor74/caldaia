@@ -1,17 +1,15 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using ArduinoCommunication;
 using NUnit.Framework;
-
-using CaldaiaBackend;
 using CaldaiaBackend.Application.DataModels;
 using Infrastructure.DomainEvents;
 
 namespace CaldaiaBackendTests
 {
     [TestFixture]
+    [Ignore("Enable only when arduino is connected!")]
     public class CaldaiaController_Tests
     {
         [Test]
