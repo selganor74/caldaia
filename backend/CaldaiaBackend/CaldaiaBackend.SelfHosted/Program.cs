@@ -10,6 +10,7 @@ using CaldaiaBackend.Infrastructure;
 using CaldaiaBackend.SelfHosted.Infrastructure.SignalRLogging;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
+using Infrastructure.DomainEvents;
 using Infrastructure.Hosting.IoC.CastleWindsor;
 using Infrastructure.Logging;
 using Topshelf;
@@ -103,7 +104,7 @@ namespace CaldaiaBackend.SelfHosted
                     .UsingFactoryMethod((kernel) =>
                     {
                         var serialPort = ConfigurationManager.AppSettings["ArduinoComPort"];
-                        var controller = new CaldaiaControllerViaArduino(serialPort, kernel.Resolve<ILoggerFactory>());
+                        var controller = new CaldaiaControllerViaArduino(serialPort, kernel.Resolve<IEventDispatcher>(), kernel.Resolve<ILoggerFactory>());
                         controller.Start();
                         return controller;
                     })
