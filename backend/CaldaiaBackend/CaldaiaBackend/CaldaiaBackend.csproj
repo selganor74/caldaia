@@ -97,8 +97,8 @@
     <Compile Include="Application\Services\IArduinoDataReader.cs" />
     <Compile Include="Application\Projections\Last24Hours.cs" />
     <Compile Include="Infrastructure\CircularTimeSlotBuffer.cs" />
-    <Compile Include="Infrastructure\InMemoryTimeBufferLoaderSaver.cs" />
-    <Compile Include="Infrastructure\ITimeSlotBufferLoaderSaver.cs" />
+    <Compile Include="Application\Services\Mocks\InMemoryTimeBufferLoaderSaver.cs" />
+    <Compile Include="Application\Services\ITimeSlotBufferLoaderSaver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Application\DataModels\SettingsFromArduino.cs" />
   </ItemGroup>

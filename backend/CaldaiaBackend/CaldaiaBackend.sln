@@ -17,6 +17,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Arduino", "Arduino", "{EFB0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F7BD6528-FA79-43DE-954C-099A3EA08D7E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projections", "Projections", "{24C72DA1-1DF8-4FB4-9846-AB6484C36ACE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSystemTimeSlotLoaderSaver", "FileSystemTimeSlotLoaderSaver\FileSystemTimeSlotLoaderSaver.csproj", "{FE9ABD11-B63F-4E9D-89B5-464E63248EB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,10 @@ Global
 		{42B784BE-893E-4698-BBE5-6EB50A0E339B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42B784BE-893E-4698-BBE5-6EB50A0E339B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42B784BE-893E-4698-BBE5-6EB50A0E339B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE9ABD11-B63F-4E9D-89B5-464E63248EB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE9ABD11-B63F-4E9D-89B5-464E63248EB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE9ABD11-B63F-4E9D-89B5-464E63248EB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE9ABD11-B63F-4E9D-89B5-464E63248EB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,5 +55,6 @@ Global
 		{F49422BE-3E92-46A7-B258-D6B41464EEF6} = {F7BD6528-FA79-43DE-954C-099A3EA08D7E}
 		{8EDBDB62-278C-4157-A7BA-B679CD4CAC2D} = {155F2754-A935-4E53-8391-B8DA820C630F}
 		{42B784BE-893E-4698-BBE5-6EB50A0E339B} = {EFB0E010-88ED-4E29-9364-C0ADFB05E519}
+		{FE9ABD11-B63F-4E9D-89B5-464E63248EB0} = {24C72DA1-1DF8-4FB4-9846-AB6484C36ACE}
 	EndGlobalSection
 EndGlobal

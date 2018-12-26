@@ -32,7 +32,8 @@
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/signalr/jquery.signalR.min.js"
+              "node_modules/signalr/jquery.signalR.min.js",
+              "node_modules/chart.js/dist/Chart.bundle.min.js"
             ]
           },
           "configurations": {

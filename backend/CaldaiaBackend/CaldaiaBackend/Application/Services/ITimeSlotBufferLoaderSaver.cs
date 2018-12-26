@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using CaldaiaBackend.Infrastructure;
 
-namespace CaldaiaBackend.Infrastructure
+namespace CaldaiaBackend.Application.Services
 {
     public interface ITimeSlotBufferLoaderSaver<T>
     {

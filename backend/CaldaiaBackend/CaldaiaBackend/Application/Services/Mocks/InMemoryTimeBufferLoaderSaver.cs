@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CaldaiaBackend.Infrastructure;
 
-namespace CaldaiaBackend.Infrastructure
+namespace CaldaiaBackend.Application.Services.Mocks
 {
     public class InMemoryTimeBufferLoaderSaver<T> : ITimeSlotBufferLoaderSaver<T>
     {

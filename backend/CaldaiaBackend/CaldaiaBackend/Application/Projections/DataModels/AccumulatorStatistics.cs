@@ -2,11 +2,11 @@
 {
     public class AccumulatorStatistics
     {
-        public ulong outPompaAccu_On { get; set; }
-        public ulong outPompaCaminoAccu_On { get; set; }
-        public ulong outCaldaiaAccu_On { get; set; }
-        public ulong inTermoAmbienteAccu_On { get; set; }
-        public ulong inTermoAccumulatoreAccu_On { get; set; }
-        public ulong rotexP1Accu_On { get; set; }
+        public ulong TEMPO_ACCENSIONE_POMPA_RISCALDAMENTO { get; set; }
+        public ulong TEMPO_ACCENSIONE_POMPA_CAMINO { get; set; }
+        public ulong TEMPO_ACCENSIONE_CALDAIA { get; set; }
+        public ulong TEMPO_TERMOSTATI_AMBIENTE { get; set; }
+        public ulong TEMPO_TERMOSTATO_ACCUMULATORE { get; set; }
+        public ulong TEMPO_ACCENSIONE_POMPA_SOLARE { get; set; }
     }
 }

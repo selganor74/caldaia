@@ -175,6 +175,10 @@
       <Project>{2acf8772-0238-4790-b4c6-8ec4a09e8e1d}</Project>
       <Name>CaldaiaBackend</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FileSystemTimeSlotLoaderSaver\FileSystemTimeSlotLoaderSaver.csproj">
+      <Project>{fe9abd11-b63f-4e9d-89b5-464e63248eb0}</Project>
+      <Name>FileSystemTimeSlotLoaderSaver</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="DeployScripts\PsExec.exe" />

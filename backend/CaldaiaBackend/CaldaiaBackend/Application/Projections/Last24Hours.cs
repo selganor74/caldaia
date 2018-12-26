@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CaldaiaBackend.Application.Events;
 using CaldaiaBackend.Application.Projections.DataModels;
+using CaldaiaBackend.Application.Services;
 using CaldaiaBackend.Infrastructure;
 using Infrastructure.DomainEvents;
 using Infrastructure.Logging;
@@ -31,12 +32,12 @@ namespace CaldaiaBackend.Application.Projections
             _log.Trace("Processing event " + nameof(AccumulatorsReceived), evt);
             var stats = _timeBuffer.GetContentAtReference(evt.timestamp) ?? new AccumulatorStatistics();
 
-            stats.inTermoAccumulatoreAccu_On += evt.inTermoAccumulatoreAccu_On;
-            stats.inTermoAmbienteAccu_On += evt.inTermoAmbienteAccu_On;
-            stats.outPompaCaminoAccu_On += evt.outPompaCaminoAccu_On;
-            stats.outCaldaiaAccu_On += evt.outCaldaiaAccu_On;
-            stats.outPompaAccu_On += evt.outPompaAccu_On;
-            stats.rotexP1Accu_On += evt.rotexP1Accu_On;
+            stats.TEMPO_TERMOSTATO_ACCUMULATORE += evt.inTermoAccumulatoreAccu_On;
+            stats.TEMPO_TERMOSTATI_AMBIENTE += evt.inTermoAmbienteAccu_On;
+            stats.TEMPO_ACCENSIONE_POMPA_CAMINO += evt.outPompaCaminoAccu_On;
+            stats.TEMPO_ACCENSIONE_CALDAIA += evt.outCaldaiaAccu_On;
+            stats.TEMPO_ACCENSIONE_POMPA_RISCALDAMENTO += evt.outPompaAccu_On;
+            stats.TEMPO_ACCENSIONE_POMPA_SOLARE += evt.rotexP1Accu_On;
 
             _timeBuffer.UpdateOrCreateContentAtReference(evt.timestamp, stats);
 

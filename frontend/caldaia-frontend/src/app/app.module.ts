@@ -17,15 +17,18 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { TabViewModule } from 'primeng/tabview';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
+import { ChartModule } from 'primeng/chart';
 
 import { AppComponent } from './app.component';
 import { BackendService } from './backend.service';
 import { TerminalComponent } from './terminal/terminal.component';
+import { StatsGraphComponent } from './stats-graph/stats-graph.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TerminalComponent
+    TerminalComponent,
+    StatsGraphComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +44,8 @@ import { TerminalComponent } from './terminal/terminal.component';
     TabViewModule,
     CardModule,
     DialogModule,
-    TerminalModule
+    TerminalModule,
+    ChartModule
   ],
   providers: [HttpClient, BackendService],
   bootstrap: [AppComponent]

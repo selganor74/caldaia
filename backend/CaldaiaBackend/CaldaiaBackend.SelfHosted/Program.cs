@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using Application.Services;
 using ArduinoCommunication;
 using CaldaiaBackend.Application;
 using CaldaiaBackend.Application.Projections;
@@ -113,8 +114,16 @@ namespace CaldaiaBackend.SelfHosted
 
                 Component
                     .For<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>()
+#if DEBUG
                     .ImplementedBy<InMemoryTimeBufferLoaderSaver<AccumulatorStatistics>>()
-                    .LifestyleSingleton(),
+#else
+                    .ImplementedBy<FileSystemTimeSlotLoaderSaver<AccumulatorStatistics>>()
+                    .DependsOn(
+                        Dependency
+                            .OnAppSettingsValue("PathToJsonStorageFile", "PathToLast24HoursJson")
+                        )
+#endif
+                    .LifestyleTransient(),
 
                 Component
                     .For<Last24Hours>()

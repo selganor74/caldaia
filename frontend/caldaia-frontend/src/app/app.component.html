@@ -137,7 +137,12 @@
                     </div>
                 </div>
             </p-tabPanel>
-            <p-tabPanel header="Terminale">
+            
+            <p-tabPanel header="Stats">
+                <app-stats-graph></app-stats-graph>
+            </p-tabPanel>
+            
+            <p-tabPanel header="Terminale"  [cache]="false">
                 <div class="row">
                     <p-toolbar class="col-md-12 col-lg-12">
                         <div class="ui-toolbar-group-left">
@@ -147,7 +152,7 @@
                     </p-toolbar>
                 </div>
 
-                <app-terminal *ngIf="selectedTab ? selectedTab.index == 2 : false"></app-terminal>
+                <app-terminal *ngIf="selectedTab ? selectedTab.index == 3 : false"></app-terminal>
 
             </p-tabPanel>
 
