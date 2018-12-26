@@ -4,7 +4,9 @@ using System.IO.Ports;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using CaldaiaBackend.Application.DataModels;
-using CaldaiaBackend.Application.Interfaces;
+using CaldaiaBackend.Application.Events;
+using CaldaiaBackend.Application.Services;
+using Infrastructure.DomainEvents;
 using Infrastructure.Logging;
 using Newtonsoft.Json;
 
@@ -29,6 +31,7 @@ namespace ArduinoCommunication
         private event Action<string> RawDataObservers;
 
         private string _parsingState = "searchingStart";
+        private IEventDispatcher _dispatcher;
         private readonly ILogger _log;
         private bool _dequeuing = false;
         private bool _sendingOrReceiving = false;
@@ -43,10 +46,12 @@ namespace ArduinoCommunication
         /// <param name="loggerFactory">a logger Factory</param>
         public CaldaiaControllerViaArduino(
             string serialPort,
+            IEventDispatcher dispatcher,
             ILoggerFactory loggerFactory
             )
         {
             _serialPort = serialPort;
+            _dispatcher = dispatcher;
             _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
             _commandToResponseTimeoutTimer = new Timer(TryRecoverConnection, null, -1, -1);
             _commandSender = new Timer(DequeueCommand, null, -1, -1);
@@ -191,7 +196,7 @@ namespace ArduinoCommunication
 
             try
             {
-                if (_currentJson.Contains("rotexTermoMin"))
+                if (_currentJson.Contains("\"_type\": \"settings\""))
                 {
                     // Settings
                     LatestSettings = JsonConvert.DeserializeObject<SettingsFromArduino>(_currentJson);
@@ -199,8 +204,15 @@ namespace ArduinoCommunication
                     return;
                 }
 
-                Latest = JsonConvert.DeserializeObject<DataFromArduino>(_currentJson);
-                NotifyObservers(Latest);
+                if (_currentJson.Contains("\"_type\": \"data\"") || _currentJson.Contains("\"_type\": \"accumulators\""))
+                {
+                    Latest = JsonConvert.DeserializeObject<DataFromArduino>(_currentJson);
+                    NotifyObservers(Latest);
+                    if (_currentJson.Contains("\"_type\": \"accumulators\""))
+                    {
+                        _dispatcher.Dispatch(AccumulatorsReceived.FromData(Latest));
+                    }
+                }
             }
             catch (Exception x)
             {

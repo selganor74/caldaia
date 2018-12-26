@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CaldaiaController_Tests.cs" />
+    <Compile Include="CircularTimeBuffer_Tests.cs" />
     <Compile Include="SerialPortEnumerator_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

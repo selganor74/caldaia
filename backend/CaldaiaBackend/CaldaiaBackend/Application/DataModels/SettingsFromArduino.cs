@@ -5,6 +5,7 @@ namespace CaldaiaBackend.Application.DataModels
     public class SettingsFromArduino
     {
         public string timestamp { get; set; } = DateTime.UtcNow.ToString("o");
+        public string _type { get; set; } = "settings"; 
         public int rotexTermoMin { get; set; }
         public int rotexTermoMax { get; set; }
         public int deltaSolare { get; set; }

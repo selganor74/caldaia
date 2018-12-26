@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 using CaldaiaBackend;
 using CaldaiaBackend.Application.DataModels;
+using Infrastructure.DomainEvents;
 
 namespace CaldaiaBackendTests
 {
@@ -113,7 +114,7 @@ namespace CaldaiaBackendTests
         private static CaldaiaControllerViaArduino CreateSerial()
         {
             var serial = new SerialEnumerator().GetSerialPorts().First();
-            var sut = new CaldaiaControllerViaArduino(serial, null);
+            var sut = new CaldaiaControllerViaArduino(serial, new NullEventDispatcher(), null);
             return sut;
         }
     }

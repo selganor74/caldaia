@@ -2,8 +2,11 @@
 using System.Configuration;
 using ArduinoCommunication;
 using CaldaiaBackend.Application;
-using CaldaiaBackend.Application.Interfaces;
-using CaldaiaBackend.Application.Interfaces.Mocks;
+using CaldaiaBackend.Application.Projections;
+using CaldaiaBackend.Application.Projections.DataModels;
+using CaldaiaBackend.Application.Services;
+using CaldaiaBackend.Application.Services.Mocks;
+using CaldaiaBackend.Infrastructure;
 using CaldaiaBackend.SelfHosted.Infrastructure.SignalRLogging;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
@@ -20,43 +23,21 @@ namespace CaldaiaBackend.SelfHosted
 
         static void Main(string[] args)
         {
+            RegisterMainComponents();
 
-            Container.Register(
-                Component
-                    .For<IArduinoDataReader, IArduinoCommandIssuer>()
-#if DEBUG
-                    .ImplementedBy<ArduinoMock>()
-#else
-                    .ImplementedBy<CaldaiaControllerViaArduino>()
-                    .UsingFactoryMethod((kernel) =>
-                    {
-                        var serialPort = ConfigurationManager.AppSettings["ArduinoComPort"];
-                        var controller = new CaldaiaControllerViaArduino(serialPort, kernel.Resolve<ILoggerFactory>());
-                        controller.Start();
-                        return controller;
-                    })
-#endif
-                    .LifestyleSingleton()
-                );
+            BuildAppComponentsAndApplication();
 
-            var factory = new CastleApplicationFactory(Container);
-            factory.BuildApplication<ArduinoBackendApplication>();
+            SetupLogging();
 
-            var logWriter = Container.Resolve<ILogWriter>();
-            logWriter.SetLogLevel(LogLevel.Trace);
+            StartupApplication();
 
-            var clw = logWriter as CompositeLogWriter;
-            if (clw != null)
-            {
-                var signalrLogWriter = new SignalRLogWriter(LogLevel.Warning);
-                clw.AddLogger(signalrLogWriter, LogLevelMode.Independent);
-            }
+            RunInOwinAndTopshelf();
+        }
 
+        private static void RunInOwinAndTopshelf()
+        {
             var loggerFactory = Container.Resolve<ILoggerFactory>();
-            log = loggerFactory.CreateNewLogger(nameof(Program));
-
-            var application = Container.Resolve<ArduinoBackendApplication>();
-            application.Start();
+            log = loggerFactory.CreateNewLogger(nameof(RunInOwinAndTopshelf));
 
             var tsh = HostFactory.Run(hc =>
             {
@@ -73,8 +54,71 @@ namespace CaldaiaBackend.SelfHosted
                 hc.SetServiceName("arduinoBackend");
             });
 
-            var exitCode = (int) Convert.ChangeType(tsh, tsh.GetTypeCode());
+            var exitCode = (int)Convert.ChangeType(tsh, tsh.GetTypeCode());
             Environment.ExitCode = exitCode;
+        }
+
+        private static void StartupApplication()
+        {
+            var application = Container.Resolve<ArduinoBackendApplication>();
+            application.Start();
+        }
+
+        private static void SetupLogging()
+        {
+            var logWriter = Container.Resolve<ILogWriter>();
+#if DEBUG
+            logWriter.SetLogLevel(LogLevel.Trace);
+#else
+            logWriter.SetLogLevel(LogLevel.Info);
+#endif
+
+            var clw = logWriter as CompositeLogWriter;
+            if (clw != null)
+            {
+#if DEBUG
+                var signalrLogWriter = new SignalRLogWriter(LogLevel.Info);
+#else
+                var signalrLogWriter = new SignalRLogWriter(LogLevel.Warning);
+#endif
+                clw.AddLogger(signalrLogWriter, LogLevelMode.Independent);
+            }
+        }
+
+        private static void BuildAppComponentsAndApplication()
+        {
+            var factory = new CastleApplicationFactory(Container);
+            factory.BuildApplication<ArduinoBackendApplication>();
+        }
+
+        private static void RegisterMainComponents()
+        {
+            Container.Register(
+                Component
+                    .For<IArduinoDataReader, IArduinoCommandIssuer>()
+#if DEBUG
+                    .ImplementedBy<ArduinoMock>()
+#else
+                    .ImplementedBy<CaldaiaControllerViaArduino>()
+                    .UsingFactoryMethod((kernel) =>
+                    {
+                        var serialPort = ConfigurationManager.AppSettings["ArduinoComPort"];
+                        var controller = new CaldaiaControllerViaArduino(serialPort, kernel.Resolve<ILoggerFactory>());
+                        controller.Start();
+                        return controller;
+                    })
+#endif
+                    .LifestyleSingleton(),
+
+                Component
+                    .For<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>()
+                    .ImplementedBy<InMemoryTimeBufferLoaderSaver<AccumulatorStatistics>>()
+                    .LifestyleSingleton(),
+
+                Component
+                    .For<Last24Hours>()
+                    .LifestyleSingleton()
+            );
         }
     }
 }

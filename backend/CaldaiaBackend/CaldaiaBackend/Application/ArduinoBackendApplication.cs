@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using CaldaiaBackend.Application.Commands;
-using CaldaiaBackend.Application.Interfaces;
+using CaldaiaBackend.Application.Projections;
+using CaldaiaBackend.Application.Services;
 using Infrastructure.Actions.Command.Executor;
 using Infrastructure.Actions.Query.Executor;
 using Infrastructure.Application;
@@ -18,9 +18,12 @@ namespace CaldaiaBackend.Application
         private Timer _backgroundJob;
         private readonly int _pollIntervalMilliseconds = 5000;
         private readonly ILogger _log;
+        private readonly Last24Hours _last24HoursProjection;
 
         public ArduinoBackendApplication(
             IArduinoDataReader dataReader,
+            Last24Hours last24HoursProjection,
+
             ICommandExecutor theCommandExecutor,
             IQueryExecutor theQueryExecutor,
             INotificationSubscriber theNotificationSubscriber,
@@ -41,9 +44,29 @@ namespace CaldaiaBackend.Application
             _dataReader = dataReader;
             _publisher = theNotificationPublisher;
             _log = theLoggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
+            _last24HoursProjection = last24HoursProjection;
         }
 
         protected override void onAppStarting()
+        {
+            RegisterObservers();
+
+            StartProjections();
+
+            StartDataPollerTask();
+        }
+
+        private void StartDataPollerTask()
+        {
+            _backgroundJob = new Timer(pollData, null, _pollIntervalMilliseconds, _pollIntervalMilliseconds);
+        }
+
+        private void StartProjections()
+        {
+            _last24HoursProjection.Start();
+        }
+
+        private void RegisterObservers()
         {
             _dataReader.RegisterObserver(
                 data => _publisher.Notify("data", data)
@@ -56,15 +79,13 @@ namespace CaldaiaBackend.Application
             _dataReader.RegisterRawDataObserver(
                 rawString => _publisher.Notify("raw", rawString)
                 );
-
-            _backgroundJob = new Timer(pollData, null, _pollIntervalMilliseconds, _pollIntervalMilliseconds);
         }
 
         private void pollData(object state)
         {
             try
             {
-                var cmd = new ReadDataFromArduinoCommand();
+                var cmd = new ReadDataAndResetAccumulatorsCommand();
                 commandExecutor.Execute(cmd);
             }
             catch (Exception e)

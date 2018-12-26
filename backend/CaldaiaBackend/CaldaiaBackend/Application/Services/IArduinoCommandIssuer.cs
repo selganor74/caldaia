@@ -1,4 +1,4 @@
-﻿namespace CaldaiaBackend.Application.Interfaces
+﻿namespace CaldaiaBackend.Application.Services
 {
     public interface IArduinoCommandIssuer
     {

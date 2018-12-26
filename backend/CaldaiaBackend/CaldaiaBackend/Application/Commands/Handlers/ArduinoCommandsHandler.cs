@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using CaldaiaBackend.Application.Interfaces;
+﻿using System.Threading.Tasks;
+using CaldaiaBackend.Application.Services;
 using Infrastructure.Actions.Command.Handler;
 
 namespace CaldaiaBackend.Application.Commands.Handlers
 {
     public class ArduinoCommandsHandler :   ICommandHandler<ReadDataFromArduinoCommand>,
+                                            ICommandHandler<ReadDataAndResetAccumulatorsCommand>,
                                             ICommandHandler<ReadSettingsFromArduinoCommand>,
                                             ICommandHandler<IncrementRotexTermoMinCommand>,
                                             ICommandHandler<DecrementRotexTermoMinCommand>,
@@ -16,7 +16,8 @@ namespace CaldaiaBackend.Application.Commands.Handlers
     {
         private readonly IArduinoCommandIssuer _arduino;
 
-        private Task EmptyTask => Task.Run(() => { });
+        private static Task EmptyTask => Task.Run(() => { });
+
         public ArduinoCommandsHandler(IArduinoCommandIssuer arduino)
         {
             _arduino = arduino;
@@ -29,6 +30,12 @@ namespace CaldaiaBackend.Application.Commands.Handlers
             return EmptyTask;
         }
 
+        public Task Execute(ReadDataAndResetAccumulatorsCommand Action)
+        {
+            _arduino.SendGetAndResetAccumulatorsCommand();
+
+            return EmptyTask;
+        }
 
         public Task Execute(ReadSettingsFromArduinoCommand Action)
         {
@@ -78,5 +85,6 @@ namespace CaldaiaBackend.Application.Commands.Handlers
 
             return EmptyTask;
         }
+
     }
 }

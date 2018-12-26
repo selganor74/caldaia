@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApiController.cs" />
+    <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Infrastructure\SignalRLogging\SignalRLogsHub.cs" />
     <Compile Include="Infrastructure\SignalRLogging\SignalRLogWriter.cs" />
     <Compile Include="Owin\IoC\WindsorControllerActivator.cs" />

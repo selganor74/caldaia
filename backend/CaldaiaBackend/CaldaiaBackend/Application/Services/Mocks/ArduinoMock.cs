@@ -1,7 +1,9 @@
 ﻿using System;
 using CaldaiaBackend.Application.DataModels;
+using CaldaiaBackend.Application.Events;
+using Infrastructure.DomainEvents;
 
-namespace CaldaiaBackend.Application.Interfaces.Mocks
+namespace CaldaiaBackend.Application.Services.Mocks
 {
     public class ArduinoMock : IArduinoCommandIssuer, IArduinoDataReader 
     {
@@ -10,8 +12,11 @@ namespace CaldaiaBackend.Application.Interfaces.Mocks
         private readonly Random _random = new Random();
         private int _rotexTermoMax = 43;
         private int _rotexTermoMin = 45;
+        private IEventDispatcher _dispatcher;
+
         private SettingsFromArduino RandomSettings => new SettingsFromArduino
         {
+            _type="settings",
             deltaSolare = _random.Next(5, 15),
             rotexMaxTempConCamino = _random.Next(68, 74),
             rotexMinTempConCamino = _random.Next(65, 68),
@@ -23,6 +28,8 @@ namespace CaldaiaBackend.Application.Interfaces.Mocks
 
         private DataFromArduino RandomData => new DataFromArduino
         {
+            _type = _random.Next(0,2)<1?"data":"accumulators",
+            timestamp = DateTime.UtcNow.ToString("o"),
             rotexTK = _random.Next(0, 100),
             rotexTS = _random.Next(0, 100),
             rotexP1 = _random.Next(0, 2),
@@ -32,6 +39,13 @@ namespace CaldaiaBackend.Application.Interfaces.Mocks
             outOverrideTermoAmbienteValue = _random.Next(0, 2)
         };
 
+        public ArduinoMock(
+            IEventDispatcher dispatcher
+            )
+        {
+            _dispatcher = dispatcher;
+        }
+
         public void PullOutData()
         {
             _observer?.Invoke(RandomData);
@@ -39,7 +53,12 @@ namespace CaldaiaBackend.Application.Interfaces.Mocks
 
         public void SendGetAndResetAccumulatorsCommand()
         {
-            _observer?.Invoke(RandomData);
+            var toSend = RandomData;
+            _observer?.Invoke(toSend);
+            if (toSend._type == "accumulators")
+            {
+                _dispatcher.Dispatch(AccumulatorsReceived.FromData(toSend));
+            }
         }
 
         public void PullOutSettings()

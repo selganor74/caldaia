@@ -1,7 +1,7 @@
 ﻿using System;
 using CaldaiaBackend.Application.DataModels;
 
-namespace CaldaiaBackend.Application.Interfaces
+namespace CaldaiaBackend.Application.Services
 {
     public interface IArduinoDataReader
     {

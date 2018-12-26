@@ -5,26 +5,27 @@ namespace CaldaiaBackend.Application.DataModels
     public class DataFromArduino
     {
         public string timestamp { get; set; } = DateTime.UtcNow.ToString("o");
-        public int loopStartMillis { get; set; }
+        public string _type { get; set; } = "data"; // can also be "accumulators"
+        public ulong loopStartMillis { get; set; }
         public int outPompaValue { get; set; }
-        public int outPompaAccu_On { get; set; }
-        public int outPompaAccu_Off { get; set; }
+        public ulong outPompaAccu_On { get; set; }
+        public ulong outPompaAccu_Off { get; set; }
         public int outPompaCaminoValue { get; set; }
-        public int outPompaCaminoAccu_On { get; set; }
-        public int outPompaCaminoAccu_Off { get; set; }
+        public ulong outPompaCaminoAccu_On { get; set; }
+        public ulong outPompaCaminoAccu_Off { get; set; }
         public int outCaldaiaValue { get; set; }
-        public int outCaldaiaAccu_On { get; set; }
-        public int outCaldaiaAccu_Off { get; set; }
+        public ulong outCaldaiaAccu_On { get; set; }
+        public ulong outCaldaiaAccu_Off { get; set; }
         public int inTermoAmbienteValue { get; set; }
-        public int inTermoAmbienteAccu_On { get; set; }
-        public int inTermoAmbienteAccu_Off { get; set; }
+        public ulong inTermoAmbienteAccu_On { get; set; }
+        public ulong inTermoAmbienteAccu_Off { get; set; }
         public int inTermoAccumulatoreValue { get; set; }
-        public int inTermoAccumulatoreAccu_On { get; set; }
-        public int inTermoAccumulatoreAccu_Off { get; set; }
+        public ulong inTermoAccumulatoreAccu_On { get; set; }
+        public ulong inTermoAccumulatoreAccu_Off { get; set; }
         public int outOverrideTermoAmbienteValue { get; set; }
-        public int isteLastOutCaldaia_On { get; set; }
-        public int isteLastOutCaldaia_On_For { get; set; }
-        public int rotexP1Accu_On { get; set; }
+        public ulong isteLastOutCaldaia_On { get; set; }
+        public ulong isteLastOutCaldaia_On_For { get; set; }
+        public ulong rotexP1Accu_On { get; set; }
         public int rotexHA { get; set; }
         public int rotexBK { get; set; }
         public int rotexP1 { get; set; }
