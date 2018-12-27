@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using CaldaiaBackend.SelfHosted.Owin;
 using Infrastructure.Logging;
 using Microsoft.Owin.Hosting;
@@ -20,13 +15,12 @@ namespace CaldaiaBackend.SelfHosted
         public WebAppRunner(ILoggerFactory loggerFactory)
         {
             _loggerFactory = loggerFactory ?? new NullLoggerFactory();
-            log = loggerFactory.CreateNewLogger(GetType().Name);
+            log = _loggerFactory.CreateNewLogger(GetType().Name);
         }
 
         public void Start()
         {
             var baseAddress = ConfigurationManager.AppSettings["BaseAddress"];
-            
 
             // Start OWIN host 
             _webApp = WebApp.Start<Startup>(url: baseAddress);

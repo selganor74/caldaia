@@ -67,3 +67,10 @@ html {
     white-space: pre;
     font-family: monospace;
   }
+
+  .chart .ui-card-body,
+  .chart .ui-card  {
+    width: 38rem;
+    margin-left: auto;
+    margin-right: auto;
+  }

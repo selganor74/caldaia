@@ -46,8 +46,8 @@
       <HintPath>..\packages\Infrastructure.Core.1.6.1\lib\net452\Infrastructure.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Hosting.IoC.CastleWindsor, Version=1.0.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Hosting.IoC.CastleWindsor.1.0.8\lib\net452\Infrastructure.Hosting.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.Hosting.IoC.CastleWindsor, Version=1.0.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Hosting.IoC.CastleWindsor.1.0.10\lib\net452\Infrastructure.Hosting.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Infrastructure.Logging.ConsoleLogWriter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">

@@ -1,3 +1,10 @@
-<p-card>
-  <p-chart *ngFor="let chartData of allChartsData" type="bar" [data]="chartData"></p-chart>
-</p-card>
+<p-panel [toggleable]="true">
+  <p-header>Accumulators</p-header>
+  <div class="fluid-container">
+    <div class="row justify-content-center">
+      <p-card class="chart" *ngFor="let chartData of allChartsData">
+        <p-chart type="bar" [data]="chartData"></p-chart>
+      </p-card>
+    </div>
+  </div>
+</p-panel>

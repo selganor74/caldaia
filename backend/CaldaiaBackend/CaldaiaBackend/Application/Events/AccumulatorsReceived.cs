@@ -37,7 +37,8 @@ namespace CaldaiaBackend.Application.Events
                 outPompaAccu_Off = data.outPompaAccu_Off,
                 outPompaAccu_On = data.outPompaAccu_On,
                 outPompaCaminoAccu_Off = data.outPompaCaminoAccu_Off,
-                outPompaCaminoAccu_On = data.outPompaCaminoAccu_On
+                outPompaCaminoAccu_On = data.outPompaCaminoAccu_On,
+                rotexP1Accu_On = data.rotexP1Accu_On
             };
         }
     }
