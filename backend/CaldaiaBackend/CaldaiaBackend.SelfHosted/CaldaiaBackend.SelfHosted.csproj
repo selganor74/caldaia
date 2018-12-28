@@ -42,16 +42,20 @@
       <HintPath>..\packages\Castle.Windsor.4.1.1\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Core, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.1.7.0\lib\net452\Infrastructure.Core.dll</HintPath>
+    <Reference Include="Infrastructure.Core, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.1.8.0\lib\net452\Infrastructure.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Hosting.IoC.CastleWindsor, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Hosting.IoC.CastleWindsor.1.7.0\lib\net452\Infrastructure.Hosting.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.Hosting.IoC.CastleWindsor, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Hosting.IoC.CastleWindsor.1.8.0\lib\net452\Infrastructure.Hosting.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Logging.ConsoleLogWriter, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Logging.ConsoleLogWriter.1.7.0\lib\net452\Infrastructure.Logging.ConsoleLogWriter.dll</HintPath>
+    <Reference Include="Infrastructure.Logging.ConsoleLogWriter, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Logging.ConsoleLogWriter.1.8.0\lib\net452\Infrastructure.Logging.ConsoleLogWriter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Version, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.1.8.0\lib\net452\Infrastructure.Version.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
