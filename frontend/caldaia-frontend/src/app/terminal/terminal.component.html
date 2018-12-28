@@ -1,3 +1,10 @@
-<p-terminal prompt="> ">
-
-</p-terminal>
+<div class="row">
+    <p-toolbar class="col-md-12 col-lg-12">
+        <div class="ui-toolbar-group-left">
+            <button pButton type="button"  [icon]="pollerIcon" [label]="pollerLabel" (click)="togglePoller()"></button>
+        </div>
+    </p-toolbar>
+</div>
+<div class="row">
+    <p-terminal prompt="> " class="col-12"></p-terminal>
+</div>

@@ -121,7 +121,7 @@ export class SignalRIntegration {
         this.rawProxy = this._hubConnection.createHubProxy('raw');
 
         this.rawProxy.on('notify', (raw: string) => {
-            console.log('SignalR: Received raw string on rawProxy', raw );
+            // console.log('SignalR: Received raw string on rawProxy', raw );
             this.fireRawReceived(raw);
         });
 

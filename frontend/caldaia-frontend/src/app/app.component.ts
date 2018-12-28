@@ -133,8 +133,4 @@ export class AppComponent implements OnInit {
     this._backend.decrementRotexTermoMin();
   }
 
-  public pausePoller() {
-    console.log('pausePoller for 12 seconds');
-    this._backend.pausePoller(12);
-  }
 }

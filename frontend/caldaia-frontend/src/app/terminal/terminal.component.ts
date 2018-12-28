@@ -21,6 +21,15 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private _response = '';
   private _timeout: any;
 
+  public pollerIsRunning = true;
+  public get pollerIcon() {
+    return this.pollerIsRunning ? 'pi pi-power-off' : 'pi pi-caret-right';
+  }
+
+  public get pollerLabel() {
+    return this.pollerIsRunning ? 'stop poller' : 'start poller';
+  }
+
   constructor(
     private _terminalService: TerminalService,
     private _backendService: BackendService,
@@ -28,8 +37,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.keepPollerPaused();
-
     this._terminalService.commandHandler.subscribe(command => {
       console.log('Sending command');
       return this._backendService.sendString(command);
@@ -41,8 +48,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._signalrHandlerService.unregisterHandler(this._dataHandler);
-    console.log('restoring poller.');
-    clearInterval(this._timer);
+    this.restorePoller();
   }
 
   private showData(data: string) {
@@ -66,8 +72,23 @@ export class TerminalComponent implements OnInit, OnDestroy {
     }, 10000);
   }
 
+  private restorePoller() {
+    this.pollerIsRunning = true;
+    console.log('restoring poller.');
+    clearInterval(this._timer);
+  }
+
   private pausePoller() {
+    this.pollerIsRunning = false;
     console.log('pausing poller');
     this._backendService.pausePoller(12);
+  }
+
+  public togglePoller() {
+    if (this.pollerIsRunning) {
+      this.keepPollerPaused();
+    } else {
+      this.restorePoller();
+    }
   }
 }

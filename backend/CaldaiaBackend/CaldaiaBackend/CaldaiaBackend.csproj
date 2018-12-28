@@ -82,6 +82,7 @@
     <Compile Include="Application\Commands\ReadDataAndResetAccumulatorsCommand.cs" />
     <Compile Include="Application\Commands\ReadDataFromArduinoCommand.cs" />
     <Compile Include="Application\Commands\ReadSettingsFromArduinoCommand.cs" />
+    <Compile Include="Application\Commands\ResetArduinoCommand.cs" />
     <Compile Include="Application\Commands\SaveSettingsCommand.cs" />
     <Compile Include="Application\Commands\SendStringCommand.cs" />
     <Compile Include="Application\Events\AccumulatorsReceived.cs" />

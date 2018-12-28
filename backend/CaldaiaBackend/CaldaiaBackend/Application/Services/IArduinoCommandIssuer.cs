@@ -11,5 +11,6 @@
         void IncrementRotexTermoMin();
         void SaveSettings();
         void SendString(string toSend);
+        void FlashDTR();
     }
 }

@@ -12,7 +12,8 @@ namespace CaldaiaBackend.Application.Commands.Handlers
                                             ICommandHandler<IncrementRotexTermoMaxCommand>,
                                             ICommandHandler<DecrementRotexTermoMaxCommand>,
                                             ICommandHandler<SaveSettingsCommand>,
-                                            ICommandHandler<SendStringCommand>
+                                            ICommandHandler<SendStringCommand>,
+                                            ICommandHandler<ResetArduinoCommand>
     {
         private readonly IArduinoCommandIssuer _arduino;
 
@@ -81,10 +82,18 @@ namespace CaldaiaBackend.Application.Commands.Handlers
 
         public Task Execute(SendStringCommand Action)
         {
-            _arduino.SendString(Action.ToSend);
+            if (Action.ToSend == "RESET")
+                _arduino.FlashDTR();
+            else
+                _arduino.SendString(Action.ToSend);
 
             return EmptyTask;
         }
 
+        public Task Execute(ResetArduinoCommand Action)
+        {
+            _arduino.FlashDTR();
+            return EmptyTask;
+        }
     }
 }

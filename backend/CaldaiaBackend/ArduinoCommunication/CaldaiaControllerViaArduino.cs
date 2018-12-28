@@ -15,6 +15,8 @@ namespace ArduinoCommunication
     public class CaldaiaControllerViaArduino : IDisposable, IArduinoDataReader, IArduinoCommandIssuer
     {
         private const int CommandToResponseTimeoutMillis = 15000;
+        private const int NumberOfJsonParsingFailuresBeforeReset = 10;
+        private static readonly TimeSpan SecondsBeforeResettingNumberOfsonParsingFailures = TimeSpan.FromSeconds(30);
         private static bool _recovering = false;
         private readonly Timer _commandToResponseTimeoutTimer;
         private readonly Timer _commandSender;
@@ -22,6 +24,7 @@ namespace ArduinoCommunication
 
         private readonly string _serialPort;
         private Timer _timer;
+        private Timer _failedJsonResetTimeout;
         private SerialPort _physicalPort;
         private string _currentJson;
         private readonly Queue<string> _readQueue = new Queue<string>(1024);
@@ -35,6 +38,7 @@ namespace ArduinoCommunication
         private readonly ILogger _log;
         private bool _dequeuing = false;
         private bool _sendingOrReceiving = false;
+        private int _failedJsonCounter = 0;
 
         public DataFromArduino Latest { get; private set; } = new DataFromArduino();
         public SettingsFromArduino LatestSettings { get; set; }
@@ -47,11 +51,11 @@ namespace ArduinoCommunication
         public CaldaiaControllerViaArduino(
             string serialPort,
             IEventDispatcher dispatcher,
-            ILoggerFactory loggerFactory
-            )
+            ILoggerFactory loggerFactory)
         {
             _serialPort = serialPort;
             _dispatcher = dispatcher;
+            _failedJsonResetTimeout = new Timer(state => ResetFailedJsonCounter(), null, -1, -1);
             _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
             _commandToResponseTimeoutTimer = new Timer(TryRecoverConnection, null, -1, -1);
             _commandSender = new Timer(DequeueCommand, null, -1, -1);
@@ -88,6 +92,12 @@ namespace ArduinoCommunication
             return () => { RawDataObservers -= observer; };
         }
 
+        private void ResetFailedJsonCounter()
+        {
+            _log.Warning($"Resetting FailedJsonCounter from [{_failedJsonCounter}] to 0");
+            _failedJsonCounter = 0;
+        }
+
         private void SetupSerialPort()
         {
             try
@@ -118,7 +128,7 @@ namespace ArduinoCommunication
             FlashDTR();
         }
 
-        private void FlashDTR()
+        public void FlashDTR()
         {
             try
             {
@@ -216,7 +226,21 @@ namespace ArduinoCommunication
             }
             catch (Exception x)
             {
-                _log.Warning($"Errors while parsing {_currentJson}", x);
+                _failedJsonCounter++;
+                _failedJsonResetTimeout.Change(SecondsBeforeResettingNumberOfsonParsingFailures.Milliseconds, -1);
+
+                _log.Warning($"[{_failedJsonCounter}] Errors while parsing {_currentJson}", x);
+
+                if (_failedJsonCounter >= NumberOfJsonParsingFailuresBeforeReset)
+                {
+                    _log.Error(
+                        $"[{_failedJsonCounter} > {NumberOfJsonParsingFailuresBeforeReset}] " +
+                        $"Resetting Board via FlashDTR "
+                        );
+                    ResetFailedJsonCounter();
+                    _failedJsonResetTimeout.Change(-1, -1);
+                    FlashDTR();
+                }
             }
         }
 

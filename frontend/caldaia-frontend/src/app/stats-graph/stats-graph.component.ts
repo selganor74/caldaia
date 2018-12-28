@@ -23,6 +23,7 @@ interface IDataset {
 }
 
 interface IChartData {
+  header: string; // this is not needed by the chart, but by our UI
   labels: string[];
   datasets: IDataset[];
 }
@@ -105,9 +106,10 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
       totalTimeOn += toAddNoRounding;
     }
 
-    chartDataset.label = propertyName + ' - Tempo Accensione Totale: ' + Math.round( ( totalTimeOn / 1000 / 60 ) * 10 ) / 10 + ' min.';
+    chartDataset.label =  'Tot: ' + Math.round( ( totalTimeOn / 1000 / 60 ) * 10 ) / 10 + ' min.';
 
     const chartData: IChartData = {
+      header: propertyName,
       labels: labels,
       datasets: [chartDataset]
     };

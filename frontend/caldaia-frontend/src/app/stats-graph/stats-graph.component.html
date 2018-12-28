@@ -2,7 +2,7 @@
   <p-header>Accumulators</p-header>
   <div class="fluid-container">
     <div class="row justify-content-center">
-      <p-card class="chart" *ngFor="let chartData of allChartsData">
+      <p-card class="chart" [title]="chartData.header" *ngFor="let chartData of allChartsData">
         <p-chart type="bar" [data]="chartData"></p-chart>
       </p-card>
     </div>

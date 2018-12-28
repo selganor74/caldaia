@@ -143,14 +143,6 @@
             </p-tabPanel>
             
             <p-tabPanel header="Terminale"  [cache]="false">
-                <div class="row">
-                    <p-toolbar class="col-md-12 col-lg-12">
-                        <div class="ui-toolbar-group-left">
-                            <button pButton type="button" class="ui-button-success" icon="pi pi-caret-right" label="poller"
-                                (click)="pausePoller()"></button>
-                        </div>
-                    </p-toolbar>
-                </div>
 
                 <app-terminal *ngIf="selectedTab ? selectedTab.index == 3 : false"></app-terminal>
 

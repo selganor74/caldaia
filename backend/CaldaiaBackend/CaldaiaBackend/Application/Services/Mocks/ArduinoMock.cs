@@ -96,6 +96,11 @@ namespace CaldaiaBackend.Application.Services.Mocks
             
         }
 
+        public void FlashDTR()
+        {
+
+        }
+
         public DataFromArduino Latest => RandomData;
         public SettingsFromArduino LatestSettings => RandomSettings;
 
