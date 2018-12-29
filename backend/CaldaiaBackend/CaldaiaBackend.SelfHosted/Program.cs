@@ -14,6 +14,7 @@ using Castle.Windsor;
 using Infrastructure.DomainEvents;
 using Infrastructure.Hosting.IoC.CastleWindsor;
 using Infrastructure.Logging;
+using Services.TimeSlotLoaderSaver.GDrive;
 using Topshelf;
 
 namespace CaldaiaBackend.SelfHosted
@@ -115,7 +116,12 @@ namespace CaldaiaBackend.SelfHosted
                 Component
                     .For<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>()
 #if DEBUG
-                    .ImplementedBy<InMemoryTimeBufferLoaderSaver<AccumulatorStatistics>>()
+                    // .ImplementedBy<InMemoryTimeBufferLoaderSaver<AccumulatorStatistics>>()
+                    .ImplementedBy<GDriveTimeSlotLoaderSaver<AccumulatorStatistics>>()
+                    .UsingFactoryMethod((kernel, context) => new GDriveTimeSlotLoaderSaver<AccumulatorStatistics>(
+                        "CaldaiaBackend.Last24Hours.DEBUG.json",
+                        kernel.Resolve<ILoggerFactory>()
+                    ))
 #else
                     .ImplementedBy<FileSystemTimeSlotLoaderSaver<AccumulatorStatistics>>()
                     .DependsOn(

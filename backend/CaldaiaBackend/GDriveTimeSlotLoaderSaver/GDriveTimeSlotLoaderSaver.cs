@@ -97,7 +97,7 @@ namespace Services.TimeSlotLoaderSaver.GDrive
             }
 
             // Create Drive API service.
-            _service = new DriveService(new BaseClientService.Initializer()
+            _service = new DriveService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
                 ApplicationName = ApplicationName,
@@ -132,13 +132,9 @@ namespace Services.TimeSlotLoaderSaver.GDrive
             var toBeSaved = toSave.AsJson();
             using (var toUpload = StringToStream(toBeSaved))
             {
-                var file = new GoogleFile
-                {
-                    Id = _fileId,
-                    Name = _fileName,
-                    MimeType = GFileMimeType
-                };
-                var updateRequest = _service.Files.Create(file, toUpload, GFileMimeType);
+                var file = new GoogleFile();
+                // var updateRequest = _service.Files.Create(file, toUpload, GFileMimeType);
+                var updateRequest = _service.Files.Update(file, _fileId, toUpload, GFileMimeType);
 
                 updateRequest.Upload();
 

@@ -183,6 +183,10 @@
       <Project>{fe9abd11-b63f-4e9d-89b5-464e63248eb0}</Project>
       <Name>FileSystemTimeSlotLoaderSaver</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GDriveTimeSlotLoaderSaver\GDriveTimeSlotLoaderSaver.csproj">
+      <Project>{43f05d38-e6f2-400a-876c-d21746b68c33}</Project>
+      <Name>GDriveTimeSlotLoaderSaver</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="DeployScripts\PsExec.exe" />
