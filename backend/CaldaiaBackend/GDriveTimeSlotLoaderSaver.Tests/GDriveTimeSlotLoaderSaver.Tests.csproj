@@ -6,11 +6,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F49422BE-3E92-46A7-B258-D6B41464EEF6}</ProjectGuid>
+    <ProjectGuid>{E81C290C-0EDE-47D9-AB5B-DCFA9025F568}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CaldaiaBackendTests</RootNamespace>
-    <AssemblyName>CaldaiaBackendTests</AssemblyName>
+    <RootNamespace>GDriveTimeSlotLoaderSaver.Tests</RootNamespace>
+    <AssemblyName>GDriveTimeSlotLoaderSaver.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -57,24 +57,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CaldaiaController_Tests.cs" />
-    <Compile Include="CircularTimeBuffer_Tests.cs" />
-    <Compile Include="SerialPortEnumerator_Tests.cs" />
+    <Compile Include="GDriveTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ArduinoCommunication\ArduinoCommunication.csproj">
-      <Project>{42b784be-893e-4698-bbe5-6eb50a0e339b}</Project>
-      <Name>ArduinoCommunication</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CaldaiaBackend\CaldaiaBackend.csproj">
       <Project>{2acf8772-0238-4790-b4c6-8ec4a09e8e1d}</Project>
       <Name>CaldaiaBackend</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GDriveTimeSlotLoaderSaver\GDriveTimeSlotLoaderSaver.csproj">
+      <Project>{43f05d38-e6f2-400a-876c-d21746b68c33}</Project>
+      <Name>GDriveTimeSlotLoaderSaver</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
