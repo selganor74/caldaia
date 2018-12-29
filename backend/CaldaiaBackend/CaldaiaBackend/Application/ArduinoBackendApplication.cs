@@ -13,9 +13,10 @@ namespace CaldaiaBackend.Application
 {
     public class ArduinoBackendApplication : BaseApplication
     {
+        private Timer _dataPollerJob;
+
         private readonly IArduinoDataReader _dataReader;
         private readonly INotificationPublisher _publisher;
-        private Timer _backgroundJob;
         private readonly int _pollIntervalMilliseconds = 5000;
         private readonly ILogger _log;
         private readonly Last24Hours _last24HoursProjection;
@@ -58,7 +59,7 @@ namespace CaldaiaBackend.Application
 
         private void StartDataPollerTask()
         {
-            _backgroundJob = new Timer(pollData, null, _pollIntervalMilliseconds, _pollIntervalMilliseconds);
+            _dataPollerJob = new Timer(pollData, null, _pollIntervalMilliseconds, _pollIntervalMilliseconds);
         }
 
         private void StartProjections()
@@ -96,7 +97,7 @@ namespace CaldaiaBackend.Application
 
         public void PausePollerForSeconds(int seconds)
         {
-            _backgroundJob.Change(seconds * 1000, _pollIntervalMilliseconds);
+            _dataPollerJob.Change(seconds * 1000, _pollIntervalMilliseconds);
         }
     }
 }

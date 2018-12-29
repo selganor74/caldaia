@@ -114,25 +114,22 @@ namespace CaldaiaBackend.SelfHosted
                     .LifestyleSingleton(),
 
                 Component
-                    .For<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>()
-#if DEBUG
-                    // .ImplementedBy<InMemoryTimeBufferLoaderSaver<AccumulatorStatistics>>()
-                    .ImplementedBy<GDriveTimeSlotLoaderSaver<AccumulatorStatistics>>()
-                    .UsingFactoryMethod((kernel, context) => new GDriveTimeSlotLoaderSaver<AccumulatorStatistics>(
-                        "CaldaiaBackend.Last24Hours.DEBUG.json",
-                        kernel.Resolve<ILoggerFactory>()
-                    ))
-#else
-                    .ImplementedBy<FileSystemTimeSlotLoaderSaver<AccumulatorStatistics>>()
-                    .DependsOn(
-                        Dependency
-                            .OnAppSettingsValue("PathToJsonStorageFile", "PathToLast24HoursJson")
-                        )
-#endif
-                    .LifestyleTransient(),
-
-                Component
                     .For<Last24Hours>()
+                    .DependsOn(
+                        Dependency.OnValue<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>(
+#if DEBUG
+                            // new InMemoryTimeBufferLoaderSaver<AccumulatorStatistics>()
+                            new FileSystemTimeSlotLoaderSaver<AccumulatorStatistics>(
+                                ConfigurationManager.AppSettings["PathToLast24HoursJson"]
+                                )
+#else
+                            new GDriveTimeSlotLoaderSaver<AccumulatorStatistics>(
+                                    "CaldaiaBackend.Last24Hours.json",
+                                    Container.Resolve<ILoggerFactory>()
+                            )
+#endif
+                        )
+                    )
                     .LifestyleSingleton()
             );
         }
