@@ -29,5 +29,16 @@ namespace CaldaiaBackend.SelfHosted.Controllers
 
             return Ok(toReturn);
         }
+
+        [HttpGet]
+        [Route("api/statistics/last-24-hours-temperatures")]
+        public IHttpActionResult GetLast24HoursTempStats()
+        {
+            var query = new GetLast24HoursTemperaturesStatisticsQuery();
+            var toReturn = _arduinoApp.ExecuteQuery<GetLast24HoursTemperaturesStatisticsQuery, string>(query);
+
+            return Ok(toReturn);
+        }
+
     }
 }

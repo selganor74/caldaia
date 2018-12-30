@@ -1,6 +1,7 @@
 ﻿using CaldaiaBackend.Application.Projections;
 using CaldaiaBackend.Application.Projections.DataModels;
 using CaldaiaBackend.Application.Services;
+using CaldaiaBackend.Application.Services.Mocks;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;

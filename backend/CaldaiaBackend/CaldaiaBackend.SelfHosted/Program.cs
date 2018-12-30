@@ -12,6 +12,7 @@ using CaldaiaBackend.SelfHosted.Infrastructure.SignalRLogging;
 using CaldaiaBackend.SelfHosted.IoC;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
+using Infrastructure.Application;
 using Infrastructure.DomainEvents;
 using Infrastructure.Hosting.IoC.CastleWindsor;
 using Infrastructure.Logging;
@@ -22,20 +23,25 @@ namespace CaldaiaBackend.SelfHosted
 {
     class Program
     {
-        public static IWindsorContainer Container = new WindsorContainer();
+        public static IWindsorContainer Container;
         private static ILogger log;
 
         static void Main(string[] args)
         {
-            RegisterMainComponents();
+            using (Container = new WindsorContainer())
+            {
+                RegisterMainComponents();
 
-            BuildAppComponentsAndApplication();
+                var app = BuildAppComponentsAndApplication();
+                using (app as IDisposable)
+                {
+                    SetupLogging();
 
-            SetupLogging();
+                    StartupApplication();
 
-            StartupApplication();
-
-            RunInOwinAndTopshelf();
+                    RunInOwinAndTopshelf();
+                }
+            }
         }
 
         private static void RunInOwinAndTopshelf()
@@ -49,7 +55,12 @@ namespace CaldaiaBackend.SelfHosted
                 {
                     s.ConstructUsing(name => new WebAppRunner(loggerFactory));
                     s.WhenStarted(tc => tc.Start());
-                    s.WhenStopped(tc => tc.Stop());
+                    s.WhenStopped(tc =>
+                    {
+                        tc.Stop();
+                        tc.Dispose();
+                        Container.Dispose();
+                    });
                 });
                 hc.RunAsLocalSystem();
 
@@ -89,10 +100,10 @@ namespace CaldaiaBackend.SelfHosted
             }
         }
 
-        private static void BuildAppComponentsAndApplication()
+        private static IApplication BuildAppComponentsAndApplication()
         {
             var factory = new CastleApplicationFactory(Container);
-            factory
+            return factory
                 .WithPostContainerBuildAction(container => { container.Install(new ProjectionsInstaller()); })
                 .BuildApplication<ArduinoBackendApplication>();
         }

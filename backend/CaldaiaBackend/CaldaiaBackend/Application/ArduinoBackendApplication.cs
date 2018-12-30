@@ -11,7 +11,7 @@ using Infrastructure.MiscPatterns.Notification;
 
 namespace CaldaiaBackend.Application
 {
-    public class ArduinoBackendApplication : BaseApplication
+    public class ArduinoBackendApplication : BaseApplication, IDisposable
     {
         private Timer _dataPollerJob;
 
@@ -102,6 +102,13 @@ namespace CaldaiaBackend.Application
         public void PausePollerForSeconds(int seconds)
         {
             _dataPollerJob.Change(seconds * 1000, _pollIntervalMilliseconds);
+        }
+
+        public void Dispose()
+        {
+            _dataPollerJob?.Dispose();
+            _last24HoursProjection?.Dispose();
+            _last24HoursTempsProjection?.Dispose();
         }
     }
 }

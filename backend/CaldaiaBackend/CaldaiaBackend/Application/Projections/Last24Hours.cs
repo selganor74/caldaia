@@ -9,7 +9,7 @@ using Infrastructure.Logging;
 
 namespace CaldaiaBackend.Application.Projections
 {
-    public class Last24Hours
+    public class Last24Hours : IDisposable
     {
         private IEventSubscriber _dispatcher;
         private ILogger _log;
@@ -56,6 +56,12 @@ namespace CaldaiaBackend.Application.Projections
         public string GetCurrentStatisticsAsJson()
         {
             return this._timeBuffer.AsJson();
+        }
+
+        public void Dispose()
+        {
+            var disposableLoader = _loader as IDisposable;
+            disposableLoader?.Dispose();
         }
     }
 }

@@ -16,7 +16,7 @@ using Owin;
 
 namespace CaldaiaBackend.SelfHosted.Owin
 {
-    public class Startup
+    public class Startup : IDisposable
     {
         private static ILogger _log;
         private SignalRNotificationAdapter _signalRNotificationHub;
@@ -89,6 +89,10 @@ namespace CaldaiaBackend.SelfHosted.Owin
                 Console.ReadKey();
                 throw;
             }
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

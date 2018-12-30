@@ -6,18 +6,22 @@ using Infrastructure.Actions.Query.Handler;
 namespace CaldaiaBackend.Application.Queries.Handlers
 {
     public class ArduinoQueriesHandler :    IQueryHandler<GetLatestDataQuery, DataFromArduino>,
-                                            IQueryHandler<GetLast24HoursStatisticsQuery, string>
+                                            IQueryHandler<GetLast24HoursStatisticsQuery, string>,
+                                            IQueryHandler<GetLast24HoursTemperaturesStatisticsQuery, string>
     {
-        private IArduinoDataReader _reader;
-        private Last24Hours _last24HoursProjection;
+        private readonly IArduinoDataReader _reader;
+        private readonly Last24Hours _last24HoursProjection;
+        private readonly Last24HoursTemperatures _last24HoursTempsProjection;
 
         public ArduinoQueriesHandler(
             IArduinoDataReader reader,
-            Last24Hours last24HoursProjection
+            Last24Hours last24HoursProjection,
+            Last24HoursTemperatures last24HoursTempsProjection
             )
         {
             _reader = reader;
             _last24HoursProjection = last24HoursProjection;
+            _last24HoursTempsProjection = last24HoursTempsProjection;
         }
         public DataFromArduino Execute(GetLatestDataQuery Action)
         {
@@ -27,6 +31,11 @@ namespace CaldaiaBackend.Application.Queries.Handlers
         public string Execute(GetLast24HoursStatisticsQuery Action)
         {
             return _last24HoursProjection.GetCurrentStatisticsAsJson();
+        }
+
+        public string Execute(GetLast24HoursTemperaturesStatisticsQuery Action)
+        {
+            return _last24HoursTempsProjection.GetCurrentStatisticsAsJson();
         }
     }
 }

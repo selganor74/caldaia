@@ -6,10 +6,11 @@ using CaldaiaBackend.Application.Services;
 using CaldaiaBackend.Infrastructure;
 using Infrastructure.DomainEvents;
 using Infrastructure.Logging;
+using Newtonsoft.Json;
 
 namespace CaldaiaBackend.Application.Projections
 {
-    public class Last24HoursTemperatures
+    public class Last24HoursTemperatures : IDisposable
     {
         private readonly IEventSubscriber _dispatcher;
         private readonly ILogger _log;
@@ -30,7 +31,7 @@ namespace CaldaiaBackend.Application.Projections
         public Task ProcessEvent(TemperaturesReceived evt)
         {
             _log.Trace("Processing event " + nameof(TemperaturesReceived), evt);
-            var stats = _timeBuffer.GetContentAtReference(evt.timestamp) 
+            var stats = _timeBuffer.GetContentAtReference(evt.timestamp)
                         ?? new TemperatureStatistics();
 
             var detail = TemperatureDetails.FromEvent(evt);
@@ -50,9 +51,20 @@ namespace CaldaiaBackend.Application.Projections
             _dispatcher.Subscribe<TemperaturesReceived>(ProcessEvent);
         }
 
-        public string GetCurrentStatisticsAsJson()
+        public string GetCurrentStatisticsAsJson(bool includeDetails = false)
         {
-            return this._timeBuffer.AsJson();
+            var timeBufferAsJson = this._timeBuffer.AsJson();
+            if (includeDetails) return timeBufferAsJson;
+
+            var dataWithoutDetails = CircularTimeSlotBuffer<TemperatureStatisticsWithNoDetails>.FromJson(timeBufferAsJson);
+
+            return dataWithoutDetails.AsJson();
+        }
+
+        public void Dispose()
+        {
+            var disposableLoader = _loader as IDisposable;
+            disposableLoader?.Dispose();
         }
     }
 }

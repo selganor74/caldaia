@@ -55,17 +55,9 @@ namespace CaldaiaBackend.Application.Projections.DataModels
         public double Avg { get; set; }
     }
 
-    public class TemperatureStatistics
+    public class TemperatureStatistics : TemperatureStatisticsWithNoDetails
     {
         public List<TemperatureDetails> DETAILS { get; set; } = new List<TemperatureDetails>();
-
-        public AggregatedValues TEMPERATURA_ACCUMULO { get; set; } = new AggregatedValues();
-
-        public AggregatedValues TEMPERATURA_PANNELLI { get; set; } = new AggregatedValues();
-
-        public AggregatedValues TEMPERATURA_CAMINO { get; set; } = new AggregatedValues();
-
-        public AggregatedValues TEMPERATURA_ACCUMULO_INFERIORE { get; set; } = new AggregatedValues();
 
         public void AddDetail(TemperatureDetails detail)
         {
@@ -86,7 +78,6 @@ namespace CaldaiaBackend.Application.Projections.DataModels
             TEMPERATURA_ACCUMULO_INFERIORE.Max = DETAILS.Max(d => d.TEMPERATURA_ACCUMULO_INFERIORE);
             TEMPERATURA_ACCUMULO_INFERIORE.Min = DETAILS.Min(d => d.TEMPERATURA_ACCUMULO_INFERIORE);
             TEMPERATURA_ACCUMULO_INFERIORE.Avg = DETAILS.Average(d => d.TEMPERATURA_ACCUMULO_INFERIORE);
-
         }
     }
 }
