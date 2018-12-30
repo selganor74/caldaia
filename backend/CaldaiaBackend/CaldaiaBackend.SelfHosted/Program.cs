@@ -9,6 +9,7 @@ using CaldaiaBackend.Application.Services;
 using CaldaiaBackend.Application.Services.Mocks;
 using CaldaiaBackend.Infrastructure;
 using CaldaiaBackend.SelfHosted.Infrastructure.SignalRLogging;
+using CaldaiaBackend.SelfHosted.IoC;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Infrastructure.DomainEvents;
@@ -91,7 +92,9 @@ namespace CaldaiaBackend.SelfHosted
         private static void BuildAppComponentsAndApplication()
         {
             var factory = new CastleApplicationFactory(Container);
-            factory.BuildApplication<ArduinoBackendApplication>();
+            factory
+                .WithPostContainerBuildAction(container => { container.Install(new ProjectionsInstaller()); })
+                .BuildApplication<ArduinoBackendApplication>();
         }
 
         private static void RegisterMainComponents()
@@ -111,25 +114,6 @@ namespace CaldaiaBackend.SelfHosted
                         return controller;
                     })
 #endif
-                    .LifestyleSingleton(),
-
-                Component
-                    .For<Last24Hours>()
-                    .DependsOn(
-                        Dependency.OnValue<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>(
-#if DEBUG
-                            // new InMemoryTimeBufferLoaderSaver<AccumulatorStatistics>()
-                            new FileSystemTimeSlotLoaderSaver<AccumulatorStatistics>(
-                                ConfigurationManager.AppSettings["PathToLast24HoursJson"]
-                                )
-#else
-                            new GDriveTimeSlotLoaderSaver<AccumulatorStatistics>(
-                                    "CaldaiaBackend.Last24Hours.json",
-                                    Container.Resolve<ILoggerFactory>()
-                            )
-#endif
-                        )
-                    )
                     .LifestyleSingleton()
             );
         }

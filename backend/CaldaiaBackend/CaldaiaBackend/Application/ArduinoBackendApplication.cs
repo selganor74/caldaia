@@ -20,10 +20,12 @@ namespace CaldaiaBackend.Application
         private readonly int _pollIntervalMilliseconds = 5000;
         private readonly ILogger _log;
         private readonly Last24Hours _last24HoursProjection;
+        private readonly Last24HoursTemperatures _last24HoursTempsProjection;
 
         public ArduinoBackendApplication(
             IArduinoDataReader dataReader,
             Last24Hours last24HoursProjection,
+            Last24HoursTemperatures last24HoursTempsProjection,
 
             ICommandExecutor theCommandExecutor,
             IQueryExecutor theQueryExecutor,
@@ -46,6 +48,7 @@ namespace CaldaiaBackend.Application
             _publisher = theNotificationPublisher;
             _log = theLoggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
             _last24HoursProjection = last24HoursProjection;
+            _last24HoursTempsProjection = last24HoursTempsProjection;
         }
 
         protected override void onAppStarting()
@@ -65,6 +68,7 @@ namespace CaldaiaBackend.Application
         private void StartProjections()
         {
             _last24HoursProjection.Start();
+            _last24HoursTempsProjection.Start();
         }
 
         private void RegisterObservers()

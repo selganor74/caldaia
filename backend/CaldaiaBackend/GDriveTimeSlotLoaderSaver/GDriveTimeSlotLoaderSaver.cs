@@ -17,7 +17,7 @@ using GoogleFile = Google.Apis.Drive.v3.Data.File;
 
 namespace Services.TimeSlotLoaderSaver.GDrive
 {
-    public class GDriveTimeSlotLoaderSaver<T> : ITimeSlotBufferLoaderSaver<T>
+    public class GDriveTimeSlotLoaderSaver<T> : ITimeSlotBufferLoaderSaver<T>, IDisposable
     {
         // If modifying these scopes, delete your previously saved credentials
         // at ~/.credentials/drive-dotnet-quickstart.json
@@ -38,6 +38,8 @@ namespace Services.TimeSlotLoaderSaver.GDrive
         private readonly string _fileName;
 
         private string _fileId;
+        private string _toBeSaved;
+        private Timer saveTimer;
 
         public GDriveTimeSlotLoaderSaver(
             string fileName,
@@ -50,6 +52,12 @@ namespace Services.TimeSlotLoaderSaver.GDrive
             _fileName = fileName;
             DoLogin();
             ObtainFileId();
+            StartSavingTimer();
+        }
+
+        private void StartSavingTimer()
+        {
+            saveTimer = new Timer(state => SaveToGDrive(), null, TimeSpan.FromMinutes(30), TimeSpan.FromMinutes(30));
         }
 
         private void ObtainFileId()
@@ -129,8 +137,12 @@ namespace Services.TimeSlotLoaderSaver.GDrive
 
         public void Save(CircularTimeSlotBuffer<T> toSave)
         {
-            var toBeSaved = toSave.AsJson();
-            using (var toUpload = StringToStream(toBeSaved))
+            _toBeSaved = toSave.AsJson();
+        }
+
+        public void SaveToGDrive()
+        {
+            using (var toUpload = StringToStream(_toBeSaved))
             {
                 var file = new GoogleFile();
                 // var updateRequest = _service.Files.Create(file, toUpload, GFileMimeType);
@@ -138,7 +150,7 @@ namespace Services.TimeSlotLoaderSaver.GDrive
 
                 updateRequest.Upload();
 
-                _log.Info("Saved file to Google Drive.", file);
+                _log.Info($"Saved file to Google Drive [{_fileName}/{_fileId}].");
             }
         }
 
@@ -150,6 +162,13 @@ namespace Services.TimeSlotLoaderSaver.GDrive
             sw.Flush();
             ms.Seek(0, SeekOrigin.Begin);
             return ms;
+        }
+
+        public void Dispose()
+        {
+            SaveToGDrive();
+            _service?.Dispose();
+            saveTimer?.Dispose();
         }
     }
 }

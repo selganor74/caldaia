@@ -58,5 +58,4 @@ namespace CaldaiaBackend.Application.Projections
             return this._timeBuffer.AsJson();
         }
     }
-
 }

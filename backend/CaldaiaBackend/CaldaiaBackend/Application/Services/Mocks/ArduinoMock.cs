@@ -59,6 +59,7 @@ namespace CaldaiaBackend.Application.Services.Mocks
             {
                 _dispatcher.Dispatch(AccumulatorsReceived.FromData(toSend));
             }
+            _dispatcher.Dispatch(TemperaturesReceived.FromData(toSend));
         }
 
         public void PullOutSettings()

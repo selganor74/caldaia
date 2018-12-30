@@ -6,7 +6,7 @@ namespace CaldaiaBackend.Application.Events
 {
     public class TemperaturesReceived : IDomainEvent
     {
-        DateTime timestamp { get; set; }
+        public DateTime timestamp { get; set; }
 
         /// <summary>
         /// temperatura registrata dal sensore sui pannelli solari

@@ -91,6 +91,8 @@
     <Compile Include="Application\Commands\SendStringCommand.cs" />
     <Compile Include="Application\Events\AccumulatorsReceived.cs" />
     <Compile Include="Application\Events\TemperaturesReceived.cs" />
+    <Compile Include="Application\Projections\DataModels\TemperatureStatistics.cs" />
+    <Compile Include="Application\Projections\Last24HoursTemperatures.cs" />
     <Compile Include="Application\Queries\GetLast24HoursStatisticsQuery.cs" />
     <Compile Include="Application\Services\Mocks\ArduinoMock.cs" />
     <Compile Include="Application\Projections\DataModels\AccumulatorStatistics.cs" />

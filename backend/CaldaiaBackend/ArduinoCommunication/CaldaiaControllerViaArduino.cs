@@ -214,7 +214,9 @@ namespace ArduinoCommunication
                     return;
                 }
 
-                if (_currentJson.Contains("\"_type\": \"data\"") || _currentJson.Contains("\"_type\": \"accumulators\""))
+                if (   _currentJson.Contains("\"_type\": \"data\"") 
+                    || _currentJson.Contains("\"_type\": \"accumulators\"")
+                       )
                 {
                     Latest = JsonConvert.DeserializeObject<DataFromArduino>(_currentJson);
                     NotifyObservers(Latest);
@@ -222,6 +224,8 @@ namespace ArduinoCommunication
                     {
                         _dispatcher.Dispatch(AccumulatorsReceived.FromData(Latest));
                     }
+
+                    _dispatcher.Dispatch(TemperaturesReceived.FromData(Latest));
                 }
             }
             catch (Exception x)

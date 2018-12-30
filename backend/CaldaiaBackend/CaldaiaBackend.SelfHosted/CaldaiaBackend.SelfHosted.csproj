@@ -150,6 +150,7 @@
     <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Infrastructure\SignalRLogging\SignalRLogsHub.cs" />
     <Compile Include="Infrastructure\SignalRLogging\SignalRLogWriter.cs" />
+    <Compile Include="IoC\ProjectionsInstaller.cs" />
     <Compile Include="Owin\IoC\WindsorControllerActivator.cs" />
     <Compile Include="Infrastructure\SignalRLogging\LogEntry.cs" />
     <Compile Include="Owin\SignalRHubs\BaseHub.cs" />
