@@ -1,3 +1,5 @@
+import { ITimeSlot } from './i-time-slot';
+
 export interface IAccumulatorsContent {
     TEMPO_ACCENSIONE_POMPA_RISCALDAMENTO: number;
     TEMPO_ACCENSIONE_POMPA_CAMINO: number;
@@ -7,9 +9,5 @@ export interface IAccumulatorsContent {
     TEMPO_ACCENSIONE_POMPA_SOLARE: number;
 }
 
-export interface IAccumulatorsTimeSlot {
-    SlotEnd: Date;
-    SlotSize: string;
-    SlotStart: Date;
-    Content: IAccumulatorsContent;
+export interface IAccumulatorsTimeSlot extends ITimeSlot < IAccumulatorsContent > {
 }

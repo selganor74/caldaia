@@ -5,18 +5,25 @@ import {
 } from '@angular/core';
 
 import {
-  HttpClient,
-  HttpHeaders
+  HttpClient
 } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
 
-import { IAccumulatorsTimeSlot, IAccumulatorsContent } from './i-accumulators-time-slot';
+import {
+  IAccumulatorsTimeSlot,
+  IAccumulatorsContent
+} from './i-accumulators-time-slot';
 
 import * as moment from 'moment';
+import {
+  ITemperaturesTimeSlot,
+  ITemperaturesContent
+} from './i-temperatures-time-slot';
 
 interface IDataset {
   label: string;
+  fill?: boolean;
   backgroundColor: string;
   borderColor: string;
   data: number[];
@@ -38,6 +45,7 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
   private interval: any;
 
   public allChartsData: IChartData[] = [];
+  public allTempChartsData: IChartData[] = [];
 
   constructor(
     private http: HttpClient
@@ -58,6 +66,77 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
       const parsedData: IAccumulatorsTimeSlot[] = JSON.parse(data);
       this.buildAllChartsData(parsedData);
     });
+    this.http.get(this.apiBaseUrl + '/statistics/last-24-hours-temperatures').subscribe((data: string) => {
+      const parsedData: ITemperaturesTimeSlot[] = JSON.parse(data);
+      this.buildAllTempChartsData(parsedData);
+    });
+  }
+
+  buildAllTempChartsData(dataFromApi: ITemperaturesTimeSlot[]): any {
+    let aContent: ITemperaturesContent;
+    let index = dataFromApi.length - 1;
+
+    while (!aContent && index >= 0) {
+      aContent = dataFromApi[index].Content;
+      index--;
+    }
+
+    if (!aContent) { return; }
+    this.allTempChartsData = [];
+    // foreach property we can build a Graph.
+    for (const propertyName in aContent) {
+      if (!aContent.hasOwnProperty(propertyName)) { continue; }
+
+      const chartData = this.buildGraphForTemperaturesProperty(dataFromApi, propertyName);
+      this.allTempChartsData.push(chartData);
+    }
+  }
+
+  buildGraphForTemperaturesProperty(dataFromApi: ITemperaturesTimeSlot[], propertyName: string): any {
+    const labels: string[] = [];
+
+    const chartMinDataset: IDataset = {
+      backgroundColor: 'blue',
+      borderColor: 'darkblue',
+      label: 'T.Min',
+      fill: false,
+      data: []
+    };
+
+    const chartMaxDataset: IDataset = {
+      backgroundColor: 'red',
+      borderColor: 'darkred',
+      label: 'T.Max',
+      fill: false,
+      data: []
+    };
+
+    const chartAvgDataset: IDataset = {
+      backgroundColor: 'green',
+      borderColor: 'darkgreen',
+      label: 'T.Media',
+      fill: false,
+      data: []
+    };
+
+    for (const slot of dataFromApi) {
+      labels.push(moment(slot.SlotStart).format('HH:mm'));
+
+      const min = slot.Content ? slot.Content[propertyName].Min : undefined;
+      const max = slot.Content ? slot.Content[propertyName].Max : undefined;
+      const avg = slot.Content ? Math.round(slot.Content[propertyName].Avg * 100) / 100 : undefined;
+      chartMinDataset.data.push(min);
+      chartMaxDataset.data.push(max);
+      chartAvgDataset.data.push(avg);
+    }
+
+    const chartData: IChartData = {
+      header: propertyName,
+      labels: labels,
+      datasets: [chartMaxDataset, chartMinDataset, chartAvgDataset]
+    };
+
+    return chartData;
   }
 
   ngOnDestroy(): void {
@@ -65,7 +144,6 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
   }
 
   private buildAllChartsData(dataFromApi: IAccumulatorsTimeSlot[]) {
-    const available_data: string[] = [];
     let aContent: IAccumulatorsContent;
     let index = dataFromApi.length - 1;
 

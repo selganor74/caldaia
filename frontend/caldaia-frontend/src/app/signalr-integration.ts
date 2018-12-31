@@ -108,7 +108,12 @@ export class SignalRIntegration {
         this._hubConnection.reconnectDelay = 2000;
         this._hubConnection.stateChanged((state) => {
 
-            const stateConversion = { 0: 'connecting', 1: 'connected', 2: 'reconnecting', 4: 'disconnected' };
+            const stateConversion = {
+                0: 'connecting',
+                1: 'connected',
+                2: 'reconnecting',
+                4: 'disconnected'
+            };
             const stateDescription = stateConversion[state.newState];
 
             console.log('SignalR: Connection status changed to ' + stateDescription);
