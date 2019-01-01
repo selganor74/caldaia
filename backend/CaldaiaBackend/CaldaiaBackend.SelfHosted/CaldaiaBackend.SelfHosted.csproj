@@ -148,9 +148,15 @@
   <ItemGroup>
     <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
+    <Compile Include="Infrastructure\EventLogLogging\EventLogWriter.cs" />
     <Compile Include="Infrastructure\SignalRLogging\SignalRLogsHub.cs" />
     <Compile Include="Infrastructure\SignalRLogging\SignalRLogWriter.cs" />
-    <Compile Include="IoC\ProjectionsInstaller.cs" />
+    <Compile Include="IoC\ArduinoInstaller_RELEASE.cs" />
+    <Compile Include="IoC\ArduinoInstaller_DEBUG.cs" />
+    <Compile Include="IoC\LoggingInstaller_RELEASE.cs" />
+    <Compile Include="IoC\LoggingInstaller_DEBUG.cs" />
+    <Compile Include="IoC\ProjectionsInstaller_DEBUG.cs" />
+    <Compile Include="IoC\ProjectionsInstaller_RELEASE.cs" />
     <Compile Include="Owin\IoC\WindsorControllerActivator.cs" />
     <Compile Include="Infrastructure\SignalRLogging\LogEntry.cs" />
     <Compile Include="Owin\SignalRHubs\BaseHub.cs" />

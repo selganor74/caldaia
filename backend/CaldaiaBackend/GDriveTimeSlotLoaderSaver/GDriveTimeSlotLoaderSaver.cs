@@ -147,10 +147,16 @@ namespace Services.TimeSlotLoaderSaver.GDrive
                 var file = new GoogleFile();
                 // var updateRequest = _service.Files.Create(file, toUpload, GFileMimeType);
                 var updateRequest = _service.Files.Update(file, _fileId, toUpload, GFileMimeType);
+                try
+                {
+                    updateRequest.Upload();
+                    _log.Info($"Saved file to Google Drive [{_fileName}/{_fileId}].");
+                }
+                catch (Exception e)
+                {
+                    _log.Warning($"Unable to save {_fileName} to Google Drive", e);
+                }
 
-                updateRequest.Upload();
-
-                _log.Info($"Saved file to Google Drive [{_fileName}/{_fileId}].");
             }
         }
 

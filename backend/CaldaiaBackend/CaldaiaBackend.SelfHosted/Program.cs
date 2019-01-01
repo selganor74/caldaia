@@ -1,22 +1,10 @@
 ﻿using System;
-using System.Configuration;
-using Application.Services;
-using ArduinoCommunication;
 using CaldaiaBackend.Application;
-using CaldaiaBackend.Application.Projections;
-using CaldaiaBackend.Application.Projections.DataModels;
-using CaldaiaBackend.Application.Services;
-using CaldaiaBackend.Application.Services.Mocks;
-using CaldaiaBackend.Infrastructure;
-using CaldaiaBackend.SelfHosted.Infrastructure.SignalRLogging;
 using CaldaiaBackend.SelfHosted.IoC;
-using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Infrastructure.Application;
-using Infrastructure.DomainEvents;
 using Infrastructure.Hosting.IoC.CastleWindsor;
 using Infrastructure.Logging;
-using Services.TimeSlotLoaderSaver.GDrive;
 using Topshelf;
 
 namespace CaldaiaBackend.SelfHosted
@@ -81,52 +69,35 @@ namespace CaldaiaBackend.SelfHosted
 
         private static void SetupLogging()
         {
-            var logWriter = Container.Resolve<ILogWriter>();
 #if DEBUG
-            logWriter.SetLogLevel(LogLevel.Trace);
+            Container.Install(new LoggingInstaller_DEBUG());
 #else
-            logWriter.SetLogLevel(LogLevel.Info);
+            Container.Install(new LoggingInstaller_RELEASE());
 #endif
-
-            var clw = logWriter as CompositeLogWriter;
-            if (clw != null)
-            {
-#if DEBUG
-                var signalrLogWriter = new SignalRLogWriter(LogLevel.Info);
-#else
-                var signalrLogWriter = new SignalRLogWriter(LogLevel.Warning);
-#endif
-                clw.AddLogger(signalrLogWriter, LogLevelMode.Independent);
-            }
         }
 
         private static IApplication BuildAppComponentsAndApplication()
         {
             var factory = new CastleApplicationFactory(Container);
             return factory
-                .WithPostContainerBuildAction(container => { container.Install(new ProjectionsInstaller()); })
+                .WithPostContainerBuildAction(container =>
+                {
+#if DEBUG
+                    container.Install(new ProjectionsInstaller_DEBUG());
+#else
+                    container.Install(new ProjectionsInstaller_RELEASE());
+#endif
+                })
                 .BuildApplication<ArduinoBackendApplication>();
         }
 
         private static void RegisterMainComponents()
         {
-            Container.Register(
-                Component
-                    .For<IArduinoDataReader, IArduinoCommandIssuer>()
 #if DEBUG
-                    .ImplementedBy<ArduinoMock>()
+            Container.Install(new ArduinoInstaller_DEBUG());
 #else
-                    .ImplementedBy<CaldaiaControllerViaArduino>()
-                    .UsingFactoryMethod((kernel) =>
-                    {
-                        var serialPort = ConfigurationManager.AppSettings["ArduinoComPort"];
-                        var controller = new CaldaiaControllerViaArduino(serialPort, kernel.Resolve<IEventDispatcher>(), kernel.Resolve<ILoggerFactory>());
-                        controller.Start();
-                        return controller;
-                    })
+            Container.Install(new ArduinoInstaller_RELEASE());
 #endif
-                    .LifestyleSingleton()
-            );
         }
     }
 }

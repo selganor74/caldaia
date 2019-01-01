@@ -1,8 +1,12 @@
 import {
   Component,
   OnInit,
-  OnDestroy
+  OnDestroy,
+//  ChangeDetectorRef
 } from '@angular/core';
+
+import { Chart } from 'chart.js';
+import { cloneDeep } from 'lodash/fp';
 
 import {
   HttpClient
@@ -21,18 +25,24 @@ import {
   ITemperaturesContent
 } from './i-temperatures-time-slot';
 
-interface IDataset {
-  label: string;
-  fill?: boolean;
-  backgroundColor: string;
-  borderColor: string;
-  data: number[];
+interface IChartData extends Chart.ChartData {
+  header: string; // this is not needed by the chart, but by our UI
 }
 
-interface IChartData {
-  header: string; // this is not needed by the chart, but by our UI
-  labels: string[];
-  datasets: IDataset[];
+type PossibleDatasets = 'tmax' | 'tmin' | 'tavg';
+class TemperatureChartData {
+  public chartData: IChartData;
+  public availableChartData: { [possibleDataset: string]: Chart.ChartDataSets } = {};
+
+  public setAvailableDataSets(enableDataSets: PossibleDatasets[]) {
+
+    this.chartData.datasets = [];
+    this.chartData = cloneDeep(this.chartData);
+
+    for (const ds of enableDataSets) {
+      this.chartData.datasets.push(this.availableChartData[ds]);
+    }
+  }
 }
 
 @Component({
@@ -45,20 +55,50 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
   private interval: any;
 
   public allChartsData: IChartData[] = [];
-  public allTempChartsData: IChartData[] = [];
+  public allTempChartsData: TemperatureChartData[] = [];
+  public commonChartOptions: Chart.ChartOptions = {};
+
+  private _tempDatasetsToShow: PossibleDatasets[] = ['tavg'];
+
+  public get tempDatasetsToShow(): PossibleDatasets[] {
+    return this._tempDatasetsToShow;
+  }
+
+  public set tempDatasetsToShow(value: PossibleDatasets[]) {
+    this._tempDatasetsToShow = value;
+    this.setDatasetsToShow();
+  }
 
   constructor(
     private http: HttpClient
+    // private changeDetectorRef: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
     this.apiBaseUrl = environment.apiBaseUrl;
 
+    this.commonChartOptions.devicePixelRatio = 4 / 1;
+    this.commonChartOptions.responsive = true;
+
     this.getDataAndBuildGraphs();
 
     this.interval = setInterval(() => {
       this.getDataAndBuildGraphs();
-    }, 60000 );
+    }, 60000);
+  }
+
+
+  private setDatasetsToShow(): any {
+    for (const dt of this.allTempChartsData) {
+      dt.setAvailableDataSets(this._tempDatasetsToShow);
+    }
+    const tempArray = this.allTempChartsData;
+    this.allTempChartsData = [];
+
+    for (const t of tempArray) {
+      this.allTempChartsData.push(t);
+    }
+    // this.changeDetectorRef.detectChanges();
   }
 
   private getDataAndBuildGraphs() {
@@ -69,6 +109,7 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
     this.http.get(this.apiBaseUrl + '/statistics/last-24-hours-temperatures').subscribe((data: string) => {
       const parsedData: ITemperaturesTimeSlot[] = JSON.parse(data);
       this.buildAllTempChartsData(parsedData);
+      this.setDatasetsToShow();
     });
   }
 
@@ -92,10 +133,10 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
     }
   }
 
-  buildGraphForTemperaturesProperty(dataFromApi: ITemperaturesTimeSlot[], propertyName: string): any {
+  buildGraphForTemperaturesProperty(dataFromApi: ITemperaturesTimeSlot[], propertyName: string): TemperatureChartData {
     const labels: string[] = [];
 
-    const chartMinDataset: IDataset = {
+    const chartMinDataset: Chart.ChartDataSets = {
       backgroundColor: 'blue',
       borderColor: 'darkblue',
       label: 'T.Min',
@@ -103,7 +144,7 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
       data: []
     };
 
-    const chartMaxDataset: IDataset = {
+    const chartMaxDataset: Chart.ChartDataSets = {
       backgroundColor: 'red',
       borderColor: 'darkred',
       label: 'T.Max',
@@ -111,7 +152,7 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
       data: []
     };
 
-    const chartAvgDataset: IDataset = {
+    const chartAvgDataset: Chart.ChartDataSets = {
       backgroundColor: 'green',
       borderColor: 'darkgreen',
       label: 'T.Media',
@@ -125,18 +166,25 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
       const min = slot.Content ? slot.Content[propertyName].Min : undefined;
       const max = slot.Content ? slot.Content[propertyName].Max : undefined;
       const avg = slot.Content ? Math.round(slot.Content[propertyName].Avg * 100) / 100 : undefined;
-      chartMinDataset.data.push(min);
-      chartMaxDataset.data.push(max);
-      chartAvgDataset.data.push(avg);
+      (<number[]>chartMinDataset.data).push(min);
+      (<number[]>chartMaxDataset.data).push(max);
+      (<number[]>chartAvgDataset.data).push(avg);
     }
+
+    const toReturn = new TemperatureChartData();
+    toReturn.availableChartData['tmin'] = chartMinDataset;
+    toReturn.availableChartData['tmax'] = chartMaxDataset;
+    toReturn.availableChartData['tavg'] = chartAvgDataset;
 
     const chartData: IChartData = {
       header: propertyName,
       labels: labels,
-      datasets: [chartMaxDataset, chartMinDataset, chartAvgDataset]
+      datasets: []
     };
 
-    return chartData;
+    toReturn.chartData = chartData;
+
+    return toReturn;
   }
 
   ngOnDestroy(): void {
@@ -166,7 +214,7 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
   private buildGraphForProperty(dataFromApi: IAccumulatorsTimeSlot[], propertyName: string): IChartData {
     const labels: string[] = [];
 
-    const chartDataset: IDataset = {
+    const chartDataset: Chart.ChartDataSets = {
       backgroundColor: 'darkgrey',
       borderColor: 'black',
       label: '',
@@ -180,11 +228,11 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
       const slotSize = 15 * 60 * 1000;
       const toAddNoRounding = slot.Content ? slot.Content[propertyName] : 0;
       const toAdd = slot.Content ? Math.round(Math.min((slot.Content[propertyName] / slotSize) * 15, 15) * 100) / 100 : 0;
-      chartDataset.data.push(toAdd);
+      (<number[]>chartDataset.data).push(toAdd);
       totalTimeOn += toAddNoRounding;
     }
 
-    chartDataset.label =  'Tot: ' + Math.round( ( totalTimeOn / 1000 / 60 ) * 10 ) / 10 + ' min.';
+    chartDataset.label = 'Tot: ' + Math.round((totalTimeOn / 1000 / 60) * 10) / 10 + ' min.';
 
     const chartData: IChartData = {
       header: propertyName,

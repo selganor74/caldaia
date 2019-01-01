@@ -18,6 +18,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
 import { ChartModule } from 'primeng/chart';
+import { CheckboxModule } from 'primeng/checkbox';
 
 import { AppComponent } from './app.component';
 import { BackendService } from './backend.service';
@@ -45,7 +46,8 @@ import { StatsGraphComponent } from './stats-graph/stats-graph.component';
     CardModule,
     DialogModule,
     TerminalModule,
-    ChartModule
+    ChartModule,
+    CheckboxModule
   ],
   providers: [HttpClient, BackendService],
   bootstrap: [AppComponent]

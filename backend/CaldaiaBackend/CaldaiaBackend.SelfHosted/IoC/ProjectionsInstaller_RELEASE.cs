@@ -1,7 +1,6 @@
 ﻿using CaldaiaBackend.Application.Projections;
 using CaldaiaBackend.Application.Projections.DataModels;
 using CaldaiaBackend.Application.Services;
-using CaldaiaBackend.Application.Services.Mocks;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
@@ -11,7 +10,7 @@ using Component = Castle.MicroKernel.Registration.Component;
 
 namespace CaldaiaBackend.SelfHosted.IoC
 {
-    class ProjectionsInstaller : IWindsorInstaller
+    class ProjectionsInstaller_RELEASE : IWindsorInstaller
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
@@ -20,9 +19,6 @@ namespace CaldaiaBackend.SelfHosted.IoC
                     .For<Last24Hours>()
                     .DependsOn(
                         Dependency.OnValue<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>(
-#if DEBUG
-                            new InMemoryTimeBufferLoaderSaver<AccumulatorStatistics>()
-#else
                             // new FileSystemTimeSlotLoaderSaver<AccumulatorStatistics>(
                             //    ConfigurationManager.AppSettings["PathToLast24HoursJson"]
                             //    )
@@ -30,7 +26,6 @@ namespace CaldaiaBackend.SelfHosted.IoC
                                 "CaldaiaBackend.Last24Hours.json",
                                 container.Resolve<ILoggerFactory>()
                             )
-#endif
                         )
                     )
                     .LifestyleSingleton(),
@@ -39,9 +34,6 @@ namespace CaldaiaBackend.SelfHosted.IoC
                     .For<Last24HoursTemperatures>()
                     .DependsOn(
                         Dependency.OnValue<ITimeSlotBufferLoaderSaver<TemperatureStatistics>>(
-#if DEBUG
-                            new InMemoryTimeBufferLoaderSaver<TemperatureStatistics>()
-#else
                             // new FileSystemTimeSlotLoaderSaver<AccumulatorStatistics>(
                             //    ConfigurationManager.AppSettings["PathToLast24HoursTemperaturesJson"]
                             //    )
@@ -49,11 +41,9 @@ namespace CaldaiaBackend.SelfHosted.IoC
                                 "CaldaiaBackend.Last24HoursTemperatures.json",
                                 container.Resolve<ILoggerFactory>()
                             )
-#endif
                         )
                     )
                     .LifestyleSingleton()
-
                 );
         }
     }
