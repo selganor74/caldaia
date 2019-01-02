@@ -33,10 +33,10 @@ namespace CaldaiaBackend.SelfHosted.IoC
                     .LifestyleSingleton(),
 
                 Component
-                    .For<LastWeekTemperatures>()
+                    .For<LastWeekAccumulators>()
                     .DependsOn(
-                        Dependency.OnValue<ITimeSlotBufferLoaderSaver<TemperatureStatistics>>(
-                            new InMemoryTimeBufferLoaderSaver<TemperatureStatistics>()
+                        Dependency.OnValue<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>(
+                            new InMemoryTimeBufferLoaderSaver<AccumulatorStatistics>()
                         )
                     )
                     .LifestyleSingleton(),
