@@ -19,13 +19,17 @@ namespace CaldaiaBackend.Application
         private readonly INotificationPublisher _publisher;
         private readonly int _pollIntervalMilliseconds = 5000;
         private readonly ILogger _log;
-        private readonly Last24Hours _last24HoursProjection;
+        private readonly Last24HoursAccumulators _last24HoursProjection;
         private readonly Last24HoursTemperatures _last24HoursTempsProjection;
+        private readonly LastWeekAccumulators _lastWeekAccumulatorsProjection;
+        private readonly LastWeekTemperatures _lastWeekTemperaturesProjection;
 
         public ArduinoBackendApplication(
             IArduinoDataReader dataReader,
-            Last24Hours last24HoursProjection,
+            Last24HoursAccumulators last24HoursProjection,
             Last24HoursTemperatures last24HoursTempsProjection,
+            LastWeekAccumulators lastWeekAccumulatorsProjection,
+            LastWeekTemperatures lastWeekTemperaturesProjection,
 
             ICommandExecutor theCommandExecutor,
             IQueryExecutor theQueryExecutor,
@@ -49,6 +53,8 @@ namespace CaldaiaBackend.Application
             _log = theLoggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
             _last24HoursProjection = last24HoursProjection;
             _last24HoursTempsProjection = last24HoursTempsProjection;
+            _lastWeekAccumulatorsProjection = lastWeekAccumulatorsProjection;
+            _lastWeekTemperaturesProjection = lastWeekTemperaturesProjection;
         }
 
         protected override void onAppStarting()
@@ -69,6 +75,8 @@ namespace CaldaiaBackend.Application
         {
             _last24HoursProjection.Start();
             _last24HoursTempsProjection.Start();
+            _last24HoursTempsProjection.Start();
+            _lastWeekTemperaturesProjection.Start();
         }
 
         private void RegisterObservers()
@@ -109,6 +117,8 @@ namespace CaldaiaBackend.Application
             _dataPollerJob?.Dispose();
             _last24HoursProjection?.Dispose();
             _last24HoursTempsProjection?.Dispose();
+            _lastWeekTemperaturesProjection?.Dispose();
+            _lastWeekAccumulatorsProjection?.Dispose();
         }
     }
 }

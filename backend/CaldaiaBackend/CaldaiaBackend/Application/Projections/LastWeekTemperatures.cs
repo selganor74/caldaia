@@ -9,14 +9,14 @@ using Infrastructure.Logging;
 
 namespace CaldaiaBackend.Application.Projections
 {
-    public class Last24HoursTemperatures : BaseProjection<TemperaturesReceived>, IDisposable
+    public class LastWeekTemperatures : BaseProjection<TemperaturesReceived>, IDisposable
     {
         private readonly ILogger _log;
         private readonly ITimeSlotBufferLoaderSaver<TemperatureStatistics> _loader;
         private CircularTimeSlotBuffer<TemperatureStatistics> _timeBuffer;
         private static Task EmptyTask => Task.Run(() => { });
 
-        public Last24HoursTemperatures(
+        public LastWeekTemperatures(
             IEventSubscriber dispatcher,
             ITimeSlotBufferLoaderSaver<TemperatureStatistics> loader,
             ILoggerFactory loggerFactory
@@ -28,7 +28,11 @@ namespace CaldaiaBackend.Application.Projections
 
         public override void Start()
         {
-            _timeBuffer = _loader.Load() ?? new CircularTimeSlotBuffer<TemperatureStatistics>(96, TimeSpan.FromMinutes(15), DateTime.Now);
+            _timeBuffer = _loader.Load() ?? 
+                          new CircularTimeSlotBuffer<TemperatureStatistics>(
+                              numberOfSlots:24 * 7, 
+                              slotSize: TimeSpan.FromHours(1), 
+                              lastSlotEndTime: DateTime.Now);
             _log.Info("Loaded time buffer");
 
             base.Start();

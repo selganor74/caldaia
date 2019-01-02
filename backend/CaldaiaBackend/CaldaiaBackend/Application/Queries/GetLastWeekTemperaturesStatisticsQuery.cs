@@ -2,7 +2,7 @@
 
 namespace CaldaiaBackend.Application.Queries
 {
-    public class GetLast24HoursStatisticsQuery : IQuery<string>
+    public class GetLastWeekTemperaturesStatisticsQuery : IQuery<string>
     {
     }
 }

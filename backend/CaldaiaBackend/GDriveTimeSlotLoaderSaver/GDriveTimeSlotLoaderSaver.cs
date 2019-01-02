@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using CaldaiaBackend.Application.Services;
 using CaldaiaBackend.Infrastructure;
 using Google.Apis.Auth.OAuth2;
@@ -12,7 +10,6 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Infrastructure.Logging;
-using Newtonsoft.Json;
 using GoogleFile = Google.Apis.Drive.v3.Data.File;
 
 namespace Services.TimeSlotLoaderSaver.GDrive

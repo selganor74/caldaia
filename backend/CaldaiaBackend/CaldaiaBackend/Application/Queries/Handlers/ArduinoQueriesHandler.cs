@@ -5,30 +5,39 @@ using Infrastructure.Actions.Query.Handler;
 
 namespace CaldaiaBackend.Application.Queries.Handlers
 {
-    public class ArduinoQueriesHandler :    IQueryHandler<GetLatestDataQuery, DataFromArduino>,
-                                            IQueryHandler<GetLast24HoursStatisticsQuery, string>,
-                                            IQueryHandler<GetLast24HoursTemperaturesStatisticsQuery, string>
+    public class ArduinoQueriesHandler : IQueryHandler<GetLatestDataQuery, DataFromArduino>,
+                                            IQueryHandler<GetLast24HoursAccumulatorsStatisticsQuery, string>,
+                                            IQueryHandler<GetLast24HoursTemperaturesStatisticsQuery, string>,
+                                            IQueryHandler<GetLastWeekAccumulatorsStatisticsQuery, string>,
+                                            IQueryHandler<GetLastWeekTemperaturesStatisticsQuery, string>
     {
         private readonly IArduinoDataReader _reader;
-        private readonly Last24Hours _last24HoursProjection;
+        private readonly Last24HoursAccumulators _last24HoursProjection;
         private readonly Last24HoursTemperatures _last24HoursTempsProjection;
+        private readonly LastWeekAccumulators _lastWeekProjection;
+        private readonly LastWeekTemperatures _lastWeekTempsProjection;
 
         public ArduinoQueriesHandler(
             IArduinoDataReader reader,
-            Last24Hours last24HoursProjection,
-            Last24HoursTemperatures last24HoursTempsProjection
+            Last24HoursAccumulators last24HoursProjection,
+            Last24HoursTemperatures last24HoursTempsProjection,
+            LastWeekAccumulators lastWeekProjection,
+            LastWeekTemperatures lastWeekTempsProjection
             )
         {
             _reader = reader;
             _last24HoursProjection = last24HoursProjection;
             _last24HoursTempsProjection = last24HoursTempsProjection;
+            _lastWeekProjection = lastWeekProjection;
+            _lastWeekTempsProjection = lastWeekTempsProjection;
         }
+
         public DataFromArduino Execute(GetLatestDataQuery Action)
         {
             return _reader.Latest;
         }
 
-        public string Execute(GetLast24HoursStatisticsQuery Action)
+        public string Execute(GetLast24HoursAccumulatorsStatisticsQuery Action)
         {
             return _last24HoursProjection.GetCurrentStatisticsAsJson();
         }
@@ -36,6 +45,16 @@ namespace CaldaiaBackend.Application.Queries.Handlers
         public string Execute(GetLast24HoursTemperaturesStatisticsQuery Action)
         {
             return _last24HoursTempsProjection.GetCurrentStatisticsAsJson();
+        }
+
+        public string Execute(GetLastWeekAccumulatorsStatisticsQuery Action)
+        {
+            return _lastWeekProjection.GetCurrentStatisticsAsJson();
+        }
+
+        public string Execute(GetLastWeekTemperaturesStatisticsQuery Action)
+        {
+            return _lastWeekTempsProjection.GetCurrentStatisticsAsJson();
         }
     }
 }

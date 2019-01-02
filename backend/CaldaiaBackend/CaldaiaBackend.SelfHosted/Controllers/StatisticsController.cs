@@ -24,8 +24,8 @@ namespace CaldaiaBackend.SelfHosted.Controllers
         [Route("api/statistics/last-24-hours")]
         public IHttpActionResult GetLast24HoursStats()
         {
-            var query = new GetLast24HoursStatisticsQuery();
-            var toReturn = _arduinoApp.ExecuteQuery<GetLast24HoursStatisticsQuery,string>(query);
+            var query = new GetLast24HoursAccumulatorsStatisticsQuery();
+            var toReturn = _arduinoApp.ExecuteQuery<GetLast24HoursAccumulatorsStatisticsQuery,string>(query);
 
             return Ok(toReturn);
         }
@@ -36,6 +36,26 @@ namespace CaldaiaBackend.SelfHosted.Controllers
         {
             var query = new GetLast24HoursTemperaturesStatisticsQuery();
             var toReturn = _arduinoApp.ExecuteQuery<GetLast24HoursTemperaturesStatisticsQuery, string>(query);
+
+            return Ok(toReturn);
+        }
+
+        [HttpGet]
+        [Route("api/statistics/last-week-accumulators")]
+        public IHttpActionResult GetLastWeekAccumulatorsStats()
+        {
+            var query = new GetLastWeekTemperaturesStatisticsQuery();
+            var toReturn = _arduinoApp.ExecuteQuery<GetLastWeekTemperaturesStatisticsQuery, string>(query);
+
+            return Ok(toReturn);
+        }
+
+        [HttpGet]
+        [Route("api/statistics/last-week-temperatures")]
+        public IHttpActionResult GetLastWeekTempStats()
+        {
+            var query = new GetLastWeekTemperaturesStatisticsQuery();
+            var toReturn = _arduinoApp.ExecuteQuery<GetLastWeekTemperaturesStatisticsQuery, string>(query);
 
             return Ok(toReturn);
         }

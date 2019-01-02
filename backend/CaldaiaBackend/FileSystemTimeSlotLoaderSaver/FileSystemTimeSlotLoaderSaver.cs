@@ -1,21 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using CaldaiaBackend.Application.Services;
 using CaldaiaBackend.Infrastructure;
-using Newtonsoft.Json;
+using Infrastructure.Logging;
 
 namespace Application.Services
 {
-    public class FileSystemTimeSlotLoaderSaver<T> : ITimeSlotBufferLoaderSaver<T>
+    public class FileSystemTimeSlotLoaderSaver<T> : ITimeSlotBufferLoaderSaver<T>, IDisposable
     {
         private readonly string _pathToJsonStorage;
+        private Timer saveTimer;
+
+        private string _toSave;
+        private object _lock = new object();
+        private readonly ILogger _log;
 
         public FileSystemTimeSlotLoaderSaver(
-            string PathToJsonStorageFile
+            string PathToJsonStorageFile,
+            ILoggerFactory loggerFactory
         )
         {
             if (String.IsNullOrEmpty(PathToJsonStorageFile))
@@ -32,6 +35,30 @@ namespace Application.Services
 
             if (!File.Exists(_pathToJsonStorage))
                 Directory.CreateDirectory(Path.GetDirectoryName(_pathToJsonStorage));
+
+            _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
+        }
+
+        private void StartSavingTimer()
+        {
+            saveTimer = new Timer(state => SaveToFile(), null, TimeSpan.FromMinutes(30), TimeSpan.FromMinutes(30));
+        }
+
+        private void SaveToFile()
+        {
+            try
+            {
+                lock (_lock)
+                {
+                    _log.Info($"Writing data to {_pathToJsonStorage}");
+                    File.WriteAllText(_pathToJsonStorage, _toSave);
+                }
+            }
+            catch (Exception e)
+            {
+                _log.Warning($"Errors while writing file {_pathToJsonStorage}", e);
+            }
+
         }
 
         public CircularTimeSlotBuffer<T> Load()
@@ -50,7 +77,16 @@ namespace Application.Services
 
         public void Save(CircularTimeSlotBuffer<T> toSave)
         {
-            File.WriteAllText(_pathToJsonStorage, toSave.AsJson());
+            lock (_lock)
+            {
+                _toSave = toSave.AsJson();
+            }
+        }
+
+        public void Dispose()
+        {
+            saveTimer?.Dispose();
+            SaveToFile();
         }
     }
 }

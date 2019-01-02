@@ -15,7 +15,7 @@ namespace CaldaiaBackend.SelfHosted.IoC
         {
             container.Register(
                 Component
-                    .For<Last24Hours>()
+                    .For<Last24HoursAccumulators>()
                     .DependsOn(
                         Dependency.OnValue<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>(
                             new InMemoryTimeBufferLoaderSaver<AccumulatorStatistics>()
@@ -30,7 +30,27 @@ namespace CaldaiaBackend.SelfHosted.IoC
                             new InMemoryTimeBufferLoaderSaver<TemperatureStatistics>()
                         )
                     )
+                    .LifestyleSingleton(),
+
+                Component
+                    .For<LastWeekTemperatures>()
+                    .DependsOn(
+                        Dependency.OnValue<ITimeSlotBufferLoaderSaver<TemperatureStatistics>>(
+                            new InMemoryTimeBufferLoaderSaver<TemperatureStatistics>()
+                        )
+                    )
+                    .LifestyleSingleton(),
+
+                Component
+                    .For<LastWeekTemperatures>()
+                    .DependsOn(
+                        Dependency.OnValue<ITimeSlotBufferLoaderSaver<TemperatureStatistics>>(
+                            new InMemoryTimeBufferLoaderSaver<TemperatureStatistics>()
+                        )
+                    )
                     .LifestyleSingleton()
+
+
                 );
         }
     }
