@@ -44,8 +44,8 @@ namespace CaldaiaBackend.SelfHosted.Controllers
         [Route("api/statistics/last-week-accumulators")]
         public IHttpActionResult GetLastWeekAccumulatorsStats()
         {
-            var query = new GetLastWeekTemperaturesStatisticsQuery();
-            var toReturn = _arduinoApp.ExecuteQuery<GetLastWeekTemperaturesStatisticsQuery, string>(query);
+            var query = new GetLastWeekAccumulatorsStatisticsQuery();
+            var toReturn = _arduinoApp.ExecuteQuery<GetLastWeekAccumulatorsStatisticsQuery, string>(query);
 
             return Ok(toReturn);
         }

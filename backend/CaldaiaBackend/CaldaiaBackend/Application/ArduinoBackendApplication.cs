@@ -75,7 +75,7 @@ namespace CaldaiaBackend.Application
         {
             _last24HoursProjection.Start();
             _last24HoursTempsProjection.Start();
-            _last24HoursTempsProjection.Start();
+            _lastWeekAccumulatorsProjection.Start();
             _lastWeekTemperaturesProjection.Start();
         }
 

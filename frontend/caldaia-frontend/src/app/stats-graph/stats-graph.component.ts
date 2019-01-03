@@ -30,6 +30,8 @@ interface IChartData extends Chart.ChartData {
 }
 
 type PossibleDatasets = 'tmax' | 'tmin' | 'tavg';
+type PossibleRanges = 'last24hours' | 'lastWeek';
+
 class TemperatureChartData {
   public chartData: IChartData;
   public availableChartData: { [possibleDataset: string]: Chart.ChartDataSets } = {};
@@ -54,9 +56,11 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
   private apiBaseUrl: string;
   private interval: any;
 
-  public allChartsData: IChartData[] = [];
-  public allTempChartsData: TemperatureChartData[] = [];
+  public allAccuChartsData: {[timeRange: string]: IChartData[]} = {};
+  public allTempChartsData: {[timeRange: string]: TemperatureChartData[]} = {};
+
   public commonChartOptions: Chart.ChartOptions = {};
+
 
   private _tempDatasetsToShow: PossibleDatasets[] = ['tavg'];
 
@@ -67,6 +71,17 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
   public set tempDatasetsToShow(value: PossibleDatasets[]) {
     this._tempDatasetsToShow = value;
     this.setDatasetsToShow();
+  }
+
+
+  private _currentRange: PossibleRanges = 'last24hours';
+
+  public get currentRange(): PossibleRanges {
+    return this._currentRange;
+  }
+
+  public set currentRange(value: PossibleRanges) {
+    this._currentRange = value;
   }
 
   constructor(
@@ -89,31 +104,45 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
 
 
   private setDatasetsToShow(): any {
-    for (const dt of this.allTempChartsData) {
-      dt.setAvailableDataSets(this._tempDatasetsToShow);
-    }
-    const tempArray = this.allTempChartsData;
-    this.allTempChartsData = [];
+    for (const tr in this.allTempChartsData) {
+      if (!this.allAccuChartsData.hasOwnProperty(tr)) { continue; }
 
-    for (const t of tempArray) {
-      this.allTempChartsData.push(t);
+      for (const dt of this.allTempChartsData[tr]) {
+        dt.setAvailableDataSets(this._tempDatasetsToShow);
+      }
+      const tempArray = this.allTempChartsData[tr];
+      this.allTempChartsData[tr] = [];
+
+      for (const t of tempArray) {
+        this.allTempChartsData[tr].push(t);
+      }
     }
-    // this.changeDetectorRef.detectChanges();
+      // this.changeDetectorRef.detectChanges();
   }
 
   private getDataAndBuildGraphs() {
     this.http.get(this.apiBaseUrl + '/statistics/last-24-hours').subscribe((data: string) => {
       const parsedData: IAccumulatorsTimeSlot[] = JSON.parse(data);
-      this.buildAllChartsData(parsedData);
+      this.buildAllAccuChartsData(parsedData, 'last24hours');
     });
     this.http.get(this.apiBaseUrl + '/statistics/last-24-hours-temperatures').subscribe((data: string) => {
       const parsedData: ITemperaturesTimeSlot[] = JSON.parse(data);
-      this.buildAllTempChartsData(parsedData);
+      this.buildAllTempChartsData(parsedData, 'last24hours');
+      this.setDatasetsToShow();
+    });
+
+    this.http.get(this.apiBaseUrl + '/statistics/last-week-accumulators').subscribe((data: string) => {
+      const parsedData: IAccumulatorsTimeSlot[] = JSON.parse(data);
+      this.buildAllAccuChartsData(parsedData, 'lastWeek');
+    });
+    this.http.get(this.apiBaseUrl + '/statistics/last-week-temperatures').subscribe((data: string) => {
+      const parsedData: ITemperaturesTimeSlot[] = JSON.parse(data);
+      this.buildAllTempChartsData(parsedData, 'lastWeek');
       this.setDatasetsToShow();
     });
   }
 
-  buildAllTempChartsData(dataFromApi: ITemperaturesTimeSlot[]): any {
+  buildAllTempChartsData(dataFromApi: ITemperaturesTimeSlot[], timeRange: PossibleRanges): any {
     let aContent: ITemperaturesContent;
     let index = dataFromApi.length - 1;
 
@@ -123,13 +152,13 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
     }
 
     if (!aContent) { return; }
-    this.allTempChartsData = [];
+    this.allTempChartsData[timeRange] = [];
     // foreach property we can build a Graph.
     for (const propertyName in aContent) {
       if (!aContent.hasOwnProperty(propertyName)) { continue; }
 
       const chartData = this.buildGraphForTemperaturesProperty(dataFromApi, propertyName);
-      this.allTempChartsData.push(chartData);
+      this.allTempChartsData[timeRange].push(chartData);
     }
   }
 
@@ -191,7 +220,7 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
     clearInterval(this.interval);
   }
 
-  private buildAllChartsData(dataFromApi: IAccumulatorsTimeSlot[]) {
+  private buildAllAccuChartsData(dataFromApi: IAccumulatorsTimeSlot[], timeRange: PossibleRanges) {
     let aContent: IAccumulatorsContent;
     let index = dataFromApi.length - 1;
 
@@ -201,13 +230,13 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
     }
 
     if (!aContent) { return; }
-    this.allChartsData = [];
+    this.allAccuChartsData[timeRange] = [];
     // foreach property we can build a Graph.
     for (const propertyName in aContent) {
       if (!aContent.hasOwnProperty(propertyName)) { continue; }
 
       const chartData = this.buildGraphForProperty(dataFromApi, propertyName);
-      this.allChartsData.push(chartData);
+      this.allAccuChartsData[timeRange].push(chartData);
     }
   }
 
@@ -225,9 +254,18 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
 
     for (const slot of dataFromApi) {
       labels.push(moment(slot.SlotStart).format('HH:mm'));
-      const slotSize = 15 * 60 * 1000;
+      const slotSizeInMilliseconds = this.calculateMillisecondsFromHHmmss(slot.SlotSize);
+      const slotSizeInMinutes = slotSizeInMilliseconds / 1000 / 60;
+      // const slotSizeInHours = slotSizeInMinutes / 60;
       const toAddNoRounding = slot.Content ? slot.Content[propertyName] : 0;
-      const toAdd = slot.Content ? Math.round(Math.min((slot.Content[propertyName] / slotSize) * 15, 15) * 100) / 100 : 0;
+      const toAdd = slot.Content
+        ? Math.round(
+            Math.min(
+              (slot.Content[propertyName] / slotSizeInMilliseconds) * slotSizeInMinutes,
+              slotSizeInMinutes
+            ) * 100
+          ) / 100
+        : 0;
       (<number[]>chartDataset.data).push(toAdd);
       totalTimeOn += toAddNoRounding;
     }
@@ -241,6 +279,13 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
     };
 
     return chartData;
+  }
+  calculateMillisecondsFromHHmmss(slotSizeHHmmss: string): number {
+    const hms = slotSizeHHmmss.split(':');
+    const hours = Number.parseInt(hms[0]);
+    const minutes = Number.parseInt(hms[1]);
+    const seconds = Number.parseInt(hms[2]);
+    return ( hours * (60 * 60) + minutes * 60 + seconds) * 1000;
   }
 
 }

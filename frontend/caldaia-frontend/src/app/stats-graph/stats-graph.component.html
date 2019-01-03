@@ -1,34 +1,44 @@
-<p-panel [toggleable]="true">
-  <p-header>Accumulators</p-header>
-  <div class="fluid-container">
-    <div class="row justify-content-center">
-      <p-card class="chart col-sm-12 col-md-6 col-lg-4" [title]="chartData.header" *ngFor="let chartData of allChartsData">
-        <p-chart type="bar" [data]="chartData" [options]="commonChartOptions"></p-chart>
-      </p-card>
-    </div>
-  </div>
-</p-panel>
-
-<p-panel [toggleable]="true">
+<p-panel [toggleable]="false">
   <p-header>
-    <span>Temperatures: </span>
-    <span>
-      <label for="tmax">T.Max</label>
-      <p-checkbox id="tmax" name="datasetSelector" value="tmax" [(ngModel)]="tempDatasetsToShow"></p-checkbox>
-      <span> | </span>
-      <label for="tmin">T.Min</label>
-      <p-checkbox id="tmin" name="datasetSelector" value="tmin" [(ngModel)]="tempDatasetsToShow"></p-checkbox>
-      <span> | </span>
-      <label for="tavg">T.Avg</label>
-      <p-checkbox id="tavg" name="datasetSelector" value="tavg" [(ngModel)]="tempDatasetsToShow"></p-checkbox>
-    </span>
-  </p-header>
-  <div class="fluid-container">
-    <div class="row justify-content-center">
-      <p-card class="chart col-sm-12 col-md-6 col-lg-4" *ngFor="let tempChart of allTempChartsData">
-        <p-header><span>{{tempChart.chartData.header}}</span></p-header>
-        <p-chart type="line" [data]="tempChart.chartData" [options]="commonChartOptions"></p-chart>
-      </p-card>
+    <div class="row">
+      <span class="col-12">
+        <p-radioButton name="range" value="last24hours" label="ultime 24 ore " [(ngModel)]="currentRange"></p-radioButton>
+        <p-radioButton name="range" value="lastWeek" label="ultima settimana " [(ngModel)]="currentRange"></p-radioButton>
+      </span>
     </div>
-  </div>
+  </p-header>
+  <p-panel [toggleable]="true">
+    <p-header>Accumulators</p-header>
+    <div class="fluid-container">
+      <div class="row justify-content-center">
+        <p-card class="chart col-sm-12 col-md-6 col-lg-4" [title]="chartData.header" *ngFor="let chartData of allAccuChartsData[currentRange]">
+          <p-chart type="bar" [data]="chartData" [options]="commonChartOptions"></p-chart>
+        </p-card>
+      </div>
+    </div>
+  </p-panel>
+
+  <p-panel [toggleable]="true">
+    <p-header>
+      <span>Temperatures: </span>
+      <span>
+        <label for="tmax">T.Max</label>
+        <p-checkbox id="tmax" name="datasetSelector" value="tmax" [(ngModel)]="tempDatasetsToShow"></p-checkbox>
+        <span> | </span>
+        <label for="tmin">T.Min</label>
+        <p-checkbox id="tmin" name="datasetSelector" value="tmin" [(ngModel)]="tempDatasetsToShow"></p-checkbox>
+        <span> | </span>
+        <label for="tavg">T.Avg</label>
+        <p-checkbox id="tavg" name="datasetSelector" value="tavg" [(ngModel)]="tempDatasetsToShow"></p-checkbox>
+      </span>
+    </p-header>
+    <div class="fluid-container">
+      <div class="row justify-content-center">
+        <p-card class="chart col-sm-12 col-md-6 col-lg-4" *ngFor="let tempChart of allTempChartsData[currentRange]">
+          <p-header><span>{{tempChart.chartData.header}}</span></p-header>
+          <p-chart type="line" [data]="tempChart.chartData" [options]="commonChartOptions"></p-chart>
+        </p-card>
+      </div>
+    </div>
+  </p-panel>
 </p-panel>
