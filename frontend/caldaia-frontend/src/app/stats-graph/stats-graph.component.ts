@@ -261,9 +261,9 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
       const toAdd = slot.Content
         ? Math.round(
             Math.min(
-              (slot.Content[propertyName] / slotSizeInMilliseconds) * slotSizeInMinutes,
-              slotSizeInMinutes
-            ) * 100
+              (slot.Content[propertyName] / slotSizeInMilliseconds),
+              1
+            ) * slotSizeInMinutes * 100
           ) / 100
         : 0;
       (<number[]>chartDataset.data).push(toAdd);

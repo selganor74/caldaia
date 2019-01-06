@@ -59,13 +59,6 @@ namespace CaldaiaBackend.SelfHosted.Owin
                     typeof(IHttpControllerActivator),
                     new WindsorControllerActivator(Program.Container));
 
-                // Setup routing
-                //config.Routes.MapHttpRoute(
-                //    name: "backend",
-                //    routeTemplate: "api/{controller}/{id}",
-                //    defaults: new { id = RouteParameter.Optional }
-                //);
-
                 config.MapHttpAttributeRoutes();
 
                 config.Formatters.Remove(config.Formatters.XmlFormatter);

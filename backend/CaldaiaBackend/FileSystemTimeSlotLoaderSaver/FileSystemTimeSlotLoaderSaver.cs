@@ -29,8 +29,9 @@ namespace Application.Services
 
             if (_pathToJsonStorage.StartsWith("~"))
             {
-                _pathToJsonStorage = _pathToJsonStorage.Replace("~\\", "");
+                _pathToJsonStorage = _pathToJsonStorage.Replace("~\\", "").Replace("~", "");
                 _pathToJsonStorage = Path.Combine(currentExeDir, _pathToJsonStorage);
+                _log.Trace($"Resplved Path {PathToJsonStorageFile} to {_pathToJsonStorage}");
             }
 
             if (!File.Exists(_pathToJsonStorage))
