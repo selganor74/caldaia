@@ -31,6 +31,7 @@ interface IChartData extends Chart.ChartData {
 
 type PossibleDatasets = 'tmax' | 'tmin' | 'tavg';
 type PossibleRanges = 'last24hours' | 'lastWeek';
+type PossibleTimeUnits = 'ms' | 'sec' | 'min' | 'hr' | 'gg';
 
 class TemperatureChartData {
   public chartData: IChartData;
@@ -190,7 +191,7 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
     };
 
     for (const slot of dataFromApi) {
-      labels.push(moment(slot.SlotStart).format('HH:mm'));
+      labels.push(moment(slot.SlotStart).format('MM/DD HH:mm'));
 
       const min = slot.Content ? slot.Content[propertyName].Min : undefined;
       const max = slot.Content ? slot.Content[propertyName].Max : undefined;
@@ -250,10 +251,10 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
       data: []
     };
 
-    let totalTimeOn = 0;
+    let totalTimeOnMilliseconds = 0;
 
     for (const slot of dataFromApi) {
-      labels.push(moment(slot.SlotStart).format('HH:mm'));
+      labels.push(moment(slot.SlotEnd).format('MM/DD HH:mm'));
       const slotSizeInMilliseconds = this.calculateMillisecondsFromHHmmss(slot.SlotSize);
       const slotSizeInMinutes = slotSizeInMilliseconds / 1000 / 60;
       // const slotSizeInHours = slotSizeInMinutes / 60;
@@ -267,10 +268,10 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
           ) / 100
         : 0;
       (<number[]>chartDataset.data).push(toAdd);
-      totalTimeOn += toAddNoRounding;
+      totalTimeOnMilliseconds += toAddNoRounding;
     }
-
-    chartDataset.label = 'Tot: ' + Math.round((totalTimeOn / 1000 / 60) * 10) / 10 + ' min.';
+    const tu = this.findSuitableTimeUnit(totalTimeOnMilliseconds);
+    chartDataset.label = 'Tot: ' + Math.round(tu.value * 10) / 10 + ' ' + tu.units + '.';
 
     const chartData: IChartData = {
       header: propertyName,
@@ -280,12 +281,52 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
 
     return chartData;
   }
+
   calculateMillisecondsFromHHmmss(slotSizeHHmmss: string): number {
     const hms = slotSizeHHmmss.split(':');
     const hours = Number.parseInt(hms[0]);
     const minutes = Number.parseInt(hms[1]);
     const seconds = Number.parseInt(hms[2]);
     return ( hours * (60 * 60) + minutes * 60 + seconds) * 1000;
+  }
+
+  findSuitableTimeUnit(timeMilliseconds: number): {units: PossibleTimeUnits; value: number} {
+    const toReturn = { units: <PossibleTimeUnits>'ms', value: timeMilliseconds};
+    while (true) {
+      switch (toReturn.units) {
+        case 'ms': {
+          if (toReturn.value >= 0 && toReturn.value < 1000) { return toReturn; }
+          toReturn.units = 'sec';
+          toReturn.value /= 1000;
+          break;
+        }
+
+        case 'sec': {
+          if (toReturn.value >= 1 && toReturn.value < 60) { return toReturn; }
+          toReturn.units = 'min';
+          toReturn.value /= 60;
+          break;
+        }
+
+        case 'min': {
+          if (toReturn.value >= 1 && toReturn.value < 60) { return toReturn; }
+          toReturn.units = 'hr';
+          toReturn.value /= 60;
+          break;
+        }
+
+        case 'hr': {
+          if (toReturn.value >= 1 && toReturn.value < 24) { return toReturn; }
+          toReturn.units = 'gg';
+          toReturn.value /= 24;
+          break;
+        }
+
+        default: {
+          return toReturn;
+        }
+      }
+    }
   }
 
 }
