@@ -2,13 +2,10 @@
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using CaldaiaBackend.Application;
-using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.SelfHosted.Owin.IoC;
 using Castle.MicroKernel.Registration;
 using Infrastructure.Actions;
 using Infrastructure.Logging;
-using Infrastructure.MiscPatterns.Notification;
-using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Cors;
 using Microsoft.Owin.FileSystems;
 using Microsoft.Owin.StaticFiles;

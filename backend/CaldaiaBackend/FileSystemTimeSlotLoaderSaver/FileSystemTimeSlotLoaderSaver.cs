@@ -21,6 +21,7 @@ namespace Application.Services
             ILoggerFactory loggerFactory
         )
         {
+            _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
             if (String.IsNullOrEmpty(PathToJsonStorageFile))
                 throw new ArgumentException(nameof(PathToJsonStorageFile) +  " must be a valid path.");
 
@@ -31,7 +32,7 @@ namespace Application.Services
             {
                 _pathToJsonStorage = _pathToJsonStorage.Replace("~\\", "").Replace("~", "");
                 _pathToJsonStorage = Path.Combine(currentExeDir, _pathToJsonStorage);
-                _log.Trace($"Resplved Path {PathToJsonStorageFile} to {_pathToJsonStorage}");
+                _log.Trace($"Resolved Path {PathToJsonStorageFile} to {_pathToJsonStorage}");
             }
 
             if (!File.Exists(_pathToJsonStorage))

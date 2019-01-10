@@ -12,16 +12,17 @@ namespace CaldaiaBackend.SelfHosted.IoC
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             var logWriter = container.Resolve<ILogWriter>();
-            logWriter.SetLogLevel(LogLevel.Info);
 
             var clw = logWriter as CompositeLogWriter;
             if (clw == null) return;
 
             var signalrLogWriter = new SignalRLogWriter(LogLevel.Warning);
-            clw.AddLogger(signalrLogWriter, LogLevelMode.Independent);
+            clw.AddLogger(signalrLogWriter, LogLevelMode.Synchronized);
 
             var eventLogLogger = new EventLogWriter("caldaiaBackend", LogLevel.Warning);
             clw.AddLogger(eventLogLogger, LogLevelMode.Independent);
+
+            logWriter.SetLogLevel(LogLevel.Info);
         }
     }
 }

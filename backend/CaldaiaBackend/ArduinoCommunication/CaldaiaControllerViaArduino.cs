@@ -14,9 +14,10 @@ namespace ArduinoCommunication
 {
     public class CaldaiaControllerViaArduino : IDisposable, IArduinoDataReader, IArduinoCommandIssuer
     {
-        private const int CommandToResponseTimeoutMillis = 15000;
+        private static readonly TimeSpan CommandToResponseTimeout = TimeSpan.FromSeconds(15);
+
+        private static readonly TimeSpan TimeoutBeforeResettingParsingFailures = CommandToResponseTimeout.Add(CommandToResponseTimeout);
         private const int NumberOfJsonParsingFailuresBeforeReset = 10;
-        private static readonly TimeSpan SecondsBeforeResettingNumberOfsonParsingFailures = TimeSpan.FromSeconds(30);
         private static bool _recovering = false;
         private readonly Timer _commandToResponseTimeoutTimer;
         private readonly Timer _commandSender;
@@ -214,7 +215,7 @@ namespace ArduinoCommunication
                     return;
                 }
 
-                if (   _currentJson.Contains("\"_type\": \"data\"") 
+                if (_currentJson.Contains("\"_type\": \"data\"")
                     || _currentJson.Contains("\"_type\": \"accumulators\"")
                        )
                 {
@@ -226,12 +227,19 @@ namespace ArduinoCommunication
                     }
 
                     _dispatcher.Dispatch(TemperaturesReceived.FromData(Latest));
+                    return;
                 }
+
+                _log.Warning("This was not an expeced json type", _currentJson);
+                throw new Exception("This was not an expected json type");
             }
             catch (Exception x)
             {
                 _failedJsonCounter++;
-                _failedJsonResetTimeout.Change(SecondsBeforeResettingNumberOfsonParsingFailures.Milliseconds, -1);
+                _failedJsonResetTimeout.Change(
+                    TimeoutBeforeResettingParsingFailures,
+                    Timeout.InfiniteTimeSpan
+                    );
 
                 _log.Warning($"[{_failedJsonCounter}] Errors while parsing {_currentJson}", x);
 
@@ -242,7 +250,7 @@ namespace ArduinoCommunication
                         $"Resetting Board via FlashDTR "
                         );
                     ResetFailedJsonCounter();
-                    _failedJsonResetTimeout.Change(-1, -1);
+                    _failedJsonResetTimeout.Change(Timeout.Infinite, Timeout.Infinite);
                     FlashDTR();
                 }
             }
@@ -280,13 +288,13 @@ namespace ArduinoCommunication
         private void CancelTimeoutCheck()
         {
             _log.Trace("Stopping timeout for command.");
-            _commandToResponseTimeoutTimer.Change(-1, -1);
+            _commandToResponseTimeoutTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         }
 
         private void StartTimeoutCheck()
         {
             _log.Trace("Starting timeout for command.");
-            _commandToResponseTimeoutTimer.Change(CommandToResponseTimeoutMillis, -1);
+            _commandToResponseTimeoutTimer.Change(CommandToResponseTimeout, Timeout.InfiniteTimeSpan);
         }
 
         public void PullOutData()
