@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+
+using Infrastructure.Logging;
+
 using CaldaiaBackend.Application.Services;
 using CaldaiaBackend.Infrastructure;
-using Infrastructure.Logging;
 
 namespace Application.Services
 {
@@ -15,15 +17,18 @@ namespace Application.Services
         private string _toSave;
         private object _lock = new object();
         private readonly ILogger _log;
+        private readonly TimeSpan _saveInterval;
 
         public FileSystemTimeSlotLoaderSaver(
             string PathToJsonStorageFile,
+            TimeSpan saveInterval,
             ILoggerFactory loggerFactory
         )
         {
             _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
+            _saveInterval = saveInterval;
             if (String.IsNullOrEmpty(PathToJsonStorageFile))
-                throw new ArgumentException(nameof(PathToJsonStorageFile) +  " must be a valid path.");
+                throw new ArgumentException(nameof(PathToJsonStorageFile) + " must be a valid path.");
 
             var currentExeDir = AppDomain.CurrentDomain.BaseDirectory;
             _pathToJsonStorage = PathToJsonStorageFile;
@@ -43,22 +48,22 @@ namespace Application.Services
 
         private void StartSavingTimer()
         {
-            saveTimer = new Timer(state => SaveToFile(), null, TimeSpan.FromMinutes(30), TimeSpan.FromMinutes(30));
+            saveTimer = new Timer(state => SaveToFile(), null, _saveInterval, _saveInterval);
         }
 
         private void SaveToFile()
         {
-            try
+            lock (_lock)
             {
-                lock (_lock)
+                try
                 {
                     _log.Info($"Writing data to {_pathToJsonStorage}");
                     File.WriteAllText(_pathToJsonStorage, _toSave);
                 }
-            }
-            catch (Exception e)
-            {
-                _log.Warning($"Errors while writing file {_pathToJsonStorage}", e);
+                catch (Exception e)
+                {
+                    _log.Warning($"Errors while writing file {_pathToJsonStorage}", e);
+                }
             }
 
         }

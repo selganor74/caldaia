@@ -1,13 +1,16 @@
-﻿using System.Configuration;
-using Application.Services;
-using CaldaiaBackend.Application.Projections;
-using CaldaiaBackend.Application.Projections.DataModels;
-using CaldaiaBackend.Application.Services;
+﻿using System;
+using System.Configuration;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Infrastructure.Logging;
 using Component = Castle.MicroKernel.Registration.Component;
+
+using Application.Services;
+using Infrastructure.Logging;
+
+using CaldaiaBackend.Application.Projections;
+using CaldaiaBackend.Application.Projections.DataModels;
+using CaldaiaBackend.Application.Services;
 
 namespace CaldaiaBackend.SelfHosted.IoC
 {
@@ -22,6 +25,7 @@ namespace CaldaiaBackend.SelfHosted.IoC
                         Dependency.OnValue<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>(
                             new FileSystemTimeSlotLoaderSaver<AccumulatorStatistics>(
                                 ConfigurationManager.AppSettings["PathToLast24HoursJson"],
+                                TimeSpan.FromMinutes(10),
                                 container.Resolve<ILoggerFactory>()
                                 )
                         )
@@ -34,6 +38,7 @@ namespace CaldaiaBackend.SelfHosted.IoC
                         Dependency.OnValue<ITimeSlotBufferLoaderSaver<TemperatureStatistics>>(
                             new FileSystemTimeSlotLoaderSaver<TemperatureStatistics>(
                                 ConfigurationManager.AppSettings["PathToLast24HoursTemperaturesJson"],
+                                TimeSpan.FromMinutes(10),
                                 container.Resolve<ILoggerFactory>()
                                 )
                         )
@@ -46,6 +51,7 @@ namespace CaldaiaBackend.SelfHosted.IoC
                         Dependency.OnValue<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>(
                             new FileSystemTimeSlotLoaderSaver<AccumulatorStatistics>(
                                 ConfigurationManager.AppSettings["PathToLastWeekAccumulatorsJson"],
+                                TimeSpan.FromMinutes(20),
                                 container.Resolve<ILoggerFactory>()
                             )
                         )
@@ -58,6 +64,7 @@ namespace CaldaiaBackend.SelfHosted.IoC
                         Dependency.OnValue<ITimeSlotBufferLoaderSaver<TemperatureStatistics>>(
                             new FileSystemTimeSlotLoaderSaver<TemperatureStatistics>(
                                 ConfigurationManager.AppSettings["PathToLastWeekTemperaturesJson"],
+                                TimeSpan.FromMinutes(20),
                                 container.Resolve<ILoggerFactory>()
                             )
                         )

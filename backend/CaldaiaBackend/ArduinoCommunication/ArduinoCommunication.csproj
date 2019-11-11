@@ -54,8 +54,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CaldaiaControllerViaArduino.cs" />
+    <Compile Include="MultipleStringToJsonParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerialEnumerator.cs" />
+    <Compile Include="SerialPortExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CaldaiaBackend\CaldaiaBackend.csproj">
