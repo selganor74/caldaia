@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Ports;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
 
 namespace ArduinoCommunication
@@ -31,6 +27,10 @@ namespace ArduinoCommunication
         internal const int FDUMMY2 = 15;
     }
 
+    /// <summary>
+    /// see https://www.codeproject.com/Questions/856414/Change-DCB-fields-from-SerialPort-instance-Csharp
+    /// and https://referencesource.microsoft.com/#system/compmod/microsoft/win32/UnsafeNativeMethods.cs,8662a7fdc91d2e0a,references
+    /// </summary>
     internal static class SerialPortExtensions
     {
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
