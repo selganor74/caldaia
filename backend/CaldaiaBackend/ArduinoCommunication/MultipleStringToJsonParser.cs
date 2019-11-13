@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Infrastructure.Logging;
 
 namespace ArduinoCommunication
 {
@@ -11,13 +12,18 @@ namespace ArduinoCommunication
         public event WhenFoundNewJson foundNewJson;
 
         private ParsingState _parsingState = ParsingState.SearchingStart;
-        private readonly Queue<string> _readQueue = new Queue<string>(1024);
-        private Timer _processTimer;
+        private readonly Queue<string> _readQueue = new Queue<string>();
+        private readonly Timer _processTimer;
         private string _currentJson;
         private string _afterJsonRemainder;
 
-        public MultipleStringToJsonParser()
+        private readonly ILogger _log;
+
+        public MultipleStringToJsonParser(
+            ILoggerFactory loggerFactory
+            )
         {
+            _log = loggerFactory.CreateNewLogger(GetType().Name);
             _processTimer = new Timer(ProcessQueue, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
         }
 
@@ -60,6 +66,7 @@ namespace ArduinoCommunication
 
             if (endPos == -1)
             {
+                _log.Trace("Still looking for an end.", current);
                 _currentJson += current;
                 current = "";
             }
@@ -68,8 +75,10 @@ namespace ArduinoCommunication
             {
                 _currentJson += current.Substring(0, endPos + 1);
                 current = current.Substring(endPos + 1);
+                _log.Trace("Found end in json string.", _currentJson);
 
-                foundNewJson(_currentJson);
+                // _log.Info("found new json", _currentJson);
+                foundNewJson?.Invoke(_currentJson);
 
                 _currentJson = current;
                 current = "";
@@ -88,6 +97,7 @@ namespace ArduinoCommunication
             if (startPos != -1)
             {
                 current = current.Substring(startPos);
+                _log.Trace("Found start in json string.", current);
                 _parsingState = ParsingState.SearchingEnd;
             }
 

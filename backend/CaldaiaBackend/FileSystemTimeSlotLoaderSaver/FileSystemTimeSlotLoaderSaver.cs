@@ -25,7 +25,7 @@ namespace Application.Services
             ILoggerFactory loggerFactory
         )
         {
-            _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
+            _log = loggerFactory?.CreateNewLogger($"{nameof(FileSystemTimeSlotLoaderSaver<T>)}<{typeof(T).Name}>") ?? new NullLogger();
             _saveInterval = saveInterval;
             if (String.IsNullOrEmpty(PathToJsonStorageFile))
                 throw new ArgumentException(nameof(PathToJsonStorageFile) + " must be a valid path.");
@@ -43,11 +43,12 @@ namespace Application.Services
             if (!File.Exists(_pathToJsonStorage))
                 Directory.CreateDirectory(Path.GetDirectoryName(_pathToJsonStorage));
 
-            _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
+            StartSavingTimer();
         }
 
         private void StartSavingTimer()
         {
+            _log.Info($"Saving to {_pathToJsonStorage} every {_saveInterval.TotalMinutes} minutes.");
             saveTimer = new Timer(state => SaveToFile(), null, _saveInterval, _saveInterval);
         }
 
@@ -57,12 +58,12 @@ namespace Application.Services
             {
                 try
                 {
-                    _log.Info($"Writing data to {_pathToJsonStorage}");
+                    _log.Info($"Writing data to {_pathToJsonStorage}", _toSave);
                     File.WriteAllText(_pathToJsonStorage, _toSave);
                 }
                 catch (Exception e)
                 {
-                    _log.Warning($"Errors while writing file {_pathToJsonStorage}", e);
+                    _log.Warning($"Errors while writing file {_pathToJsonStorage}", e, _toSave);
                 }
             }
 

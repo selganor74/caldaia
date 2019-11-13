@@ -69,7 +69,7 @@ namespace ArduinoCommunication
             _commandToResponseTimeoutTimer = new Timer(TryRecoverConnection, null, -1, -1);
             _commandSender = new Timer(DequeueCommand, null, -1, -1);
 
-            _streamingJsonParser = new MultipleStringToJsonParser();
+            _streamingJsonParser = new MultipleStringToJsonParser(loggerFactory);
             _streamingJsonParser.foundNewJson += FoundNewJson;
         }
 
@@ -117,16 +117,17 @@ namespace ArduinoCommunication
             _physicalPort = new SerialPort(_serialPort, 9600);
             _physicalPort.Handshake = Handshake.XOnXOff;
             //_physicalPort.ReceivedBytesThreshold = 1;
-            //_physicalPort.DataReceived += PhysicalPort_DataReceived;
-            //_physicalPort.DtrEnable = false;
+            _physicalPort.DataReceived += PhysicalPort_DataReceived;
+            _physicalPort.DtrEnable = false;
+            _physicalPort.ReadBufferSize = 64;
             //_physicalPort.ReadTimeout = 500;
             //_physicalPort.WriteTimeout = 500;
 
             _physicalPort.Open();
-            _physicalPort.SetFlag(COMConstants.FERRORCHAR, 0);
-            _physicalPort.SetFlag(COMConstants.FPARITY, 0);
+            //_physicalPort.SetFlag(COMConstants.FERRORCHAR, 0);
+            //_physicalPort.SetFlag(COMConstants.FPARITY, 0);
             _physicalPort.SetFlag(COMConstants.FDTRCONTROL, 0);
-            _physicalPort.SetFlag(COMConstants.FRTSCONTROL, 0);
+            //_physicalPort.SetFlag(COMConstants.FRTSCONTROL, 0);
             _physicalPort.SetField("BaudRate", (UInt32)9600);
             _physicalPort.SetField("Parity", (byte) 0);
             _physicalPort.SetField("ByteSize", (byte) 8);

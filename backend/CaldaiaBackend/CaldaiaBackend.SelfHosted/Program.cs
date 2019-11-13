@@ -57,6 +57,13 @@ namespace CaldaiaBackend.SelfHosted
                 hc.SetServiceName("arduinoBackend");
             });
 
+            if (tsh != TopshelfExitCode.Ok)
+            {
+                if (Environment.UserInteractive)
+                    Console.WriteLine("Abnormal Exit. Press a key to close the console.");
+                    Console.ReadKey();
+            }
+
             var exitCode = (int)Convert.ChangeType(tsh, tsh.GetTypeCode());
             Environment.ExitCode = exitCode;
         }
