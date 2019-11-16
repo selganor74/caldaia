@@ -46,6 +46,7 @@ namespace Application.Services
             StartSavingTimer();
         }
 
+
         private void StartSavingTimer()
         {
             _log.Info($"Saving to {_pathToJsonStorage} every {_saveInterval.TotalMinutes} minutes.");
@@ -58,12 +59,12 @@ namespace Application.Services
             {
                 try
                 {
-                    _log.Info($"Writing data to {_pathToJsonStorage}", _toSave);
+                    _log.Info($"Writing data to {_pathToJsonStorage} - {_toSave.Length} bytes");
                     File.WriteAllText(_pathToJsonStorage, _toSave);
                 }
                 catch (Exception e)
                 {
-                    _log.Warning($"Errors while writing file {_pathToJsonStorage}", e, _toSave);
+                    _log.Warning($"Errors while writing file {_pathToJsonStorage} - {_toSave.Length} bytes", e);
                 }
             }
 
