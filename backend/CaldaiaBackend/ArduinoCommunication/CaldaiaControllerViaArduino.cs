@@ -212,7 +212,8 @@ namespace ArduinoCommunication
                         );
                     ResetFailedJsonCounter();
                     _failedJsonResetTimeout.Change(Timeout.Infinite, Timeout.Infinite);
-                    FlashDTR();
+                    // FlashDTR();
+                    TryToRecover();
                 }
             }
         }
