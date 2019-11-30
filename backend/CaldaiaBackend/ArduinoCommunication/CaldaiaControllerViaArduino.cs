@@ -24,14 +24,14 @@ namespace ArduinoCommunication
         IArduinoDataReader, 
         IArduinoCommandIssuer
     {
-        private static readonly TimeSpan CommandToResponseTimeout = TimeSpan.FromSeconds(15);
+        private static readonly TimeSpan CommandToResponseTimeout = TimeSpan.FromSeconds(4);
 
         private static readonly TimeSpan TimeoutBeforeResettingParsingFailures = CommandToResponseTimeout.Add(CommandToResponseTimeout);
         private const int NumberOfJsonParsingFailuresBeforeReset = 10;
         private static bool _recovering = false;
         private readonly Timer _commandToResponseTimeoutTimer;
         private readonly Timer _commandSender;
-        private readonly Queue<string> _commandQueue = new Queue<string>(12);
+        private readonly Queue<string> _commandQueue = new Queue<string>(50);
 
         private readonly MultipleStringToJsonParser _streamingJsonParser;
 

@@ -17,7 +17,7 @@ namespace CaldaiaBackend.Application
 
         private readonly IArduinoDataReader _dataReader;
         private readonly INotificationPublisher _publisher;
-        private readonly int _pollIntervalMilliseconds = 5000;
+        private readonly int _pollIntervalMilliseconds = 7727;
         private readonly ILogger _log;
         private readonly Last24HoursAccumulators _last24HoursProjection;
         private readonly Last24HoursTemperatures _last24HoursTempsProjection;
