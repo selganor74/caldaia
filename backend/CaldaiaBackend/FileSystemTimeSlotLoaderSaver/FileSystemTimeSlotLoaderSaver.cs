@@ -14,7 +14,7 @@ namespace Application.Services
         private readonly string _pathToJsonStorage;
         private Timer saveTimer;
 
-        private string _toSave;
+        private string _toSave = "";
         private object _lock = new object();
         private readonly ILogger _log;
         private readonly TimeSpan _saveInterval;
@@ -59,12 +59,12 @@ namespace Application.Services
             {
                 try
                 {
-                    _log.Info($"Writing data to {_pathToJsonStorage} - {_toSave.Length} bytes");
                     File.WriteAllText(_pathToJsonStorage, _toSave);
+                    _log?.Info($"Writing data to {_pathToJsonStorage} - {_toSave?.Length} bytes");
                 }
                 catch (Exception e)
                 {
-                    _log.Warning($"Errors while writing file {_pathToJsonStorage} - {_toSave.Length} bytes", e);
+                    _log?.Warning($"Errors while writing file {_pathToJsonStorage} - {_toSave?.Length} bytes", e);
                 }
             }
 
@@ -94,8 +94,8 @@ namespace Application.Services
 
         public void Dispose()
         {
-            saveTimer?.Dispose();
             SaveToFile();
+            saveTimer?.Dispose();
         }
     }
 }

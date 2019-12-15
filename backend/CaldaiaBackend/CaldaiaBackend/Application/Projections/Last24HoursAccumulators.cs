@@ -55,8 +55,6 @@ namespace CaldaiaBackend.Application.Projections
         public void Dispose()
         {
             Stop();
-            var disposableLoader = _loader as IDisposable;
-            disposableLoader?.Dispose();
         }
     }
 }
