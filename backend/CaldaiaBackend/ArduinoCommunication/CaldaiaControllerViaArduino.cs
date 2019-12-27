@@ -118,7 +118,8 @@ namespace ArduinoCommunication
             _physicalPort.Handshake = Handshake.XOnXOff;
             //_physicalPort.ReceivedBytesThreshold = 1;
             _physicalPort.DataReceived += PhysicalPort_DataReceived;
-            _physicalPort.DtrEnable = false;
+            // If false Prevents Arduino to reset ...
+            _physicalPort.DtrEnable = true;
             _physicalPort.ReadBufferSize = 64;
             //_physicalPort.ReadTimeout = 500;
             //_physicalPort.WriteTimeout = 500;
