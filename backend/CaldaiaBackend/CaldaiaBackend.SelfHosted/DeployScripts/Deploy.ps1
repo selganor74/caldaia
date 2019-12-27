@@ -214,7 +214,7 @@ Class Deployer {
         $filesToCopy = $this.DeployableServicePath
         # $result = Copy-Item $filesToCopy $mappedDestination -Force -Recurse -Exclude "Logs\*.*" -ErrorAction Continue
 		ROBOCOPY $filesToCopy $mappedDestination /MIR /TEE /FFT /E /S /LOG:robocopy_log.txt /XD Logs /X CaldaiaBackend.SelfHosted.exe.config /W:1 /R:20
-		type robocopy_log.txt
+		Get-Content -Tail 12 robocopy_log.txt
 		$this.TryUnmapDrive()
     }
 
