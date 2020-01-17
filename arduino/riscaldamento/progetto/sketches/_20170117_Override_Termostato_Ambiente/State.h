@@ -58,7 +58,7 @@ class State {
   unsigned long outOverrideTermoAmbienteAccu_On;
   unsigned long outOverrideTermoAmbienteAccu_Off;
   
-  int   ainTempCaminoValue;
+  long  ainTempCaminoValue;
   float ainTempCaminoValueCentigradi;
 };
 
