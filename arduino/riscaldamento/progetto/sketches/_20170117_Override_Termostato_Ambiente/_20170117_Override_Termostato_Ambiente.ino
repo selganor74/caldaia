@@ -140,12 +140,12 @@ void doReadInputs() {
   
   // La temperatura viene calcolata acquisendo "CB_VALUES" valori, eliminando il massimo ed il minimo ed facendo la media dei restanti.
   static int currentCaminoTemp = 0;
-  static int Temps[CB_VALUES];
+  static unsigned int Temps[CB_VALUES];
   static char tempIndex= 0;
   static char maxIndex = 0;
   static char minIndex = 0;
-  static int maxTemp = 0;
-  static int minTemp = 1023;
+  static long maxTemp = 0;
+  static unsigned int minTemp = 1023;
   static float lastValidAinTempCaminoValueCentigradi = 0.0;
   
   int valuesToAverage = 0;
@@ -212,18 +212,20 @@ void doReadInputs() {
 void doCrunchInputs() {
   // Elaborazione degli output
   //* Gestione Caldaia tramite cbRotexTS usato come termostato
-  char sogliaMin;
-  char sogliaMax;
+  #define SOGLIA_MIN ( runtimeSettings.rotexTermoMin )
+  #define SOGLIA_MAX ( runtimeSettings.rotexTermoMax )
 
+
+  #define ROTEX_DISPONIBILE ( RotexStatus::rotexValues[ RTX_TS ] != 0 )
 //*
-  if ( RotexStatus::rotexValues[ RTX_TS ] != 0 ) {
-    sogliaMin = runtimeSettings.rotexTermoMin; 
-    sogliaMax = runtimeSettings.rotexTermoMax; 
-    if( currentState.outCaldaiaValue == LOW ? RotexStatus::rotexValues[ RTX_TS ] < sogliaMin : RotexStatus::rotexValues[ RTX_TS ] > sogliaMax ) {
+  if ( ROTEX_DISPONIBILE ) {
+ 
+    if( currentState.outCaldaiaValue == LOW ? RotexStatus::rotexValues[ RTX_TS ] < SOGLIA_MIN : RotexStatus::rotexValues[ RTX_TS ] > SOGLIA_MAX ) {
       currentState.outCaldaiaValue == HIGH ? currentState.outCaldaiaValue = LOW : currentState.outCaldaiaValue = HIGH;
     }
-  }  else {
-
+  }  
+  
+  if ( ! ROTEX_DISPONIBILE ){
     // Gestione dell'accesnione tramite termostato + isteresi temporale
     if ( currentState.inTermoAccumulatoreValue == HIGH ) {
       if ( currentState.outCaldaiaValue == LOW ) {
@@ -253,8 +255,9 @@ void doCrunchInputs() {
   static unsigned long tOffPompaCamino = 0;
 #define TEMPO_IN_OFF ( calcolaIntervallo( tOffPompaCamino, millis() ) )
 #define TEMPO_IN_ON ( calcolaIntervallo( tOnPompaCamino, millis() ) )
-#define TEMPO_MINIMO_PER_STATO 60000 
-#define PUO_CAMBIARE_STATO ( currentState.outPompaCaminoValue == LOW ? TEMPO_IN_OFF >= TEMPO_MINIMO_PER_STATO : TEMPO_IN_ON >= TEMPO_MINIMO_PER_STATO )
+#define TEMPO_MINIMO_PER_STATO_ON 600000  /* 600 sec = 10 min*/
+#define TEMPO_MINIMO_PER_STATO_OFF 10000  /* 10 sec */
+#define POMPA_CAMINO_PUO_CAMBIARE_STATO ( currentState.outPompaCaminoValue == LOW ? TEMPO_IN_OFF >= TEMPO_MINIMO_PER_STATO_OFF : TEMPO_IN_ON >= TEMPO_MINIMO_PER_STATO_ON )
 #define ROTEX_DISPONIBILE ( RotexStatus::rotexValues[ RTX_TS ] != 0 )
 #define ROTEX_NON_E_DISPONIBILE !ROTEX_DISPONIBILE
 #define DELTA_CAMINO_ROTEX ( (int)currentState.ainTempCaminoValueCentigradi - (int)RotexStatus::rotexValues[ RTX_TS ] )
@@ -262,35 +265,38 @@ void doCrunchInputs() {
 #define ACCENDI_POMPA_CAMINO      tOnPompaCamino  = millis(); currentState.outPompaCaminoValue = HIGH;          
 #define SPEGNI_POMPA_CAMINO       tOffPompaCamino = millis(); currentState.outPompaCaminoValue = LOW;          
 #define POMPA_CAMINO_E_SPENTA     currentState.outPompaCaminoValue == LOW
+#define POMPA_CAMINO_E_ACCESA     currentState.outPompaCaminoValue == HIGH
 #define DELTA_CAMINO_ROTEX_SOPRA_SOGLIA_INNESCO     DELTA_CAMINO_ROTEX >= runtimeSettings.deltaTInnescoPompaCamino  /* Ad esempio 3 gradi */
 #define DELTA_CAMINO_ROTEX_SOTTO_SOGLIA_INNESCO     DELTA_CAMINO_ROTEX < runtimeSettings.deltaTInnescoPompaCamino  /* Ad esempio 3 gradi */
 #define T_CAMINO_SOPRA_SOGLIA_INNESCO               T_CAMINO > runtimeSettings.TCaminoPerAccensionePompa            /* Ad esempio 62 gradi */
   //*
-  if ( PUO_CAMBIARE_STATO ) {
-    if (  POMPA_CAMINO_E_SPENTA ) {
+    if (  POMPA_CAMINO_E_SPENTA && POMPA_CAMINO_PUO_CAMBIARE_STATO) {
       if ( ROTEX_DISPONIBILE ) {
         if ( DELTA_CAMINO_ROTEX_SOPRA_SOGLIA_INNESCO || T_CAMINO_SOPRA_SOGLIA_INNESCO ) {
           ACCENDI_POMPA_CAMINO
         }
       }
-      if ( !ROTEX_NON_E_DISPONIBILE ) {
+      if ( ROTEX_NON_E_DISPONIBILE ) {
         if ( T_CAMINO >= runtimeSettings.TInnescoSeRotexNonDisponibile /* Ad esempio 55 */ ) {
           ACCENDI_POMPA_CAMINO
         }  
       } 
-    } else {   // if ( outPompaCaminoValue == LOW )
+    } 
+    
+    if ( POMPA_CAMINO_E_ACCESA && POMPA_CAMINO_PUO_CAMBIARE_STATO) { 
+ 
       if ( ROTEX_DISPONIBILE ) {
         if ( DELTA_CAMINO_ROTEX_SOTTO_SOGLIA_INNESCO ) {
           SPEGNI_POMPA_CAMINO
         }
       }
-      if ( !ROTEX_DISPONIBILE ) {
+      if ( ROTEX_NON_E_DISPONIBILE ) {
         if ( T_CAMINO < runtimeSettings.TDisinnescoSeRotexNonDisponibile /* Ad esempio 52 */ ) {
           SPEGNI_POMPA_CAMINO
         }         
       }     
-    }          // if ( outPompaCaminoValue == LOW )
-  }          // if ( PUO_CAMBIARE_STATO )
+    }
+
   //*/
 
   /* La pompa del riscaldamento è direttamente collegata alla richiesta di calore nel da parte dei termostati ambiente.*/
