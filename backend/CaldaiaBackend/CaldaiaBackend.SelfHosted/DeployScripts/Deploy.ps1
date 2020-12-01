@@ -9,7 +9,7 @@
     [String]$Server = "192.168.2.44",
 
     [Parameter(Position=3,Mandatory=$False)]        
-    [String]$NetworkShareName = "caldaiaBackend",
+    [String]$NetworkShareName = "Caldaia",
 
     [Parameter(Position=4,Mandatory=$False)]        
     [String]$DestinationPathInShare = "\", 
@@ -21,7 +21,10 @@
     [String]$DeployableServicePath = "C:\Projects\DigitalInvoice\src\DigitalInvoice.Host\bin\Debug",
 
     [Parameter(Position=7,Mandatory=$False)]        
-    [String]$ServiceExecutableFullPathOnServer = "D:\Shared\deployment_test\DigitalInvoice.Host.exe"
+    [String]$ServiceExecutableFullPathOnServer = "D:\Shared\deployment_test\DigitalInvoice.Host.exe",
+
+    [Parameter(Position=8,Mandatory=$False)]        
+    [String]$ServiceConfigFileName = "CaldaiaBackend.SelfHosted.exe.config"
 )
 
 Class Deployer {
@@ -39,6 +42,7 @@ Class Deployer {
     [String]$DeployableServicePath
     [String]$DeployableAppPath
 	[String]$ServiceExecutableFullPathOnServer
+	[String]$ServiceConfigFileName
 
     Deployer( 
         [String]$Username, 
@@ -49,8 +53,9 @@ Class Deployer {
         [String]$ServiceName,                       # Il nome del servizio da deployare. Usato per avviare, terminare ed installare il servizio Es.: DigitalInvoice
         [String]$DeployableServicePath,             # Il path locale della directory che contiene il servizio. Tipicamente .\bin\<Configuration>
         [String]$DeployableAppPath,                 # Il path locale della applicazione web. Tipicamente .\app
-        [String]$ServiceExecutableFullPathOnServer  # Percorso completo del servizio sul server
-    ) {
+        [String]$ServiceExecutableFullPathOnServer, # Percorso completo del servizio sul server
+		[String]$ServiceConfigFileName
+	) {
 		$this.Username = $Username
 		$this.Password = $Password
         $this.Server = $Server
@@ -62,6 +67,7 @@ Class Deployer {
         $this.DeployableAppPath = $DeployableAppPath
 
 		$this.ServiceExecutableFullPathOnServer = $ServiceExecutableFullPathOnServer
+		$this.ServiceConfigFileName = $ServiceConfigFileName
 
 		$this.BuildCredentials($Username, $Password)
     }
@@ -213,7 +219,11 @@ Class Deployer {
 		$mappedDestination = $this.driveToMap+"\"+$this.DestinationPathInShare
         $filesToCopy = $this.DeployableServicePath
         # $result = Copy-Item $filesToCopy $mappedDestination -Force -Recurse -Exclude "Logs\*.*" -ErrorAction Continue
-		ROBOCOPY $filesToCopy $mappedDestination /MIR /TEE /FFT /E /S /LOG:robocopy_log.txt /XD Logs /X CaldaiaBackend.SelfHosted.exe.config /W:1 /R:20
+		ROBOCOPY $filesToCopy $mappedDestination /MIR /TEE /FFT /E /S /LOG:robocopy_log.txt /XD Logs /XF $this.ServiceConfigFileName /W:1 /R:20
+		Get-Content robocopy_log.txt -Tail 13
+		If (-Not ( Test-Path -Path "$($mappedDestination)\$($this.ServiceConfigFileName)" ) ) {
+			Copy-Item "$($filesToCopy)\$($this.ServiceConfigFileName)"  $mappedDestination -Force
+		}
 		Get-Content -Tail 12 robocopy_log.txt
 		$this.TryUnmapDrive()
     }
@@ -270,5 +280,5 @@ Class Deployer {
     }
 }
 
-[Deployer]$deploy = [Deployer]::new($Username, $Password, $Server, $NetworkShareName, $DestinationPathInShare, $ServiceName, $DeployableServicePath, $DeployableAppPath, $ServiceExecutableFullPathOnServer)
+[Deployer]$deploy = [Deployer]::new($Username, $Password, $Server, $NetworkShareName, $DestinationPathInShare, $ServiceName, $DeployableServicePath, $DeployableAppPath, $ServiceExecutableFullPathOnServer, $ServiceConfigFileName)
 $deploy.Deploy()

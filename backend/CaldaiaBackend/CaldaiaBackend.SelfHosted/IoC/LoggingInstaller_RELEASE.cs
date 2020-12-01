@@ -19,7 +19,7 @@ namespace CaldaiaBackend.SelfHosted.IoC
             var signalrLogWriter = new SignalRLogWriter(LogLevel.Warning);
             clw.AddLogger(signalrLogWriter, LogLevelMode.Synchronized);
 
-            //var eventLogLogger = new EventLogWriter("caldaiaBackend", LogLevel.Warning);
+            //var eventLogLogger = new EventLogWriter("arduinoBackend", LogLevel.Warning);
             //clw.AddLogger(eventLogLogger, LogLevelMode.Independent);
 
             logWriter.SetLogLevel(LogLevel.Info);

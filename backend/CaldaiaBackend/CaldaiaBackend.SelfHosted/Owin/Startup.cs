@@ -74,9 +74,12 @@ namespace CaldaiaBackend.SelfHosted.Owin
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                Console.WriteLine("*** PRESS A KEY TO EXIT ***");
-                Console.ReadKey();
+                if (Environment.UserInteractive)
+                {
+                    Console.WriteLine(e);
+                    Console.WriteLine("*** PRESS A KEY TO EXIT ***");
+                    Console.ReadKey();
+                }
                 throw;
             }
         }
