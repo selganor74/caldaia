@@ -37,6 +37,14 @@ class TemperatureChartData {
   public chartData: IChartData;
   public availableChartData: { [possibleDataset: string]: Chart.ChartDataSets } = {};
 
+  public isFullScreen = false;
+
+  private _notifyToggleFullScreen: (source: TemperatureChartData) => void;
+
+  constructor(notifyFullScreen: (source: TemperatureChartData) => void ) {
+    this._notifyToggleFullScreen = notifyFullScreen || ( (src) => {} );
+  }
+
   public setAvailableDataSets(enableDataSets: PossibleDatasets[]) {
 
     this.chartData.datasets = [];
@@ -45,6 +53,10 @@ class TemperatureChartData {
     for (const ds of enableDataSets) {
       this.chartData.datasets.push(this.availableChartData[ds]);
     }
+  }
+
+  public toggleFullScreen() {
+    this._notifyToggleFullScreen(this);
   }
 }
 
@@ -61,7 +73,7 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
   public allTempChartsData: {[timeRange: string]: TemperatureChartData[]} = {};
 
   public commonChartOptions: Chart.ChartOptions = {};
-
+  public currentFullScreen: TemperatureChartData;
 
   private _tempDatasetsToShow: PossibleDatasets[] = ['tavg'];
 
@@ -106,17 +118,18 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
 
   private setDatasetsToShow(): any {
     for (const tr in this.allTempChartsData) {
-      if (!this.allAccuChartsData.hasOwnProperty(tr)) { continue; }
+      if (!this.allAccuChartsData.hasOwnProperty(tr)) 
+        continue;
 
-      for (const dt of this.allTempChartsData[tr]) {
+      for (const dt of this.allTempChartsData[tr]) 
         dt.setAvailableDataSets(this._tempDatasetsToShow);
-      }
+      
       const tempArray = this.allTempChartsData[tr];
       this.allTempChartsData[tr] = [];
 
-      for (const t of tempArray) {
+      for (const t of tempArray) 
         this.allTempChartsData[tr].push(t);
-      }
+      
     }
       // this.changeDetectorRef.detectChanges();
   }
@@ -163,6 +176,23 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
     }
   }
 
+  private onToggleFullScreen(source: TemperatureChartData) {
+    console.log("Notify Toggle Full Screen called");
+    
+    if(this.currentFullScreen === source) {
+      this.currentFullScreen = undefined;
+      source.isFullScreen = false;
+      return;
+    }
+    for(const timeRange in this.allTempChartsData) {
+      const chartsForTimeRange = this.allTempChartsData[timeRange];
+      for(const chart of chartsForTimeRange)
+        chart.isFullScreen = false;
+    }
+    source.isFullScreen = true;
+    this.currentFullScreen = source;
+  }
+
   buildGraphForTemperaturesProperty(dataFromApi: ITemperaturesTimeSlot[], propertyName: string): TemperatureChartData {
     const labels: string[] = [];
 
@@ -201,7 +231,8 @@ export class StatsGraphComponent implements OnInit, OnDestroy {
       (<number[]>chartAvgDataset.data).push(avg);
     }
 
-    const toReturn = new TemperatureChartData();
+    const toReturn = new TemperatureChartData(this.onToggleFullScreen);
+
     toReturn.availableChartData['tmin'] = chartMinDataset;
     toReturn.availableChartData['tmax'] = chartMaxDataset;
     toReturn.availableChartData['tavg'] = chartAvgDataset;

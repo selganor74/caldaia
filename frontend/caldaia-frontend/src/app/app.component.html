@@ -8,7 +8,7 @@
     </p-panel>
 </p-dialog>
 
-<div class="fluid-container">
+<div class="fluid-container" style="margin: 2rem;">
     <div class="row">
         <p-tabView class="col-md-12" (onChange)="onTabViewChange($event)">
             <p-tabPanel header="Dispositivi">
@@ -23,6 +23,7 @@
                 </div>
 
                 <div class="row justify-content-center main-content">
+
                     <div class="col-md-4 col-lg-3 device">
                         <p-panel header="Camino">
                             <div class="monitor">
@@ -31,15 +32,16 @@
                                 <span>{{data.ainTempCaminoValueCentigradi}}&deg;C</span>
                                 <i [ngClass]="{'pi-spin': data.outPompaCaminoValue}" [ngStyle]="{'color': data.outPompaCaminoValue ? 'green' : 'gray'}"
                                     class="pi pi-cog"></i>
-
                             </div>
                         </p-panel>
                     </div>
+                    
                     <div class="col-md-4 col-lg-3 device">
                         <p-panel header="Accumulo Rotex">
                             <div class="monitor">{{data.rotexTS}}&deg;C</div>
                         </p-panel>
                     </div>
+                    
                     <div class="col-md-4 col-lg-3 device">
                         <p-panel header="Pannelli Solari">
                             <div class="monitor">
@@ -49,12 +51,14 @@
                             </div>
                         </p-panel>
                     </div>
+                    
                     <div class="col-md-4 col-lg-3 device">
                         <p-panel header="Caldaia">
                             <div class="monitor"><i [ngClass]="{'pi-spin': data.outCaldaiaValue}" [ngStyle]="{'color': data.outCaldaiaValue ? 'green' : 'gray'}"
                                     class="pi pi-cog"></i></div>
                         </p-panel>
                     </div>
+                    
                     <div class="col-md-4 col-lg-3 device">
                         <p-panel header="Riscaldamento">
                             <div class="monitor">
@@ -64,6 +68,7 @@
                                     class="pi pi-cog"></i></div>
                         </p-panel>
                     </div>
+                
                 </div>
             </p-tabPanel>
 
@@ -159,3 +164,4 @@
             <pre>{{settings | json}}</pre>
         </p-panel>
     </div>
+</div>

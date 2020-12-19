@@ -34,7 +34,11 @@
     </p-header>
     <div class="fluid-container">
       <div class="row justify-content-center">
-        <p-card class="chart col-sm-12 col-md-6 col-lg-4" *ngFor="let tempChart of allTempChartsData[currentRange]">
+        <p-card class="chart {{tempChart.isFullScreen ? 'col-12' : 'col-sm-12 col-md-6 col-lg-4'}}"
+                style="{{currentFullScreen && !tempChart.isFullScreen ? 'display: none;' : ''}}"
+                *ngFor="let tempChart of allTempChartsData[currentRange]"
+                (click)="tempChart.toggleFullScreen()" 
+                >
           <p-header><span>{{tempChart.chartData.header}}</span></p-header>
           <p-chart type="line" [data]="tempChart.chartData" [options]="commonChartOptions"></p-chart>
         </p-card>
