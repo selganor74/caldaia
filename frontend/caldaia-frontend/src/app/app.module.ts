@@ -24,12 +24,16 @@ import { AppComponent } from './app.component';
 import { BackendService } from './backend.service';
 import { TerminalComponent } from './terminal/terminal.component';
 import { StatsGraphComponent } from './stats-graph/stats-graph.component';
+import { TemperatureChartComponent } from './chart/temperature-chart/temperature-chart.component';
+import { AccumulatorChartComponent } from './chart/accumulator-chart/accumulator-chart.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TerminalComponent,
-    StatsGraphComponent
+    StatsGraphComponent,
+    TemperatureChartComponent,
+    AccumulatorChartComponent
   ],
   imports: [
     BrowserModule,

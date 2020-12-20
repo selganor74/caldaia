@@ -21,54 +21,55 @@
                         </div>
                     </p-toolbar>
                 </div>
+                <div class="fluid-container">
+                    <div class="row justify-content-center main-content">
 
-                <div class="row justify-content-center main-content">
-
-                    <div class="col-md-4 col-lg-3 device">
-                        <p-panel header="Camino">
-                            <div class="monitor">
-                                <i *ngIf="data.outOverrideTermoAmbienteValue" style="vertical-align: center; font-size: 0.8em; color: orange"
-                                    class="pi pi-exclamation-triangle"></i>
-                                <span>{{data.ainTempCaminoValueCentigradi}}&deg;C</span>
-                                <i [ngClass]="{'pi-spin': data.outPompaCaminoValue}" [ngStyle]="{'color': data.outPompaCaminoValue ? 'green' : 'gray'}"
-                                    class="pi pi-cog"></i>
-                            </div>
-                        </p-panel>
-                    </div>
+                        <div class="col-6 device">
+                            <p-panel header="Accumulo Rotex">
+                                <div class="monitor">{{data.rotexTS}}&deg;C</div>
+                            </p-panel>
+                        </div>
+                        
+                        <div class="col-6 device">
+                            <p-panel header="Camino">
+                                <div class="monitor">
+                                    <i *ngIf="data.outOverrideTermoAmbienteValue" style="vertical-align: center; font-size: 0.8em; color: orange"
+                                        class="pi pi-exclamation-triangle"></i>
+                                    <span>{{data.ainTempCaminoValueCentigradi}}&deg;C</span>
+                                    <i [ngClass]="{'pi-spin': data.outPompaCaminoValue}" [ngStyle]="{'color': data.outPompaCaminoValue ? 'green' : 'gray'}"
+                                        class="pi pi-cog"></i>
+                                </div>
+                            </p-panel>
+                        </div>
+                        
+                        <div class="col-4 device">
+                            <p-panel header="Pannelli Solari">
+                                <div class="monitor">
+                                    {{data.rotexTK}}&deg;C
+                                    <i [ngClass]="{'pi-spin': data.rotexP1}" [ngStyle]="{'color': data.rotexP1 ? 'green' : 'gray'}"
+                                        class="pi pi-cog"></i>
+                                </div>
+                            </p-panel>
+                        </div>
+                        
+                        <div class="col-4 device">
+                            <p-panel header="Caldaia">
+                                <div class="monitor"><i [ngClass]="{'pi-spin': data.outCaldaiaValue}" [ngStyle]="{'color': data.outCaldaiaValue ? 'green' : 'gray'}"
+                                        class="pi pi-cog"></i></div>
+                            </p-panel>
+                        </div>
+                        
+                        <div class="col-4 device">
+                            <p-panel header="Riscaldamento">
+                                <div class="monitor">
+                                    <i *ngIf="data.outOverrideTermoAmbienteValue" style="vertical-align: center; font-size: 0.8em; color: orange"
+                                        class="pi pi-exclamation-triangle"></i>
+                                    <i [ngClass]="{'pi-spin': data.outPompaValue}" [ngStyle]="{'color': data.outPompaValue ? 'green' : 'gray'}"
+                                        class="pi pi-cog"></i></div>
+                            </p-panel>
+                        </div>
                     
-                    <div class="col-md-4 col-lg-3 device">
-                        <p-panel header="Accumulo Rotex">
-                            <div class="monitor">{{data.rotexTS}}&deg;C</div>
-                        </p-panel>
                     </div>
-                    
-                    <div class="col-md-4 col-lg-3 device">
-                        <p-panel header="Pannelli Solari">
-                            <div class="monitor">
-                                {{data.rotexTK}}&deg;C
-                                <i [ngClass]="{'pi-spin': data.rotexP1}" [ngStyle]="{'color': data.rotexP1 ? 'green' : 'gray'}"
-                                    class="pi pi-cog"></i>
-                            </div>
-                        </p-panel>
-                    </div>
-                    
-                    <div class="col-md-4 col-lg-3 device">
-                        <p-panel header="Caldaia">
-                            <div class="monitor"><i [ngClass]="{'pi-spin': data.outCaldaiaValue}" [ngStyle]="{'color': data.outCaldaiaValue ? 'green' : 'gray'}"
-                                    class="pi pi-cog"></i></div>
-                        </p-panel>
-                    </div>
-                    
-                    <div class="col-md-4 col-lg-3 device">
-                        <p-panel header="Riscaldamento">
-                            <div class="monitor">
-                                <i *ngIf="data.outOverrideTermoAmbienteValue" style="vertical-align: center; font-size: 0.8em; color: orange"
-                                    class="pi pi-exclamation-triangle"></i>
-                                <i [ngClass]="{'pi-spin': data.outPompaValue}" [ngStyle]="{'color': data.outPompaValue ? 'green' : 'gray'}"
-                                    class="pi pi-cog"></i></div>
-                        </p-panel>
-                    </div>
-                
                 </div>
             </p-tabPanel>
 
