@@ -8,9 +8,9 @@
     </p-panel>
 </p-dialog>
 
-<div class="fluid-container" style="margin: 2rem;">
+<div class="fluid-container" >
     <div class="row">
-        <p-tabView class="col-md-12" (onChange)="onTabViewChange($event)">
+        <p-tabView class="col-sm-12" (onChange)="onTabViewChange($event)">
             <p-tabPanel header="Dispositivi">
 
                 <div class="row">
@@ -24,13 +24,13 @@
                 <div class="fluid-container">
                     <div class="row justify-content-center main-content">
 
-                        <div class="col-6 device">
+                        <div class="col-sm-12 col-md-6 device">
                             <p-panel header="Accumulo Rotex">
                                 <div class="monitor">{{data.rotexTS}}&deg;C</div>
                             </p-panel>
                         </div>
                         
-                        <div class="col-6 device">
+                        <div class="col-sm-12 col-md-6 device">
                             <p-panel header="Camino">
                                 <div class="monitor">
                                     <i *ngIf="data.outOverrideTermoAmbienteValue" style="vertical-align: center; font-size: 0.8em; color: orange"
@@ -42,7 +42,7 @@
                             </p-panel>
                         </div>
                         
-                        <div class="col-4 device">
+                        <div class="col-sm-12 col-md-4 device">
                             <p-panel header="Pannelli Solari">
                                 <div class="monitor">
                                     {{data.rotexTK}}&deg;C
@@ -52,14 +52,14 @@
                             </p-panel>
                         </div>
                         
-                        <div class="col-4 device">
+                        <div class="col-sm-12 col-md-4 device">
                             <p-panel header="Caldaia">
                                 <div class="monitor"><i [ngClass]="{'pi-spin': data.outCaldaiaValue}" [ngStyle]="{'color': data.outCaldaiaValue ? 'green' : 'gray'}"
                                         class="pi pi-cog"></i></div>
                             </p-panel>
                         </div>
                         
-                        <div class="col-4 device">
+                        <div class="col-sm-12 col-md-4 device">
                             <p-panel header="Riscaldamento">
                                 <div class="monitor">
                                     <i *ngIf="data.outOverrideTermoAmbienteValue" style="vertical-align: center; font-size: 0.8em; color: orange"

@@ -22,9 +22,11 @@ export class TemperaturesChartDefinitionHolder {
         chartDef.header = chartId;
 
         chartDef.labels.push(label);
-        chartDef.avgDataset.push((<IAggregatedValues>(ts.Content[chartId])).Avg);
-        chartDef.minDataset.push((<IAggregatedValues>(ts.Content[chartId])).Min);
-        chartDef.maxDataset.push((<IAggregatedValues>(ts.Content[chartId])).Max);
+        if (ts && ts.Content) {
+          chartDef.avgDataset.push((<IAggregatedValues>(ts.Content[chartId])).Avg);
+          chartDef.minDataset.push((<IAggregatedValues>(ts.Content[chartId])).Min);
+          chartDef.maxDataset.push((<IAggregatedValues>(ts.Content[chartId])).Max);
+        }
       }
     }
   }

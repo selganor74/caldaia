@@ -10,6 +10,10 @@ html {
     font-weight: bold;
 }
 
+ul [role="presentation"] {
+  height: 4rem;
+}
+
 .layout-topbar {
     height: 55px;
     background-color: black;
@@ -82,3 +86,4 @@ html {
     margin-left: auto;
     margin-right: auto;
   }
+
