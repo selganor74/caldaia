@@ -1,4 +1,3 @@
-<p-card class="chart col-12">
-  <p-header><span>{{title}}</span></p-header>
+<p-card class="chart col-12" [title] = "title">
   <p-chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
 </p-card>

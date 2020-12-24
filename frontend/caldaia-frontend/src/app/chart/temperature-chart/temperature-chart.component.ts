@@ -1,7 +1,7 @@
-import { 
-  Component, 
-  Input, 
-  OnInit 
+import {
+  Component,
+  Input,
+  OnInit
 } from '@angular/core';
 
 export class TemperatureChartDefinition {
@@ -13,10 +13,10 @@ export class TemperatureChartDefinition {
 }
 
 class HeaderTranslator {
-  TEMPERATURA_ACCUMULO = "Accumulo";
-  TEMPERATURA_CAMINO = "Camino";
-  TEMPERATURA_ACCUMULO_INFERIORE = "Accumulo Inferiore";
-  TEMPERATURA_PANNELLI = "Pannelli Solari";
+  TEMPERATURA_ACCUMULO = 'Accumulo';
+  TEMPERATURA_CAMINO = 'Camino';
+  TEMPERATURA_ACCUMULO_INFERIORE = 'Accumulo Inferiore';
+  TEMPERATURA_PANNELLI = 'Pannelli Solari';
 }
 
 @Component({
@@ -33,9 +33,11 @@ export class TemperatureChartComponent implements OnInit {
 
   private _chartDefinition: TemperatureChartDefinition;
 
-  @Input("chart-definition")
-  public get chartDefinition(): TemperatureChartDefinition { return this._chartDefinition };
+  @Input('chart-definition')
+  public get chartDefinition(): TemperatureChartDefinition { return this._chartDefinition; }
   public set chartDefinition(value: TemperatureChartDefinition ) {
+    if (!value) { return; }
+
     console.log(`TemperatureChartComponent: setting dataFromApi to `, value);
     this._chartDefinition = value;
     this.chartDefinitionToNgPrimeChartData();
@@ -44,9 +46,9 @@ export class TemperatureChartComponent implements OnInit {
   public readonly chartOptions: Chart.ChartOptions = {
     // devicePixelRatio: 4 / 1,
     responsive: true
-  }
+  };
 
-  public isFullScreen: boolean = false;
+  public isFullScreen = false;
 
   // data to be visualized in ngprime chart format.
   public chartData: Chart.ChartData;
@@ -83,7 +85,7 @@ export class TemperatureChartComponent implements OnInit {
       data: this._chartDefinition.avgDataset
     };
 
-    const newChartData: Chart.ChartData = {}
+    const newChartData: Chart.ChartData = {};
 
     this.title = this.translate[this._chartDefinition.header] || this._chartDefinition.header;
     newChartData.labels = this._chartDefinition.labels;
@@ -92,11 +94,8 @@ export class TemperatureChartComponent implements OnInit {
     //  chartMaxDataset,
       chartAvgDataset
     ];
-    // newChartData.datasets['tmin'] = chartMinDataset; // tmin
-    // newChartData.datasets['tmax'] = chartMaxDataset; // tmax
-    // newChartData.datasets['tavg'] = chartAvgDataset; // tavg
-    
-    console.log("TemperatureChartComponent: set new chart data", newChartData);
+
+    console.log('TemperatureChartComponent: set new chart data', newChartData);
     this.chartData = newChartData;
   }
 }
