@@ -390,7 +390,7 @@
     <None Include="config.DEBUG.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="DeployScripts\Build.bat" />
+    <None Include="DeployScripts\BuildCustom.bat" />
     <None Include="DeployScripts\DeployTo.bat" />
     <None Include="DeployScripts\Deploy.ps1" />
     <Compile Include="Environments.cs" />

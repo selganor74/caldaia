@@ -59,7 +59,7 @@ pushd %CURRDIR%
 	)
 
 	REM Builds the project in %Configuration%
-	CALL build.bat %Configuration%
+	CALL BuildCustom.bat %Configuration%
 	IF errorlevel 1 GOTO :End
 
 	REM Copy the latest Frontend build into the deployable
