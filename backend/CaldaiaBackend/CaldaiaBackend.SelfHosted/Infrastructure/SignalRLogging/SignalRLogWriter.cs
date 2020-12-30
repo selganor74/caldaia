@@ -51,7 +51,7 @@ namespace CaldaiaBackend.SelfHosted.Infrastructure.SignalRLogging
 
         public void Error(string componentName, string toLog, params object[] context)
         {
-            if (_logLevel < LogLevel.Errors) return;
+            if (_logLevel < LogLevel.Error) return;
 
             var toSend = ContextToJson(context);
 

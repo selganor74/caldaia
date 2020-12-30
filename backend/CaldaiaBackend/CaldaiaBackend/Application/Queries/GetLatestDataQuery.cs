@@ -1,5 +1,5 @@
 ﻿using CaldaiaBackend.Application.DataModels;
-using Infrastructure.Actions.Query;
+using Infrastructure.Actions;
 
 namespace CaldaiaBackend.Application.Queries
 {

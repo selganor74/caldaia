@@ -1,10 +1,8 @@
-﻿using System;
-using Infrastructure.Actions.Command;
+﻿using Infrastructure.Actions;
 
 namespace CaldaiaBackend.Application.Commands
 {
     public class ReadDataAndResetAccumulatorsCommand : ICommand
     {
-        public string CommandId { get; } = Guid.NewGuid().ToString();
     }
 }

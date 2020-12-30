@@ -1,4 +1,4 @@
-﻿using Infrastructure.Actions.Command;
+﻿using Infrastructure.Actions;
 
 namespace CaldaiaBackend.Application.Commands
 {
@@ -7,7 +7,6 @@ namespace CaldaiaBackend.Application.Commands
     /// </summary>
     public class PausePollerCommand : ICommand
     {
-        public string CommandId { get; }
         public int PauseForSeconds { get; set; }
     }
 }

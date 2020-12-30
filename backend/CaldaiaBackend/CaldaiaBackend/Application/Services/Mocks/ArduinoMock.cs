@@ -1,7 +1,7 @@
 ﻿using System;
 using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.Application.Events;
-using Infrastructure.DomainEvents;
+using Infrastructure.Events;
 
 namespace CaldaiaBackend.Application.Services.Mocks
 {
@@ -12,7 +12,7 @@ namespace CaldaiaBackend.Application.Services.Mocks
         private readonly Random _random = new Random();
         private int _rotexTermoMax = 43;
         private int _rotexTermoMin = 45;
-        private IEventDispatcher _dispatcher;
+        private readonly IEventDispatcher _dispatcher;
 
         private SettingsFromArduino RandomSettings => new SettingsFromArduino
         {

@@ -4,7 +4,7 @@ using CaldaiaBackend.Application.Events;
 using CaldaiaBackend.Application.Projections.DataModels;
 using CaldaiaBackend.Application.Services;
 using CaldaiaBackend.Infrastructure;
-using Infrastructure.DomainEvents;
+using Infrastructure.Events;
 using Infrastructure.Logging;
 
 namespace CaldaiaBackend.Application.Projections
@@ -34,7 +34,7 @@ namespace CaldaiaBackend.Application.Projections
             base.Start();
         }
 
-        protected override Task HandleEvent(AccumulatorsReceived evt)
+        protected override void HandleEvent(AccumulatorsReceived evt)
         {
             _log.Trace("Processing event " + nameof(AccumulatorsReceived), evt);
             var stats = _timeBuffer.GetContentAtReference(evt.timestamp) ?? new AccumulatorStatistics();
@@ -44,7 +44,6 @@ namespace CaldaiaBackend.Application.Projections
             _timeBuffer.UpdateOrCreateContentAtReference(evt.timestamp, stats);
 
             _loader.Save(_timeBuffer);
-            return EmptyTask;
         }
 
         public string GetCurrentStatisticsAsJson()

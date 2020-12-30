@@ -1,7 +1,8 @@
 ﻿using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.Application.Projections;
 using CaldaiaBackend.Application.Services;
-using Infrastructure.Actions.Query.Handler;
+using Infrastructure.Actions;
+using Infrastructure.Application;
 
 namespace CaldaiaBackend.Application.Queries.Handlers
 {
@@ -32,27 +33,27 @@ namespace CaldaiaBackend.Application.Queries.Handlers
             _lastWeekTempsProjection = lastWeekTempsProjection;
         }
 
-        public DataFromArduino Execute(GetLatestDataQuery Action)
+        public DataFromArduino Execute(GetLatestDataQuery Action, IExecutionContext context)
         {
             return _reader.Latest;
         }
 
-        public string Execute(GetLast24HoursAccumulatorsStatisticsQuery Action)
+        public string Execute(GetLast24HoursAccumulatorsStatisticsQuery Action, IExecutionContext context)
         {
             return _last24HoursProjection.GetCurrentStatisticsAsJson();
         }
 
-        public string Execute(GetLast24HoursTemperaturesStatisticsQuery Action)
+        public string Execute(GetLast24HoursTemperaturesStatisticsQuery Action, IExecutionContext context)
         {
             return _last24HoursTempsProjection.GetCurrentStatisticsAsJson();
         }
 
-        public string Execute(GetLastWeekAccumulatorsStatisticsQuery Action)
+        public string Execute(GetLastWeekAccumulatorsStatisticsQuery Action, IExecutionContext context)
         {
             return _lastWeekProjection.GetCurrentStatisticsAsJson();
         }
 
-        public string Execute(GetLastWeekTemperaturesStatisticsQuery Action)
+        public string Execute(GetLastWeekTemperaturesStatisticsQuery Action, IExecutionContext context)
         {
             return _lastWeekTempsProjection.GetCurrentStatisticsAsJson();
         }

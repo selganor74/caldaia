@@ -1,4 +1,4 @@
-﻿using Infrastructure.Actions.Command;
+﻿using Infrastructure.Actions;
 
 namespace CaldaiaBackend.Application.Commands
 {
@@ -9,6 +9,5 @@ namespace CaldaiaBackend.Application.Commands
     /// </summary>
     public class DecrementRotexTermoMinCommand : ICommand
     {
-        public string CommandId { get; }
     }
 }

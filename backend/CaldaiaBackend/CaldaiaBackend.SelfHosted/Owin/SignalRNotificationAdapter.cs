@@ -1,7 +1,7 @@
 ﻿using System;
 using CaldaiaBackend.Application.DataModels;
+using CaldaiaBackend.Application.Services;
 using Infrastructure.Logging;
-using Infrastructure.MiscPatterns.Notification;
 using Microsoft.AspNet.SignalR;
 using Owin;
 
@@ -21,17 +21,11 @@ namespace CaldaiaBackend.SelfHosted.Owin
             _appObservable = appObservable;
         }
 
-        public void SetupSignalR(IAppBuilder appBuilder)
+        public void Start()
         {
             _appObservable.Subscribe("data", (DataFromArduino data) => { NotifyToChannel("data", data); });
             _appObservable.Subscribe("settings", (SettingsFromArduino settings) => { NotifyToChannel("settings", settings); });
             _appObservable.Subscribe("raw", (string rawData) => { NotifyToChannel("raw", rawData); });
-
-            appBuilder.MapSignalR("/signalr", new HubConfiguration
-            {
-                EnableDetailedErrors = true,
-                EnableJavaScriptProxies = true
-            });
         }
 
         public void NotifyToChannel<T>(string channel, T data)
@@ -46,6 +40,5 @@ namespace CaldaiaBackend.SelfHosted.Owin
                 _log.Warning("Errors in Hub.", e);
             }
         }
-
     }
 }

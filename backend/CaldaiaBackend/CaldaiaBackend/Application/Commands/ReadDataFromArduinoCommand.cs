@@ -1,5 +1,4 @@
-﻿using System;
-using Infrastructure.Actions.Command;
+﻿using Infrastructure.Actions;
 
 namespace CaldaiaBackend.Application.Commands
 {
@@ -8,6 +7,5 @@ namespace CaldaiaBackend.Application.Commands
     /// </summary>
     public class ReadDataFromArduinoCommand : ICommand
     {
-        public string CommandId { get; } = Guid.NewGuid().ToString();
     }
 }

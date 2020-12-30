@@ -1,6 +1,6 @@
 ﻿using System;
 using CaldaiaBackend.Application.DataModels;
-using Infrastructure.DomainEvents;
+using Infrastructure.DomainDesign.DomainEvents;
 
 namespace CaldaiaBackend.Application.Events
 {

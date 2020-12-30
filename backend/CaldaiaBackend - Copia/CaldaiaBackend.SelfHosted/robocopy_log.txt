@@ -1,0 +1,388 @@
+
+-------------------------------------------------------------------------------
+   ROBOCOPY     ::     Copia di file efficace per Windows                              
+-------------------------------------------------------------------------------
+
+  Avviato: martedç 1 dicembre 2020 22:57:58
+      Origine : C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\
+ Destinazione : Y:\
+
+         File: *.*
+	    
+     File exc: CaldaiaBackend.SelfHosted.exe.config
+	    
+Directory exc: Logs
+	    
+      Opzioni: *.* /FFT /TEE /S /DCOPY:DA /COPY:DAT /PURGE /MIR /R:20 /W:1 
+
+-------------------------------------------------------------------------------
+
+	                  71	C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:57:58 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:57:59 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:00 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:01 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:02 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:03 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:04 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:05 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:06 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:07 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:08 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:09 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:10 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:11 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:13 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:14 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:15 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:16 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:17 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:18 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		    7168	Application.Services.dll
+2020/12/01 22:58:19 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Application.Services.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+
+ERRORE: LIMITE NUOVO TENTATIVO SUPERATO.
+
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:19 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:20 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:21 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:22 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:23 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:24 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:25 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:26 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:27 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:28 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:29 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:30 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:31 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:33 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:34 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:35 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:36 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:37 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:38 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:39 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   17920	ArduinoCommunication.dll
+2020/12/01 22:58:40 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\ArduinoCommunication.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+
+ERRORE: LIMITE NUOVO TENTATIVO SUPERATO.
+
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:40 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:41 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:42 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:43 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:44 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:45 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:46 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:47 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:48 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:49 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:50 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:51 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:52 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:53 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:54 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:56 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:57 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:58 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:58:59 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:59:00 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   40960	CaldaiaBackend.dll
+2020/12/01 22:59:01 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.dll
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+
+ERRORE: LIMITE NUOVO TENTATIVO SUPERATO.
+
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:01 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:02 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:03 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:04 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:05 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:06 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:07 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:08 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:09 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:10 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:11 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:12 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:13 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:15 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:16 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:17 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:18 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:19 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:20 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:21 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+Attesa di 1 secondi... Nuovo tentativo in corso...
+	   Pió recente		   28160	CaldaiaBackend.SelfHosted.exe
+2020/12/01 22:59:22 ERRORE 32 (0x00000020) Copia del file in corso C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\CaldaiaBackend.SelfHosted.exe
+Impossibile accedere al file. Il file ä utilizzato da un altro processo.
+
+ERRORE: LIMITE NUOVO TENTATIVO SUPERATO.
+
+	   Pió recente		   10240	Services.TimeSlotLoaderSaver.GDrive.dll  0%  100%  
+	                   0	C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\AngularAppDist\
+	                  29	C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\AngularAppDist\caldaia-frontend\
+	                   1	C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\GoogleDrive\
+	                   1	C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\GoogleDrive\token.json\
+	                   4	C:\DriveD\play\caldaia\backend\CaldaiaBackend\CaldaiaBackend.SelfHosted\bin\Release\Projections\
+	   Pió vecchio		   12815	Last24Hours.json  0%  100%  
+	   Pió vecchio		   49796	Last24HoursTemperatures.json  0%  100%  
+	   Pió vecchio		   20738	LastWeek.json  0%  100%  
+	   Pió vecchio		   57981	LastWeekTemperatures.json  0%  100%  
+
+-------------------------------------------------------------------------------
+
+              Totale   Copiato  IgnorateNon corrispondentiNon riuscitaSupplementari
+Directory:         6         0         6         0         0         0
+     File:       106         5        97         0         4         0
+     Byte:   17.28 m   148.0 k   17.05 m         0    92.0 k         0
+   Durata:   0:01:24   0:00:04                       0:01:20   0:00:00
+
+
+ VelocitÖ:               35513 Byte/sec.
+ VelocitÖ:               2.032 MB/min.
+   Terminato: martedç 1 dicembre 2020 22:59:22
+

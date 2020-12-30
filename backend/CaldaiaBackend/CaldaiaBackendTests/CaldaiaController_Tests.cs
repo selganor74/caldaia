@@ -4,7 +4,7 @@ using System.Threading;
 using ArduinoCommunication;
 using NUnit.Framework;
 using CaldaiaBackend.Application.DataModels;
-using Infrastructure.DomainEvents;
+using Infrastructure.Events.Implementations;
 
 namespace CaldaiaBackendTests
 {

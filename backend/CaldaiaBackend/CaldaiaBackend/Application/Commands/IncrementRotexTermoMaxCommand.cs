@@ -1,4 +1,5 @@
-﻿using Infrastructure.Actions.Command;
+﻿
+using Infrastructure.Actions;
 
 namespace CaldaiaBackend.Application.Commands
 {
@@ -9,6 +10,5 @@ namespace CaldaiaBackend.Application.Commands
     /// </summary>
     public class IncrementRotexTermoMaxCommand : ICommand
     {
-        public string CommandId { get; }
     }
 }

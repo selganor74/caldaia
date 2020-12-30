@@ -31,16 +31,80 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Infrastructure.Core, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.1.8.0\lib\net452\Infrastructure.Core.dll</HintPath>
+    <Reference Include="Infrastructure, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Version, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.1.8.0\lib\net452\Infrastructure.Version.dll</HintPath>
+    <Reference Include="Infrastructure.Actions, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Actions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Application, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Application.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Application.Telemetry, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Application.Telemetry.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Authorization, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Authorization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Core, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.DomainDesign, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.DomainDesign.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Events, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Events.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Events.RabbitMQ, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Events.RabbitMQ.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Identity, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Identity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Logging, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Logging.Log4Net, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Logging.Log4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Messaging, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Messaging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Repository, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Repository.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Workflow, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Workflow.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Diagnostics.Tracing.EventSource, Version=1.1.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.28\lib\net46\Microsoft.Diagnostics.Tracing.EventSource.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RabbitMQ.Client, Version=5.0.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\RabbitMQ.Client.5.1.2\lib\net451\RabbitMQ.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

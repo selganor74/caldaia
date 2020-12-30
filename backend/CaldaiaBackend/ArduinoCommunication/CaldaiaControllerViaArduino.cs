@@ -4,12 +4,12 @@ using System.IO.Ports;
 using System.Threading;
 
 using Newtonsoft.Json;
-using Infrastructure.DomainEvents;
 using Infrastructure.Logging;
 
 using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.Application.Events;
 using CaldaiaBackend.Application.Services;
+using Infrastructure.Events;
 
 namespace ArduinoCommunication
 {

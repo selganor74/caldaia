@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Infrastructure.DomainEvents;
+using Infrastructure.DomainDesign.DomainEvents;
+using Infrastructure.Events;
 using Infrastructure.Logging;
 
 namespace CaldaiaBackend.Application.Projections
 {
     public abstract class BaseProjection<TEvent> 
-        where TEvent : IDomainEvent
+        where TEvent : class, IDomainEvent
     {
         private readonly IEventSubscriber _subscriber;
         protected readonly ILogger _log;
@@ -29,7 +29,7 @@ namespace CaldaiaBackend.Application.Projections
         public virtual void Start()
         {
             _log.Info($"Starting Projection {GetType().Name}<{nameof(TEvent)}>");
-            _unsubscribe = _subscriber.Subscribe<TEvent>(HandleEvent);
+            _unsubscribe = _subscriber.SubscribeTo<TEvent>(HandleEvent);
         }
 
         public void Stop()
@@ -38,6 +38,6 @@ namespace CaldaiaBackend.Application.Projections
             _log.Info($"Stopped Projection {GetType().Name}<{nameof(TEvent)}>");
         }
 
-        protected abstract Task HandleEvent(TEvent arg);
+        protected abstract void HandleEvent(TEvent arg);
     }
 }

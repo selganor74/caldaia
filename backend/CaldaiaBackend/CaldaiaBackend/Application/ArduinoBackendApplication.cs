@@ -3,15 +3,12 @@ using System.Threading;
 using CaldaiaBackend.Application.Commands;
 using CaldaiaBackend.Application.Projections;
 using CaldaiaBackend.Application.Services;
-using Infrastructure.Actions.Command.Executor;
-using Infrastructure.Actions.Query.Executor;
-using Infrastructure.Application;
+using Infrastructure.Actions;
 using Infrastructure.Logging;
-using Infrastructure.MiscPatterns.Notification;
 
 namespace CaldaiaBackend.Application
 {
-    public class ArduinoBackendApplication : BaseApplication, IDisposable
+    public class ArduinoBackendApplication : IDisposable
     {
         private Timer _dataPollerJob;
 
@@ -23,6 +20,7 @@ namespace CaldaiaBackend.Application
         private readonly Last24HoursTemperatures _last24HoursTempsProjection;
         private readonly LastWeekAccumulators _lastWeekAccumulatorsProjection;
         private readonly LastWeekTemperatures _lastWeekTemperaturesProjection;
+        private ICommandExecutor _commandExecutor;
 
         public ArduinoBackendApplication(
             IArduinoDataReader dataReader,
@@ -31,22 +29,10 @@ namespace CaldaiaBackend.Application
             LastWeekAccumulators lastWeekAccumulatorsProjection,
             LastWeekTemperatures lastWeekTemperaturesProjection,
 
-            ICommandExecutor theCommandExecutor,
-            IQueryExecutor theQueryExecutor,
-            INotificationSubscriber theNotificationSubscriber,
-            ICommandExecutorConfig theCommandExecutorConfig,
-            IQueryExecutorConfig theQueryExecutorConfig,
+            ICommandExecutor commandExecutor,
             INotificationPublisher theNotificationPublisher,
             ILoggerFactory theLoggerFactory
-        ) : base(
-            theCommandExecutor,
-            theQueryExecutor,
-            theNotificationSubscriber,
-            theCommandExecutorConfig,
-            theQueryExecutorConfig,
-            theNotificationPublisher,
-            theLoggerFactory
-        )
+        ) 
         {
             _dataReader = dataReader;
             _publisher = theNotificationPublisher;
@@ -55,9 +41,10 @@ namespace CaldaiaBackend.Application
             _last24HoursTempsProjection = last24HoursTempsProjection;
             _lastWeekAccumulatorsProjection = lastWeekAccumulatorsProjection;
             _lastWeekTemperaturesProjection = lastWeekTemperaturesProjection;
+            _commandExecutor = commandExecutor;
         }
 
-        protected override void onAppStarting()
+        public void Start()
         {
             RegisterObservers();
 
@@ -99,7 +86,7 @@ namespace CaldaiaBackend.Application
             try
             {
                 var cmd = new ReadDataAndResetAccumulatorsCommand();
-                commandExecutor.Execute(cmd);
+                _commandExecutor.ExecuteCommand(cmd);
             }
             catch (Exception e)
             {

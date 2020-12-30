@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Infrastructure.Actions.Command;
+﻿using Infrastructure.Actions;
 
 namespace CaldaiaBackend.Application.Commands
 {
@@ -12,6 +7,5 @@ namespace CaldaiaBackend.Application.Commands
     /// </summary>
     public class ResetArduinoCommand : ICommand
     {
-        public string CommandId { get; } = Guid.NewGuid().ToString();
     }
 }

@@ -1,30 +1,28 @@
 ﻿param(
     [Parameter(Position=0,Mandatory=$False)]        
-    [String]$Username = "192.168.2.44\admin",# $env:USERDOMAIN + "\" + $env:USERNAME,
+    [String]$Username = "LOCCIONI\Administrator",# $env:USERDOMAIN + "\" + $env:USERNAME,
 
     [Parameter(Position=1,Mandatory=$True)]        
     [String]$Password,
 
     [Parameter(Position=2,Mandatory=$False)]        
-    [String]$Server = "192.168.2.44",
+    [String]$Server = $env:COMPUTERNAME,
 
     [Parameter(Position=3,Mandatory=$False)]        
-    [String]$NetworkShareName = "Caldaia",
+    [String]$NetworkShareName = "D$",
 
     [Parameter(Position=4,Mandatory=$False)]        
-    [String]$DestinationPathInShare = "\", 
+    [String]$DestinationPathInShare = "\Shared\deployment_test", 
 
     [Parameter(Position=5,Mandatory=$False)]        
-    [String]$ServiceName = "arduinoBackend",
-
-    [Parameter(Position=6,Mandatory=$False)]        
     [String]$DeployableServicePath = "C:\Projects\DigitalInvoice\src\DigitalInvoice.Host\bin\Debug",
 
-    [Parameter(Position=7,Mandatory=$False)]        
+    [Parameter(Position=6,Mandatory=$False)]        
     [String]$ServiceExecutableFullPathOnServer = "D:\Shared\deployment_test\DigitalInvoice.Host.exe",
 
-    [Parameter(Position=8,Mandatory=$False)]        
-    [String]$ServiceConfigFileName = "CaldaiaBackend.SelfHosted.exe.config"
+	[Parameter(Position=7,Mandatory=$False)]        
+    [String]$ServiceName = "DigitalInvoice_TEST"
+
 )
 
 Class Deployer {
@@ -38,11 +36,10 @@ Class Deployer {
     [String]$NetworkShare
 	[String]$DestinationPathInShare
     [String]$DestinationPath
-    [String]$ServiceName
     [String]$DeployableServicePath
     [String]$DeployableAppPath
 	[String]$ServiceExecutableFullPathOnServer
-	[String]$ServiceConfigFileName
+	[String]$ServiceName
 
     Deployer( 
         [String]$Username, 
@@ -50,24 +47,21 @@ Class Deployer {
         [String]$Server,                            # solo hostname Es.: GL-WEBAPP02
         [String]$NetworkShareName,                  # Solo il nome della share di rete
         [String]$DestinationPathInShare,            # Il path all'interno della share di rete'
-        [String]$ServiceName,                       # Il nome del servizio da deployare. Usato per avviare, terminare ed installare il servizio Es.: DigitalInvoice
         [String]$DeployableServicePath,             # Il path locale della directory che contiene il servizio. Tipicamente .\bin\<Configuration>
         [String]$DeployableAppPath,                 # Il path locale della applicazione web. Tipicamente .\app
         [String]$ServiceExecutableFullPathOnServer, # Percorso completo del servizio sul server
-		[String]$ServiceConfigFileName
-	) {
+		[String]$ServiceName                        # Nome del servizio che andrà installato.
+    ) {
 		$this.Username = $Username
 		$this.Password = $Password
         $this.Server = $Server
         $this.NetworkShare = "\\" + $Server + "\" + $NetworkShareName
 		$this.DestinationPathInShare = $DestinationPathInShare
         $this.DestinationPath = $this.NetworkShare + "\" + $DestinationPathInShare
-        $this.ServiceName = $ServiceName
         $this.DeployableServicePath = $DeployableServicePath
         $this.DeployableAppPath = $DeployableAppPath
-
 		$this.ServiceExecutableFullPathOnServer = $ServiceExecutableFullPathOnServer
-		$this.ServiceConfigFileName = $ServiceConfigFileName
+		$this.ServiceName = $ServiceName
 
 		$this.BuildCredentials($Username, $Password)
     }
@@ -162,7 +156,7 @@ Class Deployer {
         $this.CacheCredentials()       
         
         # $ServiceInstallCommand = $this.ServiceExecutableFullPathOnServer + " install --localsystem "
-        $ServiceInstallCommand = $PSScriptRoot + "\psexec \\" + $this.Server + " -accepteula -nobanner -s -u " + $this.Username + " -p " + $this.Password + " " + $this.ServiceExecutableFullPathOnServer + " install"
+        $ServiceInstallCommand = $PSScriptRoot + "\psexec \\" + $this.Server + " -accepteula -nobanner -s -u " + $this.Username + " -p " + $this.Password + " " + $this.ServiceExecutableFullPathOnServer + " install -servicename " + $this.ServiceName + " --localsystem"
 		Write-Host "Trying to install service " $this.ServiceName "using command" $ServiceInstallCommand
         $scriptBlock = ([ScriptBlock]::create($ServiceInstallCommand))
         try {
@@ -219,13 +213,75 @@ Class Deployer {
 		$mappedDestination = $this.driveToMap+"\"+$this.DestinationPathInShare
         $filesToCopy = $this.DeployableServicePath
         # $result = Copy-Item $filesToCopy $mappedDestination -Force -Recurse -Exclude "Logs\*.*" -ErrorAction Continue
-		ROBOCOPY $filesToCopy $mappedDestination /MIR /TEE /FFT /E /S /LOG:robocopy_log.txt /XD Logs /XF $this.ServiceConfigFileName /W:1 /R:20
-		Get-Content robocopy_log.txt -Tail 13
-		If (-Not ( Test-Path -Path "$($mappedDestination)\$($this.ServiceConfigFileName)" ) ) {
-			Copy-Item "$($filesToCopy)\$($this.ServiceConfigFileName)"  $mappedDestination -Force
-		}
-		Get-Content -Tail 12 robocopy_log.txt
+		&ROBOCOPY $filesToCopy $mappedDestination /MIR /TEE /FFT /E /S /LOG:robocopy_log.txt /XF log4net.config /XD Logs /XD App_Data /W:1 /R:20
+		$robocopyResult = $LASTEXITCODE
+		Get-Content -Tail 13 .\robocopy_log.txt | Write-Host
 		$this.TryUnmapDrive()
+		# See https://ss64.com/nt/robocopy-exit.html
+		if ($robocopyResult -eq 16 ) { 
+			Write-Host "*** FATAL ERROR ***. Please check Robocopy log file for details"
+			exit -1
+		}
+		if ($robocopyResult -eq 15 ) { 
+			Write-Host "OKCOPY + FAIL + MISMATCHES + XTRA. Please check Robocopy log file for details"
+			exit -1 
+		}
+		if ($robocopyResult -eq 14 ) { 
+			Write-Host "FAIL + MISMATCHES + XTRA. Please check Robocopy log file for details"
+			exit -1          
+		}
+		if ($robocopyResult -eq 13 ) { 
+			Write-Host "OKCOPY + FAIL + MISMATCHES. Please check Robocopy log file for details"
+			exit -1        
+		}
+		if ($robocopyResult -eq 12 ) { 
+			Write-Host "FAIL + MISMATCHES. Please check Robocopy log file for details"
+			exit -1                 
+		}
+		if ($robocopyResult -eq 11 ) { 
+			Write-Host "OKCOPY + FAIL + XTRA. Please check Robocopy log file for details"
+			exit -1              
+		}
+		if ($robocopyResult -eq 10 ) { 
+			Write-Host "FAIL + XTRA. Please check Robocopy log file for details"
+			exit -1                       
+		}
+		if ($robocopyResult -eq 9  ) { 
+			Write-Host "OKCOPY + FAIL. Please check Robocopy log file for details"
+			exit -1                     
+		}
+		if ($robocopyResult -eq 8  ) { 
+			Write-Host "FAIL. Please check Robocopy log file for details"
+			exit -1                              
+		}
+		if ($robocopyResult -eq 7  ) { 
+			Write-Host "OKCOPY + MISMATCHES + XTRA. Please check Robocopy log file for details"        
+			exit -1
+		}
+		if ($robocopyResult -eq 6  ) { 
+			Write-Host "MISMATCHES + XTRA. Please check Robocopy log file for details"                 
+			exit -1
+		}
+		if ($robocopyResult -eq 5  ) { 
+			Write-Host "OKCOPY + MISMATCHES. Please check Robocopy log file for details"               
+			exit -1
+		}
+		if ($robocopyResult -eq 4  ) { 
+			Write-Host "MISMATCHES. Please check Robocopy log file for details"
+			exit -1                        
+		}
+		if ($robocopyResult -eq 3  ) { 
+			Write-Host "OKCOPY + XTRA. Everything was fine!"
+		}
+		if ($robocopyResult -eq 2  ) { 
+			Write-Host "XTRA. Everything was fine!"
+		}
+		if ($robocopyResult -eq 1  ) { 
+			Write-Host "OKCOPY. Everything was fine!"
+		}
+		if ($robocopyResult -eq 0  ) { 
+			Write-Host "No Change"       
+		} 
     }
 
     [Boolean]TryObtainService() {
@@ -280,5 +336,5 @@ Class Deployer {
     }
 }
 
-[Deployer]$deploy = [Deployer]::new($Username, $Password, $Server, $NetworkShareName, $DestinationPathInShare, $ServiceName, $DeployableServicePath, $DeployableAppPath, $ServiceExecutableFullPathOnServer, $ServiceConfigFileName)
+[Deployer]$deploy = [Deployer]::new($Username, $Password, $Server, $NetworkShareName, $DestinationPathInShare, $DeployableServicePath, $DeployableAppPath, $ServiceExecutableFullPathOnServer, $ServiceName)
 $deploy.Deploy()

@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using CaldaiaBackend.Application.Services;
-using Infrastructure.Actions.Command.Handler;
+﻿using CaldaiaBackend.Application.Services;
+using Infrastructure.Actions;
+using Infrastructure.Application;
 
 namespace CaldaiaBackend.Application.Commands.Handlers
 {
@@ -17,83 +17,81 @@ namespace CaldaiaBackend.Application.Commands.Handlers
     {
         private readonly IArduinoCommandIssuer _arduino;
 
-        private static Task EmptyTask => Task.Run(() => { });
-
         public ArduinoCommandsHandler(IArduinoCommandIssuer arduino)
         {
             _arduino = arduino;
         }
 
-        public Task Execute(ReadDataFromArduinoCommand Action)
+        public Void Execute(ReadDataFromArduinoCommand Action, IExecutionContext context)
         {
             _arduino.PullOutData();
 
-            return EmptyTask;
+            return Void.Result;
         }
 
-        public Task Execute(ReadDataAndResetAccumulatorsCommand Action)
+        public Void Execute(ReadDataAndResetAccumulatorsCommand Action, IExecutionContext context)
         {
             _arduino.SendGetAndResetAccumulatorsCommand();
 
-            return EmptyTask;
+            return Void.Result;
         }
 
-        public Task Execute(ReadSettingsFromArduinoCommand Action)
+        public Void Execute(ReadSettingsFromArduinoCommand Action, IExecutionContext context)
         {
             _arduino.PullOutSettings();
 
-            return EmptyTask;
+            return Void.Result;
         }
 
-        public Task Execute(IncrementRotexTermoMaxCommand Action)
+        public Void Execute(IncrementRotexTermoMaxCommand Action, IExecutionContext context)
         {
             _arduino.IncrementRotexTermoMax();
 
-            return EmptyTask;
+            return Void.Result;
         }
 
-        public Task Execute(DecrementRotexTermoMaxCommand Action)
+        public Void Execute(DecrementRotexTermoMaxCommand Action, IExecutionContext context)
         {
             _arduino.DecrementRotexTermoMax();
 
-            return EmptyTask;
+            return Void.Result;
         }
 
-        public Task Execute(DecrementRotexTermoMinCommand Action)
+        public Void Execute(DecrementRotexTermoMinCommand Action, IExecutionContext context)
         {
             _arduino.DecrementRotexTermoMin();
 
-            return EmptyTask;
+            return Void.Result;
         }
 
-        public Task Execute(IncrementRotexTermoMinCommand Action)
+        public Void Execute(IncrementRotexTermoMinCommand Action, IExecutionContext context)
         {
             _arduino.IncrementRotexTermoMin();
 
-            return EmptyTask;
+            return Void.Result;
         }
 
-        public Task Execute(SaveSettingsCommand Action)
+        public Void Execute(SaveSettingsCommand Action, IExecutionContext context)
         {
             _arduino.SaveSettings();
 
-            return EmptyTask;
+            return Void.Result;
         }
 
-        public Task Execute(SendStringCommand Action)
+        public Void Execute(SendStringCommand Action, IExecutionContext context)
         {
             if (Action.ToSend == "RESET")
                 _arduino.FlashDTR();
             else
                 _arduino.SendString(Action.ToSend);
 
-            return EmptyTask;
+            return Void.Result;
         }
 
-        public Task Execute(ResetArduinoCommand Action)
+        public Void Execute(ResetArduinoCommand Action, IExecutionContext context)
         {
             _arduino.FlashDTR();
-            return EmptyTask;
+            return Void.Result;
         }
     }
 }

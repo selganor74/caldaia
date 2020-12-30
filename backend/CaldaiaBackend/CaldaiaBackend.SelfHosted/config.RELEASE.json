@@ -1,0 +1,11 @@
+{
+  "deployHost": "192.168.2.44",
+  "port": 32767,
+  "baseUrl": "",
+
+  "arduinoComPort": "COM3",
+  "pathToLast24HoursJson": "~\\App_Data\\Projections\\Last24Hours.json",
+  "pathToLast24HoursTemperaturesJson": "~\\App_Data\\Projections\\Last24HoursTemperatures.json",
+  "pathToLastWeekAccumulatorsJson": "~\\App_Data\\Projections\\LastWeek.json",
+  "pathToLastWeekTemperaturesJson": "~\\App_Data\\Projections\\LastWeekTemperatures.json"
+}

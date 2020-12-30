@@ -29,7 +29,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;RELEASE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -42,64 +42,240 @@
       <HintPath>..\packages\Castle.Windsor.4.1.1\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Core, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.1.8.0\lib\net452\Infrastructure.Core.dll</HintPath>
+    <Reference Include="Hangfire.Core, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Core.1.7.0\lib\net46\Hangfire.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Hosting.IoC.CastleWindsor, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Hosting.IoC.CastleWindsor.1.8.0\lib\net452\Infrastructure.Hosting.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Hangfire.MemoryStorage, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.MemoryStorage.1.6.0\lib\net40\Hangfire.MemoryStorage.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Logging.ConsoleLogWriter, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Logging.ConsoleLogWriter.1.8.0\lib\net452\Infrastructure.Logging.ConsoleLogWriter.dll</HintPath>
+    <Reference Include="Hangfire.SqlServer, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.SqlServer.1.7.0\lib\net45\Hangfire.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Version, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.1.8.0\lib\net452\Infrastructure.Version.dll</HintPath>
+    <Reference Include="Infrastructure, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.4.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    <Reference Include="Infrastructure.Actions, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Actions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.4.0\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+    <Reference Include="Infrastructure.Actions.IoC.CastleWindsor, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Actions.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.4.0.0\lib\net451\Microsoft.Owin.dll</HintPath>
+    <Reference Include="Infrastructure.Application, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Application.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Cors, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Cors.4.0.0\lib\net451\Microsoft.Owin.Cors.dll</HintPath>
+    <Reference Include="Infrastructure.Application.Hosting.WebApi, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Application.Hosting.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Diagnostics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Diagnostics.4.0.0\lib\net451\Microsoft.Owin.Diagnostics.dll</HintPath>
+    <Reference Include="Infrastructure.Application.Hosting.WebApi.Hangfire, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.38\lib\net452\Infrastructure.Application.Hosting.WebApi.Hangfire.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Application.Hosting.WebApi.IoC.CastleWindsor, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Application.Hosting.WebApi.IoC.CastleWindsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Application.Hosting.WebApi.SelfHost, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Application.Hosting.WebApi.SelfHost.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Application.Hosting.WebApi.SelfHost.Topshelf, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Application.Hosting.WebApi.SelfHost.Topshelf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Application.Hosting.WebApi.SignalR, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Application.Hosting.WebApi.SignalR.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Application.IoC.CastleWindsor, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Application.IoC.CastleWindsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Application.Telemetry, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.38\lib\net452\Infrastructure.Application.Telemetry.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Application.Telemetry.Azure, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.38\lib\net452\Infrastructure.Application.Telemetry.Azure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Application.Telemetry.Azure.IoC.CastleWindsor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Telemetry.Azure.IoC.CastleWindsor.2.0.38\lib\net452\Infrastructure.Application.Telemetry.Azure.IoC.CastleWindsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Authorization, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Authorization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Core, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.DomainDesign, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.DomainDesign.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Events, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Events.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Events.IoC.CastleWindsor, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Events.IoC.CastleWindsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Events.PushNotifications.SignalR.IoC.CastleWindsor, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Events.PushNotifications.SignalR.IoC.CastleWindsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Events.RabbitMQ, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.IoC.CastleWindsor.2.0.38\lib\net452\Infrastructure.Events.RabbitMQ.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Events.RabbitMQ.IoC.CastleWindsor, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.IoC.CastleWindsor.2.0.38\lib\net452\Infrastructure.Events.RabbitMQ.IoC.CastleWindsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Identity, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Identity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Logging, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Logging.IoC.CastleWindsor, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Logging.IoC.CastleWindsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Logging.Log4Net, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Logging.Log4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Logging.Log4Net.IoC.CastleWindsor, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.Logging.Log4Net.IoC.CastleWindsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Messaging, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.38\lib\net452\Infrastructure.Messaging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Repository, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.38\lib\net452\Infrastructure.Repository.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Telemetry.Azure, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Telemetry.Azure.2.0.38\lib\net452\Infrastructure.Telemetry.Azure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Telemetry.Azure.IoC.CastleWindsor, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Telemetry.Azure.IoC.CastleWindsor.2.0.38\lib\net452\Infrastructure.Telemetry.Azure.IoC.CastleWindsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.WebApi, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.38\lib\net452\Infrastructure.WebApi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.WebApi.IoC.CastleWindsor, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.IoC.CastleWindsor.2.0.38\lib\net452\Infrastructure.WebApi.IoC.CastleWindsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.WebApi.SelfHost, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.38\lib\net452\Infrastructure.WebApi.SelfHost.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infrastructure.Workflow, Version=2.0.38.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.38\lib\net452\Infrastructure.Workflow.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.4.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.2.4.0\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.4.1\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.4.1\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Diagnostics.Tracing.EventSource, Version=1.1.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.28\lib\net46\Microsoft.Diagnostics.Tracing.EventSource.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.5.3.0\lib\net461\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.5.3.0\lib\net461\Microsoft.IdentityModel.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.3.0\lib\net461\Microsoft.IdentityModel.Tokens.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Cors, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Cors.4.0.1\lib\net45\Microsoft.Owin.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Diagnostics, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Diagnostics.4.0.1\lib\net45\Microsoft.Owin.Diagnostics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Owin.FileSystems, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.FileSystems.4.0.0\lib\net451\Microsoft.Owin.FileSystems.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Host.HttpListener, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.4.0.0\lib\net451\Microsoft.Owin.Host.HttpListener.dll</HintPath>
+    <Reference Include="Microsoft.Owin.Host.HttpListener, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.4.0.1\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.2.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.0.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Hosting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Hosting.4.0.0\lib\net451\Microsoft.Owin.Hosting.dll</HintPath>
+    <Reference Include="Microsoft.Owin.Hosting, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Hosting.4.0.1\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Security, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Security.2.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Jwt, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Jwt.4.0.1\lib\net45\Microsoft.Owin.Security.Jwt.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.4.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Owin.StaticFiles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.StaticFiles.4.0.0\lib\net451\Microsoft.Owin.StaticFiles.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -110,15 +286,32 @@
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RabbitMQ.Client, Version=5.0.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\RabbitMQ.Client.5.1.2\lib\net451\RabbitMQ.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.4.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.3.0\lib\net461\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
@@ -134,30 +327,45 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.7\lib\net45\System.Web.Http.Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web.Http.Tracing, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Tracing.5.2.7\lib\net45\System.Web.Http.Tracing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.0.0\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Topshelf, Version=4.1.0.172, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
-      <HintPath>..\packages\Topshelf.4.1.0\lib\net452\Topshelf.dll</HintPath>
+    <Reference Include="Topshelf, Version=4.2.1.215, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Topshelf.4.2.1\lib\net452\Topshelf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
-    <Compile Include="Infrastructure\EventLogLogging\EventLogWriter.cs" />
+    <Compile Include="Hangfire\CastleJobActivator.cs" />
+    <Compile Include="Hangfire\InfrastructureLogProvider.cs" />
+    <Compile Include="Hangfire\InfrastructureLogs.cs" />
+    <Compile Include="Infrastructure\Notification\InMemoryNotificationService.cs" />
     <Compile Include="Infrastructure\SignalRLogging\SignalRLogsHub.cs" />
     <Compile Include="Infrastructure\SignalRLogging\SignalRLogWriter.cs" />
-    <Compile Include="IoC\ArduinoInstaller_RELEASE.cs" />
-    <Compile Include="IoC\ArduinoInstaller_DEBUG.cs" />
-    <Compile Include="IoC\LoggingInstaller_RELEASE.cs" />
-    <Compile Include="IoC\LoggingInstaller_DEBUG.cs" />
-    <Compile Include="IoC\ProjectionsInstaller_DEBUG.cs" />
-    <Compile Include="IoC\ProjectionsInstaller_RELEASE.cs" />
-    <Compile Include="Owin\IoC\WindsorControllerActivator.cs" />
+    <Compile Include="Installers\ArduinoInstaller_RELEASE.cs" />
+    <Compile Include="Installers\ArduinoInstaller_DEBUG.cs" />
+    <Compile Include="Installers\LoggingInstaller_RELEASE.cs" />
+    <Compile Include="Installers\LoggingInstaller_DEBUG.cs" />
+    <Compile Include="Installers\ProjectionsInstaller_DEBUG.cs" />
+    <Compile Include="Installers\ProjectionsInstaller_RELEASE.cs" />
     <Compile Include="Infrastructure\SignalRLogging\LogEntry.cs" />
     <Compile Include="Owin\SignalRHubs\BaseHub.cs" />
     <Compile Include="Owin\SignalRHubs\DataHub.cs" />
@@ -171,10 +379,25 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="Application.cs" />
+    <None Include="App_Data\dummy.log">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Config.cs" />
+    <None Include="config.RELEASE.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="config.DEBUG.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="DeployScripts\Build.bat" />
+    <None Include="DeployScripts\DeployTo.bat" />
     <None Include="DeployScripts\Deploy.ps1" />
-    <None Include="DeployScripts\Deploy_Prod.bat" />
+    <Compile Include="Environments.cs" />
+    <Compile Include="Installers\InfrastructureInstaller.cs" />
+    <Compile Include="Installers\InfrastructureLoggingInstaller.cs" />
     <None Include="packages.config" />
+    <Compile Include="StartUp.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArduinoCommunication\ArduinoCommunication.csproj">
@@ -195,15 +418,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DeployScripts\.gitignore" />
     <Content Include="DeployScripts\PsExec.exe" />
+    <Content Include="InfrastructureIcon.ico" />
     <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />
-    <Content Include="Scripts\jquery.signalR-2.4.0.js" />
-    <Content Include="Scripts\jquery.signalR-2.4.0.min.js" />
+    <Content Include="Scripts\jquery.signalR-2.4.1.js" />
+    <Content Include="Scripts\jquery.signalR-2.4.1.min.js" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="AngularAppDist\" />
+    <Folder Include="AngularAppDist\caldaia-frontend\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

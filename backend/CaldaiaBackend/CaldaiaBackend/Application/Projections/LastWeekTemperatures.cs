@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Threading.Tasks;
 using CaldaiaBackend.Application.Events;
 using CaldaiaBackend.Application.Projections.DataModels;
 using CaldaiaBackend.Application.Services;
 using CaldaiaBackend.Infrastructure;
-using Infrastructure.DomainEvents;
+using Infrastructure.Events;
 using Infrastructure.Logging;
 
 namespace CaldaiaBackend.Application.Projections
@@ -14,7 +13,6 @@ namespace CaldaiaBackend.Application.Projections
         private readonly ILogger _log;
         private readonly ITimeSlotBufferLoaderSaver<TemperatureStatistics> _loader;
         private CircularTimeSlotBuffer<TemperatureStatistics> _timeBuffer;
-        private static Task EmptyTask => Task.Run(() => { });
 
         public LastWeekTemperatures(
             IEventSubscriber dispatcher,
@@ -38,7 +36,7 @@ namespace CaldaiaBackend.Application.Projections
             base.Start();
         }
 
-        protected override Task HandleEvent(TemperaturesReceived evt)
+        protected override void HandleEvent(TemperaturesReceived evt)
         {
             _log.Trace("Processing event " + nameof(TemperaturesReceived), evt);
             var stats = _timeBuffer.GetContentAtReference(evt.timestamp)
@@ -50,7 +48,6 @@ namespace CaldaiaBackend.Application.Projections
             _timeBuffer.UpdateOrCreateContentAtReference(evt.timestamp, stats);
 
             _loader.Save(_timeBuffer);
-            return EmptyTask;
         }
 
         public string GetCurrentStatisticsAsJson(bool includeDetails = false)

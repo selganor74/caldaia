@@ -12,7 +12,7 @@ namespace ArduinoCommunication
         public event WhenFoundNewJson foundNewJson;
 
         private ParsingState _parsingState = ParsingState.SearchingStart;
-        private readonly Queue<string> _readQueue = new Queue<string>();
+        private readonly Queue<string> _readQueue = new Queue<string>(10240);
         private readonly Timer _processTimer;
         private string _currentJson;
         private string _afterJsonRemainder;

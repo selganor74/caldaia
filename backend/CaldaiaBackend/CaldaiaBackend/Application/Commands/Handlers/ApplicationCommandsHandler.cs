@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Infrastructure.Actions.Command.Handler;
+﻿using Infrastructure.Actions;
+using Infrastructure.Application;
 
 namespace CaldaiaBackend.Application.Commands.Handlers
 {
     public class ApplicationCommandsHandler : ICommandHandler<PausePollerCommand>
     {
         private readonly ArduinoBackendApplication _application;
-        private Task _emptyTask => Task.Run(() => { });
+
         public ApplicationCommandsHandler(
             ArduinoBackendApplication application
             )
@@ -18,10 +14,10 @@ namespace CaldaiaBackend.Application.Commands.Handlers
             _application = application;
         }
 
-        public Task Execute(PausePollerCommand Action)
+        public Void Execute(PausePollerCommand action, IExecutionContext context)
         {
-            _application.PausePollerForSeconds(Action.PauseForSeconds);
-            return _emptyTask;
+            _application.PausePollerForSeconds(action.PauseForSeconds);
+            return Void.Result;
         }
     }
 }

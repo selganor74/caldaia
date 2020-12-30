@@ -9,7 +9,7 @@ pushd %~dp0
 	pushd ..
 		for %%f in (*.csproj) do (
 			echo Building %%f
-			msbuild .\%%f /p:Configuration="Release" /p:RELEASE="Release" /p:OutputPath="bin\Release" /p:Platform="Any CPU" /t:Rebuild 
+			msbuild .\%%f /p:Configuration="Release" /p:RELEASE="Release" /p:DefineConstants="RELEASE" /p:OutputPath="bin\Release" /p:Platform="Any CPU" /t:Rebuild 
 		)
 	popd
 popd
