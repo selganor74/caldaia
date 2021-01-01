@@ -28,10 +28,11 @@ namespace CaldaiaBackend.Infrastructure
         private readonly List<TimeSlot<T>> _buffer = new List<TimeSlot<T>>();
         private DateTime lastSlotEndTime;
         private readonly TimeSpan slotSize;
+        private readonly object _bufferLock = new object();
 
         public CircularTimeSlotBuffer()
         {
-            
+
         }
 
         public CircularTimeSlotBuffer(IEnumerable<TimeSlot<T>> timeSlots)
@@ -89,18 +90,21 @@ namespace CaldaiaBackend.Infrastructure
         /// <param name="content"></param>
         /// <exception cref="IndexOutOfRangeException">If the requested reference is "previous" to the oldest Slot in the collection.</exception> 
         /// <returns>An IEnumerable of all the removed elements"/></returns>
-        public IEnumerable<T> UpdateOrCreateContentAtReference(DateTime reference, T content = default(T) )
+        public IEnumerable<T> UpdateOrCreateContentAtReference(DateTime reference, T content = default(T))
         {
-            List<T> removed = new List<T>();
-            var utcReference = reference.ToUniversalTime();
-            while (lastSlotEndTime < utcReference)
+            lock (_bufferLock)
             {
-                var aRemoved = AddNextSlot();
-                removed.Add(aRemoved);
-            }
+                var removed = new List<T>();
+                var utcReference = reference.ToUniversalTime();
+                while (lastSlotEndTime < utcReference)
+                {
+                    var aRemoved = AddNextSlot();
+                    removed.Add(aRemoved);
+                }
 
-            SetContentAtReference(utcReference, content);
-            return removed;
+                SetContentAtReference(utcReference, content);
+                return removed;
+            }
         }
 
         private T AddNextSlot(T content = default(T))
@@ -115,12 +119,18 @@ namespace CaldaiaBackend.Infrastructure
 
         public IEnumerable<TimeSlot<T>> GetBuffer()
         {
-            return _buffer;
+            lock (_bufferLock)
+            {
+                return _buffer.ToList();
+            }
         }
-            
+
         public string AsJson()
         {
-            return JsonConvert.SerializeObject(_buffer);
+            lock (_bufferLock)
+            {
+                return JsonConvert.SerializeObject(_buffer);
+            }
         }
 
         public static CircularTimeSlotBuffer<T> FromJson(string jsonSource)
