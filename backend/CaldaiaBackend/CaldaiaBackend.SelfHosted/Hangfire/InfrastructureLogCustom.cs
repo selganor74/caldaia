@@ -6,12 +6,12 @@ using LogLevel = Hangfire.Logging.LogLevel;
 
 namespace CaldaiaBackend.SelfHosted.Hangfire
 {
-    internal class InfrastructureLog : ILog
+    internal class InfrastructureLogCustom : ILog
     {
         private readonly ILogger _log;
         private readonly InfrastructureLogLevel _logLevel;
 
-        public InfrastructureLog(ILogger log, InfrastructureLogLevel logLevel)
+        public InfrastructureLogCustom(ILogger log, InfrastructureLogLevel logLevel)
         {
             _log = log;
             _logLevel = logLevel;

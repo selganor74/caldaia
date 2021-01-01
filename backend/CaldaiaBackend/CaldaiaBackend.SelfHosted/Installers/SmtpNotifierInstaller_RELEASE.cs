@@ -21,8 +21,7 @@ namespace CaldaiaBackend.SelfHosted.Installers
         {
             var configAsJson = File.ReadAllText(_config.smtpNotifierConfigPath);
             var smtpConfig = JsonConvert.DeserializeObject<SmtpErrorNotifierConfig>(configAsJson);
-            var starter = container.UseInfrastructureSmtpErrorNotifier(smtpConfig);
-            starter.Start();
+            container.UseInfrastructureSmtpErrorNotifier(smtpConfig);
         }
     }
 }

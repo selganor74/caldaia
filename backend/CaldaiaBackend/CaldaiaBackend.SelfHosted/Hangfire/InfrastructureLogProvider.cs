@@ -17,7 +17,7 @@ namespace CaldaiaBackend.SelfHosted.Hangfire
 
         public ILog GetLogger(string name)
         {
-            return new InfrastructureLog(_loggerFactory.CreateNewLogger(name), _logLevel);
+            return new InfrastructureLogCustom(_loggerFactory.CreateNewLogger(name), _logLevel);
         }
     }
 
