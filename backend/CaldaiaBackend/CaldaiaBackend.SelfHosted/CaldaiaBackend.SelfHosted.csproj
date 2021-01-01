@@ -388,7 +388,9 @@
     <Compile Include="Config.cs" />
     <None Include="Application.cs.sample" />
     <None Include="App_Data\dummy.log" />
-    <None Include="config-email.secret.json" />
+    <None Include="config-email.secret.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Config.cs.sample" />
     <None Include="config.DEBUG.json.sample" />
     <None Include="config.RELEASE.json">
