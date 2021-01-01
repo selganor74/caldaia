@@ -242,3 +242,4 @@ ModelManifest.xml
 .fake/
 /backend/CaldaiaBackend/CaldaiaBackend.SelfHosted/DeployScripts/Deploy_Prod.bat
 /backend/CaldaiaBackend/GDriveTimeSlotLoaderSaver/GoogleDrive/credentials.json
+*.secret.json

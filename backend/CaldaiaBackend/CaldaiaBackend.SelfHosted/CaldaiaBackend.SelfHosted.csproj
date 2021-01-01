@@ -388,6 +388,7 @@
     <Compile Include="Config.cs" />
     <None Include="Application.cs.sample" />
     <None Include="App_Data\dummy.log" />
+    <None Include="config-email.secret.json" />
     <None Include="Config.cs.sample" />
     <None Include="config.DEBUG.json.sample" />
     <None Include="config.RELEASE.json">
@@ -433,7 +434,6 @@
     <Folder Include="AngularAppDist\caldaia-frontend\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".gitignore" />
     <Content Include="DeployScripts\.gitignore" />
     <Content Include="DeployScripts\PsExec.exe" />
     <Content Include="InfrastructureIcon.ico" />
