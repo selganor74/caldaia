@@ -405,13 +405,9 @@
     <Compile Include="Installers\InfrastructureLoggingInstaller.cs" />
     <None Include="DeployScripts\DeployTo.bat.sample" />
     <None Include="DeployScripts\_Deploy.ps1" />
-    <None Include="config-email.secret.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Environments.cs.sample" />
     <None Include="Installers\InfrastructureInstaller.cs.sample" />
     <None Include="Installers\InfrastructureLoggingInstaller.cs.sample" />
-    <None Include="packages.config" />
     <Compile Include="StartUp.cs" />
     <None Include="StartUp.cs.sample" />
   </ItemGroup>
@@ -441,8 +437,6 @@
     <Content Include="DeployScripts\.gitignore" />
     <Content Include="DeployScripts\PsExec.exe" />
     <Content Include="InfrastructureIcon.ico" />
-    <Content Include="Package.WebApi.SelfHost.csproj" />
-    <Content Include="Package.WebApi.SelfHost.csproj.user" />
     <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />
