@@ -1,0 +1,7 @@
+{
+	"deployHost": "localhost",
+	"port": 58009,
+	"baseUrl": "sample-app",
+	"authTokenIssuer": "http://auth-test.loccioni.com/Loccioni.Autenticazione.Service",
+	"enableAuth": false
+}

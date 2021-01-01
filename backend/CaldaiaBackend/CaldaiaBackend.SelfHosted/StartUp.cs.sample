@@ -7,8 +7,6 @@ using Newtonsoft.Json;
 using Infrastructure.Application.Hosting.WebApi.SelfHost.Topshelf;
 using Infrastructure.Logging;
 using CaldaiaBackend.SelfHosted.Installers;
-using Infrastructure.Logging.SmtpNotification;
-using Newtonsoft.Json.Serialization;
 
 namespace CaldaiaBackend.SelfHosted
 {
@@ -52,6 +50,7 @@ namespace CaldaiaBackend.SelfHosted
 		*/
         public static void Main(params string[] param)
         {
+
             using (container = new WindsorContainer())
             {
                 var config = ReadConfigFromJson(ENVIRONMENT);
@@ -70,28 +69,20 @@ namespace CaldaiaBackend.SelfHosted
                         .For<TopshelfServiceRunner<Application>>()
                         .DependsOn(Dependency.OnValue<LogLevel>(logLevel)),
 
-
-                    Component
-                        .For<Application>()
-                        .DependsOn(
-                            Dependency.OnValue<Environments>(ENVIRONMENT),
-                            Dependency.OnValue<LogLevel>(logLevel)
+                    Classes
+                        .FromThisAssembly()
+                        .Where(t =>    t != typeof(Config)		/* Excludes Config because already registered ! */ 
+                                    && !typeof(ApiController).IsAssignableFrom(t) /* Excludes eventual WebApi Controllers because they will get registered by Castle Integration */
+                                    && !typeof(IWindsorInstaller).IsAssignableFrom(t) /* Excludes Installers, as they may need more fine grained setup rules */       
+							)
+						.WithServiceAllInterfaces()
+                        .WithServiceSelf()
+                        .Configure(
+                            c => c.DependsOn(
+                                    Dependency.OnValue<Environments>(ENVIRONMENT),
+                                    Dependency.OnValue<LogLevel>(logLevel)
+                                )
                             )
-                        .LifestyleSingleton()
-      //              Classes
-      //                  .FromThisAssembly()
-      //                  .Where(t =>    t != typeof(Config)		/* Excludes Config because already registered ! */ 
-      //                              && !typeof(ApiController).IsAssignableFrom(t) /* Excludes eventual WebApi Controllers because they will get registered by Castle Integration */
-      //                              && !typeof(IWindsorInstaller).IsAssignableFrom(t) /* Excludes Installers, as they may need more fine grained setup rules */       
-						//	)
-						//.WithServiceAllInterfaces()
-      //                  .WithServiceSelf()
-      //                  .Configure(
-      //                      c => c.DependsOn(
-      //                              Dependency.OnValue<Environments>(ENVIRONMENT),
-      //                              Dependency.OnValue<LogLevel>(logLevel)
-      //                          )
-      //                      )
                     );
 
                 // Sets up minimal infrastructure needs

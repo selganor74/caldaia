@@ -1,9 +1,7 @@
 using System;
-using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
-using CaldaiaBackend.Application;
-using CaldaiaBackend.Application.Services;
+
 using Castle.Windsor;
 using Hangfire;
 using Hangfire.MemoryStorage;
@@ -16,14 +14,7 @@ using Infrastructure.Logging;
 using Infrastructure.Application.Hosting.WebApi.SelfHost;
 
 using CaldaiaBackend.SelfHosted.Hangfire;
-using CaldaiaBackend.SelfHosted.Infrastructure.Notification;
 using CaldaiaBackend.SelfHosted.Installers;
-using CaldaiaBackend.SelfHosted.IoC;
-using CaldaiaBackend.SelfHosted.Owin;
-using Castle.MicroKernel.Registration;
-using Microsoft.Owin;
-using Microsoft.Owin.FileSystems;
-using Microsoft.Owin.StaticFiles;
 
 namespace CaldaiaBackend.SelfHosted
 {
@@ -54,14 +45,12 @@ namespace CaldaiaBackend.SelfHosted
             _config = config;
             _container = container;
 
-            try
-            {
-                loggerFactory = _container.Resolve<ILoggerFactory>();
-            }
-            catch
-            {
-                loggerFactory = new NullLoggerFactory();
-            }
+            try 
+			{
+			    loggerFactory = _container.Resolve<ILoggerFactory>();
+			} catch {
+			    loggerFactory = new NullLoggerFactory();
+			}
             logger = loggerFactory.CreateNewLogger(Assembly.GetExecutingAssembly().GetName().Name);
         }
 
@@ -75,55 +64,22 @@ namespace CaldaiaBackend.SelfHosted
             var webAppOptions = WebApiSetup();
             StartWebApplication(webAppOptions);
         }
-
+		
         /// <summary>
         /// Finish application composition
         /// </summary>
         private void ContainerSetup()
         {
-            _container.Install(new InfrastructureInstaller(enableAuth: false));
-            switch (_environment)
-            {
-                case Environments.DEBUG:
-                case Environments.TEST:
-                    _container.Install(new LoggingInstaller_DEBUG());
-                    _container.Install(new ProjectionsInstaller_DEBUG());
-                    _container.Install(new ArduinoInstaller_DEBUG());
-                    break;
-                case Environments.RELEASE:
-                    _container.Install(new LoggingInstaller_RELEASE());
-                    _container.Install(new SmtpNotifierInstaller_RELEASE(_config));
-                    _container.Install(new ProjectionsInstaller_RELEASE(_config));
-                    _container.Install(new ArduinoInstaller_RELEASE(_config));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            _container.Register(
-                Component
-                    .For<INotificationPublisher, INotificationSubscriber>()
-                    .ImplementedBy<InMemoryNotificationService>()
-                    .LifestyleSingleton(),
-
-                Component
-                    .For<SignalRNotificationAdapter>()
-                    .ImplementedBy<SignalRNotificationAdapter>()
-                    .LifestyleSingleton(),
-
-                Component
-                    .For<ArduinoBackendApplication>()
-                    .ImplementedBy<ArduinoBackendApplication>()
-                    .LifestyleSingleton()
-                );
+			// ADD YOUR CONTAINER CONFIGURATION HERE //
+            _container.Install(new InfrastructureInstaller(_config.enableAuth));
 
             _container.CheckConfiguration();
         }
 
-        /// <summary>
-        /// Creates the SelfHostWebApiOptions object that will be used to
-        /// run the application.
-        /// </summary>
+		/// <summary>
+		/// Creates the SelfHostWebApiOptions object that will be used to
+		/// run the application.
+		/// </summary>
         private SelfHostWebApiOptions WebApiSetup()
         {
             var webAppOptions = new SelfHostWebApiOptions
@@ -134,17 +90,14 @@ namespace CaldaiaBackend.SelfHosted
                 EnableWebApiTracing = false,
                 EnableHttpLogging = false,
 
-                // TokenIssuer = _config.authTokenIssuer,
-                // TokenScope = "urn:gl-services-infrastructure",
+                TokenIssuer = _config.authTokenIssuer,
+                TokenScope = "urn:gl-services-infrastructure",
 
-                EnableAutoApi = false,
-                AutoApiEnableAuthorize = false, // _config.enableAuth,
+                EnableAutoApi = true,
+                AutoApiEnableAuthorize = _config.enableAuth,
                 AutoApiRoutePrefix = "infrastructure/api",
 
-                CustomWebApiConfig = httpConfiguration =>
-                {
-                    httpConfiguration.UseCastleWindsor(_container);
-                },
+                CustomWebApiConfig = httpConfiguration => { httpConfiguration.UseCastleWindsor(_container); },
 
                 CustomOwinConfig = appBuilder =>
                 {
@@ -153,44 +106,15 @@ namespace CaldaiaBackend.SelfHosted
                     ConfigureHangfire(appBuilder, _config.deployUrl);
 
                     SetupHangfireJobs();
-
-                    SetupFrontend(appBuilder);
                 }
             };
             return webAppOptions;
         }
 
-        private void SetupFrontend(IAppBuilder appBuilder)
-        {
-            var frontendPhysicalPath = "";
-
-            switch (_environment)
-            {
-                case Environments.TEST:
-                case Environments.DEBUG:
-                    frontendPhysicalPath = "../../AngularAppDist/caldaia-frontend";
-                    break;
-                case Environments.RELEASE:
-                    frontendPhysicalPath = "./AngularAppDist/caldaia-frontend";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            if (!Directory.Exists(frontendPhysicalPath))
-                throw new InvalidOperationException($"frontend path not found {frontendPhysicalPath}");
-
-            appBuilder.UseStaticFiles(new StaticFileOptions
-            {
-                FileSystem = new PhysicalFileSystem(frontendPhysicalPath),
-                RequestPath = new PathString("/app"),
-                ServeUnknownFileTypes = true
-            });
-        }
 
         private void SetupHangfireJobs()
         {
-            // SETUP YOUR SCHEDULED JOBS HERE //
+		    // SETUP YOUR SCHEDULED JOBS HERE //
             // RegisterHangfireJob<SomeJob>(j => j.Execute(), Cron.Never);
         }
 
@@ -204,11 +128,7 @@ namespace CaldaiaBackend.SelfHosted
                 loggerFactory
             );
 
-
             logger.Warning($"{Environment.NewLine}Starting in {_environment} environment with config:{Environment.NewLine}{_config}");
-
-            var arduinoApplication = _container.Resolve<ArduinoBackendApplication>();
-            arduinoApplication.Start();
 
             runner.Start();
 
@@ -244,16 +164,7 @@ namespace CaldaiaBackend.SelfHosted
         private void SetupSignalR(IAppBuilder appBuilder, string deployUrl)
         {
             const string signalrBase = "/signalr"; // <- MUST contain the leading slash !!!
-
-            // 
-            var signalrNotificationAdapter = _container.Resolve<SignalRNotificationAdapter>();
-            signalrNotificationAdapter.Start();
-
-            appBuilder.MapSignalR(signalrBase, new HubConfiguration
-            {
-                EnableDetailedErrors = true,
-                EnableJavaScriptProxies = true
-            });
+            appBuilder.MapSignalR(signalrBase, new HubConfiguration());
             logger.Info($"SignalR started on {deployUrl}{signalrBase}");
         }
 

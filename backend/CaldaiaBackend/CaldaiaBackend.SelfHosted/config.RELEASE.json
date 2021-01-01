@@ -7,5 +7,7 @@
   "pathToLast24HoursJson": "~\\App_Data\\Projections\\Last24Hours.json",
   "pathToLast24HoursTemperaturesJson": "~\\App_Data\\Projections\\Last24HoursTemperatures.json",
   "pathToLastWeekAccumulatorsJson": "~\\App_Data\\Projections\\LastWeek.json",
-  "pathToLastWeekTemperaturesJson": "~\\App_Data\\Projections\\LastWeekTemperatures.json"
+  "pathToLastWeekTemperaturesJson": "~\\App_Data\\Projections\\LastWeekTemperatures.json",
+
+  "smtpNotifierConfigPath": ".\\config-email.secret.json" 
 }

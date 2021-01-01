@@ -30,13 +30,19 @@ namespace CaldaiaBackend.SelfHosted
         /// </summary>
         public string deployUrl => $"http://{deployHost}:{port}/{baseUrl}";
 
+    
+        /// <summary>
+        /// auth token issuer. Può essere uno di questi valori:
+        /// "http://auth-test.loccioni.com/Loccioni.Autenticazione.Service"
+        /// "http://auth.loccioni.com/Loccioni.Autenticazione.Service"
+        /// </summary>
+        public string authTokenIssuer { get; set; }
 
-        public string arduinoComPort { get; set; }
-        public string pathToLast24HoursJson { get; set; }
-        public string pathToLast24HoursTemperaturesJson { get; set; }
-        public string pathToLastWeekAccumulatorsJson { get; set; }
-        public string pathToLastWeekTemperaturesJson { get; set; }
-        public string smtpNotifierConfigPath { get; set; } = "";
+        /// <summary>
+        /// Tells the system to enable or not the Authentication layer.
+        /// </summary>
+        public bool enableAuth { get; set; }
+
 
         /// <summary>
         /// Converts a printable version of the config, with password info striped away.

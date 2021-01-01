@@ -1,8 +1,8 @@
 using System;
 using Hangfire.Logging;
 using Infrastructure.Logging;
-using LogLevel = Hangfire.Logging.LogLevel;
 using InfrastructureLogLevel = Infrastructure.Logging.LogLevel;
+using LogLevel = Hangfire.Logging.LogLevel;
 
 namespace CaldaiaBackend.SelfHosted.Hangfire
 {
