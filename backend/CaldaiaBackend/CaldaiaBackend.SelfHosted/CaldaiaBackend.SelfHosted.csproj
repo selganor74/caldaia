@@ -54,148 +54,148 @@
       <HintPath>..\packages\Hangfire.SqlServer.1.7.0\lib\net45\Hangfire.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.dll</HintPath>
+    <Reference Include="Infrastructure, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Actions, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Actions.dll</HintPath>
+    <Reference Include="Infrastructure.Actions, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Actions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Actions.IoC.CastleWindsor, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Actions.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.Actions.IoC.CastleWindsor, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Actions.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Application, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Application.dll</HintPath>
+    <Reference Include="Infrastructure.Application, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Application.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Application.Hosting.WebApi, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Application.Hosting.WebApi.dll</HintPath>
+    <Reference Include="Infrastructure.Application.Hosting.WebApi, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Application.Hosting.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Infrastructure.Application.Hosting.WebApi.Hangfire, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.2.0.41\lib\net452\Infrastructure.Application.Hosting.WebApi.Hangfire.dll</HintPath>
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.42\lib\net452\Infrastructure.Application.Hosting.WebApi.Hangfire.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Application.Hosting.WebApi.IoC.CastleWindsor, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Application.Hosting.WebApi.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.Application.Hosting.WebApi.IoC.CastleWindsor, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Application.Hosting.WebApi.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Application.Hosting.WebApi.SelfHost, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Application.Hosting.WebApi.SelfHost.dll</HintPath>
+    <Reference Include="Infrastructure.Application.Hosting.WebApi.SelfHost, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Application.Hosting.WebApi.SelfHost.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Application.Hosting.WebApi.SelfHost.Topshelf, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Application.Hosting.WebApi.SelfHost.Topshelf.dll</HintPath>
+    <Reference Include="Infrastructure.Application.Hosting.WebApi.SelfHost.Topshelf, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Application.Hosting.WebApi.SelfHost.Topshelf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Application.Hosting.WebApi.SignalR, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Application.Hosting.WebApi.SignalR.dll</HintPath>
+    <Reference Include="Infrastructure.Application.Hosting.WebApi.SignalR, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Application.Hosting.WebApi.SignalR.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Application.IoC.CastleWindsor, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Application.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.Application.IoC.CastleWindsor, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Application.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Application.Telemetry, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.2.0.41\lib\net452\Infrastructure.Application.Telemetry.dll</HintPath>
+    <Reference Include="Infrastructure.Application.Telemetry, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.42\lib\net452\Infrastructure.Application.Telemetry.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Application.Telemetry.Azure, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.2.0.41\lib\net452\Infrastructure.Application.Telemetry.Azure.dll</HintPath>
+    <Reference Include="Infrastructure.Application.Telemetry.Azure, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.42\lib\net452\Infrastructure.Application.Telemetry.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Infrastructure.Application.Telemetry.Azure.IoC.CastleWindsor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Telemetry.Azure.IoC.CastleWindsor.2.0.41\lib\net452\Infrastructure.Application.Telemetry.Azure.IoC.CastleWindsor.dll</HintPath>
+      <HintPath>..\packages\Infrastructure.Telemetry.Azure.IoC.CastleWindsor.2.0.42\lib\net452\Infrastructure.Application.Telemetry.Azure.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Authorization, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Authorization.dll</HintPath>
+    <Reference Include="Infrastructure.Authorization, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Authorization.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Core, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.41\lib\net452\Infrastructure.Core.dll</HintPath>
+    <Reference Include="Infrastructure.Core, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.DomainDesign, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.41\lib\net452\Infrastructure.DomainDesign.dll</HintPath>
+    <Reference Include="Infrastructure.DomainDesign, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.DomainDesign.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Events, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Events.dll</HintPath>
+    <Reference Include="Infrastructure.Events, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Events.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Events.IoC.CastleWindsor, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Events.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.Events.IoC.CastleWindsor, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Events.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Events.PushNotifications.SignalR.IoC.CastleWindsor, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Events.PushNotifications.SignalR.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.Events.PushNotifications.SignalR.IoC.CastleWindsor, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Events.PushNotifications.SignalR.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Events.RabbitMQ, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.IoC.CastleWindsor.2.0.41\lib\net452\Infrastructure.Events.RabbitMQ.dll</HintPath>
+    <Reference Include="Infrastructure.Events.RabbitMQ, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.IoC.CastleWindsor.2.0.42\lib\net452\Infrastructure.Events.RabbitMQ.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Events.RabbitMQ.IoC.CastleWindsor, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.IoC.CastleWindsor.2.0.41\lib\net452\Infrastructure.Events.RabbitMQ.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.Events.RabbitMQ.IoC.CastleWindsor, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.IoC.CastleWindsor.2.0.42\lib\net452\Infrastructure.Events.RabbitMQ.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Identity, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.41\lib\net452\Infrastructure.Identity.dll</HintPath>
+    <Reference Include="Infrastructure.Identity, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Identity.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Logging, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Logging.dll</HintPath>
+    <Reference Include="Infrastructure.Logging, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Logging.IoC.CastleWindsor, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Logging.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.Logging.IoC.CastleWindsor, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Logging.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Logging.Log4Net, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Logging.Log4Net.dll</HintPath>
+    <Reference Include="Infrastructure.Logging.Log4Net, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Logging.Log4Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Logging.Log4Net.IoC.CastleWindsor, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Logging.Log4Net.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.Logging.Log4Net.IoC.CastleWindsor, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Logging.Log4Net.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Logging.SmtpNotification, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.Logging.SmtpNotification.dll</HintPath>
+    <Reference Include="Infrastructure.Logging.SmtpNotification, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.Logging.SmtpNotification.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Messaging, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.2.0.41\lib\net452\Infrastructure.Messaging.dll</HintPath>
+    <Reference Include="Infrastructure.Messaging, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.42\lib\net452\Infrastructure.Messaging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Repository, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.2.0.41\lib\net452\Infrastructure.Repository.dll</HintPath>
+    <Reference Include="Infrastructure.Repository, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.42\lib\net452\Infrastructure.Repository.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Telemetry.Azure, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Telemetry.Azure.2.0.41\lib\net452\Infrastructure.Telemetry.Azure.dll</HintPath>
+    <Reference Include="Infrastructure.Telemetry.Azure, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Telemetry.Azure.2.0.42\lib\net452\Infrastructure.Telemetry.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Telemetry.Azure.IoC.CastleWindsor, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Telemetry.Azure.IoC.CastleWindsor.2.0.41\lib\net452\Infrastructure.Telemetry.Azure.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.Telemetry.Azure.IoC.CastleWindsor, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Telemetry.Azure.IoC.CastleWindsor.2.0.42\lib\net452\Infrastructure.Telemetry.Azure.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.WebApi, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.2.0.41\lib\net452\Infrastructure.WebApi.dll</HintPath>
+    <Reference Include="Infrastructure.WebApi, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.2.0.42\lib\net452\Infrastructure.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.WebApi.IoC.CastleWindsor, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.IoC.CastleWindsor.2.0.41\lib\net452\Infrastructure.WebApi.IoC.CastleWindsor.dll</HintPath>
+    <Reference Include="Infrastructure.WebApi.IoC.CastleWindsor, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.IoC.CastleWindsor.2.0.42\lib\net452\Infrastructure.WebApi.IoC.CastleWindsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.WebApi.SelfHost, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.41\lib\net452\Infrastructure.WebApi.SelfHost.dll</HintPath>
+    <Reference Include="Infrastructure.WebApi.SelfHost, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.WebApi.SelfHost.2.0.42\lib\net452\Infrastructure.WebApi.SelfHost.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Workflow, Version=2.0.41.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.41\lib\net452\Infrastructure.Workflow.dll</HintPath>
+    <Reference Include="Infrastructure.Workflow, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Workflow.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
@@ -377,7 +377,6 @@
     <Compile Include="Owin\SignalRHubs\RawStringsHub.cs" />
     <Compile Include="Owin\SignalRHubs\SettingsHub.cs" />
     <Compile Include="Owin\SignalRNotificationAdapter.cs" />
-    <Compile Include="Owin\Startup.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebAppRunner.cs" />
@@ -391,6 +390,7 @@
     <None Include="config-email.secret.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="config-email.secret.json.sample" />
     <None Include="Config.cs.sample" />
     <None Include="config.DEBUG.json.sample" />
     <None Include="config.RELEASE.json">

@@ -86,7 +86,7 @@ namespace CaldaiaBackend.SelfHosted
                     );
 
                 // Sets up minimal infrastructure needs
-                container.Install(new InfrastructureLoggingInstaller(logLevel));
+                container.Install(new InfrastructureLoggingInstaller(logLevel, ENVIRONMENT, config));
 
                 // Resolve the application and start !
                 var serviceRunner = container.Resolve<TopshelfServiceRunner<Application>>();

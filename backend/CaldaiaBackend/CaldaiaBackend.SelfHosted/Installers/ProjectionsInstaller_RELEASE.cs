@@ -15,21 +15,16 @@ namespace CaldaiaBackend.SelfHosted.IoC
 {
     class ProjectionsInstaller_RELEASE : IWindsorInstaller
     {
-        private readonly Config _config;
-
-        public ProjectionsInstaller_RELEASE(Config config)
-        {
-            _config = config;
-        }
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
+            var config = container.Resolve<Config>();
             container.Register(
                 Component
                     .For<Last24HoursAccumulators>()
                     .DependsOn(
                         Dependency.OnValue<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>(
                             new FileSystemTimeSlotLoaderSaver<AccumulatorStatistics>(
-                                _config.pathToLast24HoursJson,
+                                config.pathToLast24HoursJson,
                                 TimeSpan.FromMinutes(10),
                                 container.Resolve<ILoggerFactory>()
                                 )
@@ -42,7 +37,7 @@ namespace CaldaiaBackend.SelfHosted.IoC
                     .DependsOn(
                         Dependency.OnValue<ITimeSlotBufferLoaderSaver<TemperatureStatistics>>(
                             new FileSystemTimeSlotLoaderSaver<TemperatureStatistics>(
-                                _config.pathToLast24HoursTemperaturesJson,
+                                config.pathToLast24HoursTemperaturesJson,
                                 TimeSpan.FromMinutes(10),
                                 container.Resolve<ILoggerFactory>()
                                 )
@@ -55,7 +50,7 @@ namespace CaldaiaBackend.SelfHosted.IoC
                     .DependsOn(
                         Dependency.OnValue<ITimeSlotBufferLoaderSaver<AccumulatorStatistics>>(
                             new FileSystemTimeSlotLoaderSaver<AccumulatorStatistics>(
-                                _config.pathToLastWeekAccumulatorsJson,
+                                config.pathToLastWeekAccumulatorsJson,
                                 TimeSpan.FromMinutes(20),
                                 container.Resolve<ILoggerFactory>()
                             )
@@ -68,7 +63,7 @@ namespace CaldaiaBackend.SelfHosted.IoC
                     .DependsOn(
                         Dependency.OnValue<ITimeSlotBufferLoaderSaver<TemperatureStatistics>>(
                             new FileSystemTimeSlotLoaderSaver<TemperatureStatistics>(
-                                _config.pathToLastWeekTemperaturesJson,
+                                config.pathToLastWeekTemperaturesJson,
                                 TimeSpan.FromMinutes(20),
                                 container.Resolve<ILoggerFactory>()
                             )

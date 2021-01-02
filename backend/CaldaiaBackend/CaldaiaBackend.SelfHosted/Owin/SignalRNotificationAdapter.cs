@@ -3,7 +3,6 @@ using CaldaiaBackend.Application.DataModels;
 using CaldaiaBackend.Application.Services;
 using Infrastructure.Logging;
 using Microsoft.AspNet.SignalR;
-using Owin;
 
 namespace CaldaiaBackend.SelfHosted.Owin
 {

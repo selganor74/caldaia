@@ -1,7 +1,8 @@
 {
 	"deployHost": "localhost",
 	"port": 58009,
-	"baseUrl": "sample-app",
+	"baseUrl": "CaldaiaBackend.SelfHosted",
 	"authTokenIssuer": "http://auth-test.loccioni.com/Loccioni.Autenticazione.Service",
-	"enableAuth": false
+  "enableAuth": false,
+  "smtpErrorNotifierConfigPath":  "config-email.secret.json"
 }

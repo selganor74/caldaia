@@ -243,3 +243,4 @@ ModelManifest.xml
 /backend/CaldaiaBackend/CaldaiaBackend.SelfHosted/DeployScripts/Deploy_Prod.bat
 /backend/CaldaiaBackend/GDriveTimeSlotLoaderSaver/GoogleDrive/credentials.json
 *.secret.json
+/backend/CaldaiaBackend/CaldaiaBackend.SelfHosted/config-email.secret.json.sample

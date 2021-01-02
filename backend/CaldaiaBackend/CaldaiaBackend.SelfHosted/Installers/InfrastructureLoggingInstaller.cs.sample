@@ -5,20 +5,35 @@ using Infrastructure.Logging;
 
 namespace CaldaiaBackend.SelfHosted.Installers
 {
-    class InfrastructureLoggingInstaller : IWindsorInstaller
+    class InfrastructureLoggingInstaller2 : IWindsorInstaller
     {
         private readonly LogLevel logLevel;
+		private readonly Environments environment;
+		private readonly Config config;
 
-        public InfrastructureLoggingInstaller(LogLevel logLevel)
+        public InfrastructureLoggingInstaller2(
+		  LogLevel logLevel, 
+		  Environments environment,
+		  Config config
+		)
         {
             this.logLevel = logLevel;
+			this.environment = environment;
+			this.config = config;
         }
+
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container
                 .UseInfrastructureConsoleLogger(logLevel)
                 .UseInfrastructureLog4Net()
                 .UseInfrastructureEvents();
+
+			if (environment == Environments.RELEASE && !string.IsNullOrWhiteSpace(config.smtpErrorNotifierConfigPath))
+			{
+				container
+				  .UseInfrastructureSmtpErrorNotifier(config.smtpErrorNotifierConfigPath);
+			}
         }
     }
 }

@@ -10,18 +10,11 @@ namespace CaldaiaBackend.SelfHosted.Installers
 {
     class SmtpNotifierInstaller_RELEASE : IWindsorInstaller
     {
-        private readonly Config _config;
-
-        public SmtpNotifierInstaller_RELEASE(Config config)
-        {
-            _config = config;
-        }
 
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            var configAsJson = File.ReadAllText(_config.smtpNotifierConfigPath);
-            var smtpConfig = JsonConvert.DeserializeObject<SmtpErrorNotifierConfig>(configAsJson);
-            container.UseInfrastructureSmtpErrorNotifier(smtpConfig);
+            var config = container.Resolve<Config>();
+            container.UseInfrastructureSmtpErrorNotifier(config.smtpNotifierConfigPath);
         }
     }
 }

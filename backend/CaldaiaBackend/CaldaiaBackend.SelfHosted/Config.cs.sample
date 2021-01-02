@@ -43,6 +43,10 @@ namespace CaldaiaBackend.SelfHosted
         /// </summary>
         public bool enableAuth { get; set; }
 
+        /// <summary>
+        /// The .
+        /// </summary>
+        public string smtpErrorNotifierConfigPath { get; set; }
 
         /// <summary>
         /// Converts a printable version of the config, with password info striped away.

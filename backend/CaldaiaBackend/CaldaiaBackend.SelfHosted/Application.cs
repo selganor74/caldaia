@@ -92,9 +92,9 @@ namespace CaldaiaBackend.SelfHosted
                     break;
                 case Environments.RELEASE:
                     _container.Install(new LoggingInstaller_RELEASE());
-                    _container.Install(new SmtpNotifierInstaller_RELEASE(_config));
-                    _container.Install(new ProjectionsInstaller_RELEASE(_config));
-                    _container.Install(new ArduinoInstaller_RELEASE(_config));
+                    _container.Install(new SmtpNotifierInstaller_RELEASE());
+                    _container.Install(new ProjectionsInstaller_RELEASE());
+                    _container.Install(new ArduinoInstaller_RELEASE());
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -269,4 +269,3 @@ namespace CaldaiaBackend.SelfHosted
         }
     }
 }
-

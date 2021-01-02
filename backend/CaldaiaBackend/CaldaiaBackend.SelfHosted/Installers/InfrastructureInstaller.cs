@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using CaldaiaBackend.Application.Commands;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
@@ -8,7 +9,7 @@ namespace CaldaiaBackend.SelfHosted.Installers
 {
     class InfrastructureInstaller : IWindsorInstaller
     {
-        private bool _enableAuth;
+        private readonly bool _enableAuth;
 
         public InfrastructureInstaller(bool enableAuth)
         {
@@ -19,7 +20,7 @@ namespace CaldaiaBackend.SelfHosted.Installers
         {
 
             container
-                .UseInfrastructureActions()
+                .UseInfrastructureActionsInAssemblyContaining<SendStringCommand>()
                 .UseInfrastructureActionsInstrumentation()
                 .UseInfrastructurePushNotification()
                 ;
