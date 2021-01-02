@@ -401,7 +401,7 @@
     </None>
     <None Include="DeployScripts\Build.bat" />
     <None Include="DeployScripts\BuildCustom.bat" />
-    <None Include="DeployScripts\DeployTo.bat" />
+    <None Include="DeployScripts\Deploy.bat" />
     <None Include="DeployScripts\Deploy.ps1" />
     <Compile Include="Environments.cs" />
     <Compile Include="Installers\InfrastructureInstaller.cs" />

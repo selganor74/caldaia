@@ -22,7 +22,7 @@ namespace CaldaiaBackend.SelfHosted.IoC
             //var eventLogLogger = new EventLogWriter("arduinoBackend", LogLevel.Warning);
             //clw.AddLogger(eventLogLogger, LogLevelMode.Independent);
 
-            logWriter.SetLogLevel(LogLevel.Trace);
+            logWriter.SetLogLevel(LogLevel.Info);
         }
     }
 }

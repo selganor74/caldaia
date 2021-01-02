@@ -15,9 +15,9 @@ namespace CaldaiaBackend.Infrastructure
 
         public TimeSlot(DateTime slotEnd, TimeSpan slotSize, T content = default(T))
         {
-            this.SlotEnd = slotEnd;
-            this.SlotSize = slotSize;
-            this.Content = content;
+            SlotEnd = slotEnd;
+            SlotSize = slotSize;
+            Content = content;
         }
 
     }
@@ -37,9 +37,9 @@ namespace CaldaiaBackend.Infrastructure
 
         public CircularTimeSlotBuffer(IEnumerable<TimeSlot<T>> timeSlots)
         {
-            this.slotSize = timeSlots.First().SlotSize;
-            this.lastSlotEndTime = timeSlots.Max(t => t.SlotEnd);
-            this._buffer = timeSlots.ToList();
+            slotSize = timeSlots.First().SlotSize;
+            lastSlotEndTime = timeSlots.Max(t => t.SlotEnd);
+            _buffer = timeSlots.ToList();
         }
 
         public CircularTimeSlotBuffer(
@@ -78,9 +78,12 @@ namespace CaldaiaBackend.Infrastructure
         /// <returns>dafault(T) if no slot was found for reference date</returns>
         public T GetContentAtReference(DateTime referenceDate)
         {
-            var utcReference = referenceDate.ToUniversalTime();
-            var slot = _buffer.FirstOrDefault(e => e.SlotStart < utcReference && utcReference <= e.SlotEnd);
-            return slot == null ? default(T) : slot.Content;
+            lock (_bufferLock)
+            {
+                var utcReference = referenceDate.ToUniversalTime();
+                var slot = _buffer.FirstOrDefault(e => e.SlotStart < utcReference && utcReference <= e.SlotEnd);
+                return slot == null ? default(T) : slot.Content;
+            }
         }
 
         /// <summary>
@@ -92,10 +95,11 @@ namespace CaldaiaBackend.Infrastructure
         /// <returns>An IEnumerable of all the removed elements"/></returns>
         public IEnumerable<T> UpdateOrCreateContentAtReference(DateTime reference, T content = default(T))
         {
+            var removed = new List<T>();
+            var utcReference = reference.ToUniversalTime();
+
             lock (_bufferLock)
             {
-                var removed = new List<T>();
-                var utcReference = reference.ToUniversalTime();
                 while (lastSlotEndTime < utcReference)
                 {
                     var aRemoved = AddNextSlot();

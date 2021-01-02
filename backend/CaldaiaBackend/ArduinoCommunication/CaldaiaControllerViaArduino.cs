@@ -31,12 +31,12 @@ namespace ArduinoCommunication
         private static bool _recovering = false;
         private readonly Timer _commandToResponseTimeoutTimer;
         private readonly Timer _commandSender;
+        private readonly Timer _failedJsonResetTimeout;
         private readonly Queue<string> _commandQueue = new Queue<string>(50);
 
         private readonly MultipleStringToJsonParser _streamingJsonParser;
 
         private readonly string _serialPort;
-        private Timer _failedJsonResetTimeout;
         private SerialPort _physicalPort;
 
         private event Action<DataFromArduino> Observers;
@@ -62,15 +62,16 @@ namespace ArduinoCommunication
             IEventDispatcher dispatcher,
             ILoggerFactory loggerFactory)
         {
+            _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
+
             _serialPort = serialPort;
             _dispatcher = dispatcher;
             _failedJsonResetTimeout = new Timer(state => ResetFailedJsonCounter(), null, -1, -1);
-            _log = loggerFactory?.CreateNewLogger(GetType().Name) ?? new NullLogger();
             _commandToResponseTimeoutTimer = new Timer(TryRecoverConnection, null, -1, -1);
             _commandSender = new Timer(DequeueCommand, null, -1, -1);
 
             _streamingJsonParser = new MultipleStringToJsonParser(loggerFactory);
-            _streamingJsonParser.foundNewJson += FoundNewJson;
+            _streamingJsonParser.OnFoundNewJson += OnFoundNewJson;
         }
 
         public void Start()
@@ -163,7 +164,7 @@ namespace ArduinoCommunication
             }
         }
 
-        private void FoundNewJson(string _currentJson)
+        private void OnFoundNewJson(string _currentJson)
         {
             _log.Trace("Found full json", _currentJson);
 
@@ -192,7 +193,7 @@ namespace ArduinoCommunication
                     return;
                 }
 
-                _log.Warning("This was not an expeced json type", _currentJson);
+                _log.Warning("This was not an expected json type", _currentJson);
                 throw new Exception("This was not an expected json type");
             }
             catch (Exception x)

@@ -9,9 +9,10 @@ namespace ArduinoCommunication
 
     internal class MultipleStringToJsonParser : IDisposable
     {
-        public event WhenFoundNewJson foundNewJson;
+        public event WhenFoundNewJson OnFoundNewJson;
 
         private ParsingState _parsingState = ParsingState.SearchingStart;
+        private readonly object _readQueueLock = new object();
         private readonly Queue<string> _readQueue = new Queue<string>(10240);
         private readonly Timer _processTimer;
         private string _currentJson;
@@ -29,32 +30,38 @@ namespace ArduinoCommunication
 
         public void AddString(string received)
         {
-            _readQueue.Enqueue(received);
+            lock (_readQueueLock)
+            {
+                _readQueue.Enqueue(received);
+            }
         }
 
         private void ProcessQueue(object state)
         {
-            if (_readQueue.Count == 0) return;
-
-            while (_readQueue.Count > 0)
+            lock (_readQueueLock)
             {
-                var current = _readQueue.Dequeue();
-                if (current == null) continue;
-                while (current.Length != 0)
+                if (_readQueue.Count == 0) return;
+
+                while (_readQueue.Count > 0)
                 {
-                    switch (_parsingState)
+                    var current = _readQueue.Dequeue();
+                    if (current == null) continue;
+                    while (current.Length != 0)
                     {
-                        case ParsingState.SearchingStart:
+                        switch (_parsingState)
+                        {
+                            case ParsingState.SearchingStart:
                             {
                                 current = SearchStart(current);
                                 break;
                             }
 
-                        case ParsingState.SearchingEnd:
+                            case ParsingState.SearchingEnd:
                             {
                                 current = SearchEnd(current);
                                 break;
                             }
+                        }
                     }
                 }
             }
@@ -78,7 +85,7 @@ namespace ArduinoCommunication
                 _log.Trace("Found end in json string.", _currentJson);
 
                 // _log.Info("found new json", _currentJson);
-                foundNewJson?.Invoke(_currentJson);
+                OnFoundNewJson?.Invoke(_currentJson);
 
                 _currentJson = current;
                 current = "";
