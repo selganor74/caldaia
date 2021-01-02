@@ -217,7 +217,7 @@ namespace CaldaiaBackend.SelfHosted
 
         public void Stop()
         {
-            runner.Stop();
+            runner?.Stop();
             logger.Info($"{Assembly.GetExecutingAssembly().GetName().Name} Stopped!");
         }
 
