@@ -198,18 +198,17 @@ namespace CaldaiaBackend.SelfHosted
         private void StartWebApplication(SelfHostWebApiOptions webAppOptions)
         {
             var dispatcher = _container.Resolve<IEventDispatcher>();
-            runner = new WebApiAppRunner(
-                webAppOptions,
-                dispatcher,
-                loggerFactory
-            );
-
 
             logger.Warning($"{Environment.NewLine}Starting in {_environment} environment with config:{Environment.NewLine}{_config}");
 
             var arduinoApplication = _container.Resolve<ArduinoBackendApplication>();
             arduinoApplication.Start();
 
+            runner = new WebApiAppRunner(
+                webAppOptions,
+                dispatcher,
+                loggerFactory
+            );
             runner.Start();
 
             logger.Info("Started!");
@@ -234,7 +233,7 @@ namespace CaldaiaBackend.SelfHosted
                 WorkerCount = 1
             };
 
-            var hangfireUri = "/hangfire";
+            const string hangfireUri = "/hangfire";
 
             appBuilder.UseHangfireServer(options);
             appBuilder.UseHangfireDashboard(hangfireUri);
@@ -245,7 +244,6 @@ namespace CaldaiaBackend.SelfHosted
         {
             const string signalrBase = "/signalr"; // <- MUST contain the leading slash !!!
 
-            // 
             var signalrNotificationAdapter = _container.Resolve<SignalRNotificationAdapter>();
             signalrNotificationAdapter.Start();
 
