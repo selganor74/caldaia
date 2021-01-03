@@ -35,68 +35,68 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Infrastructure, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.dll</HintPath>
+    <Reference Include="Infrastructure, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Actions, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Actions.dll</HintPath>
+    <Reference Include="Infrastructure.Actions, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Actions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Application, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Application.dll</HintPath>
+    <Reference Include="Infrastructure.Application, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Application.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Application.Telemetry, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Application.Telemetry.dll</HintPath>
+    <Reference Include="Infrastructure.Application.Telemetry, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Application.Telemetry.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Authorization, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Authorization.dll</HintPath>
+    <Reference Include="Infrastructure.Authorization, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Authorization.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Core, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Core.dll</HintPath>
+    <Reference Include="Infrastructure.Core, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.DomainDesign, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.DomainDesign.dll</HintPath>
+    <Reference Include="Infrastructure.DomainDesign, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.DomainDesign.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Events, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Events.dll</HintPath>
+    <Reference Include="Infrastructure.Events, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Events.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Events.RabbitMQ, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Events.RabbitMQ.dll</HintPath>
+    <Reference Include="Infrastructure.Events.RabbitMQ, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Events.RabbitMQ.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Identity, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Identity.dll</HintPath>
+    <Reference Include="Infrastructure.Identity, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Identity.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Logging, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Logging.dll</HintPath>
+    <Reference Include="Infrastructure.Logging, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Logging.Log4Net, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Logging.Log4Net.dll</HintPath>
+    <Reference Include="Infrastructure.Logging.Log4Net, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Logging.Log4Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Logging.SmtpNotification, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Logging.SmtpNotification.dll</HintPath>
+    <Reference Include="Infrastructure.Logging.SmtpNotification, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Logging.SmtpNotification.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Messaging, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Messaging.dll</HintPath>
+    <Reference Include="Infrastructure.Messaging, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Messaging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Repository, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Repository.dll</HintPath>
+    <Reference Include="Infrastructure.Repository, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Repository.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Infrastructure.Workflow, Version=2.0.42.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Infrastructure.Core.2.0.42\lib\net452\Infrastructure.Workflow.dll</HintPath>
+    <Reference Include="Infrastructure.Workflow, Version=2.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infrastructure.Core.2.0.43\lib\net452\Infrastructure.Workflow.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">

@@ -1,14 +1,13 @@
 using System;
 using System.IO;
-using System.Web.Http;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Newtonsoft.Json;
 using Infrastructure.Application.Hosting.WebApi.SelfHost.Topshelf;
 using Infrastructure.Logging;
 using CaldaiaBackend.SelfHosted.Installers;
-using Infrastructure.Logging.SmtpNotification;
-using Newtonsoft.Json.Serialization;
+using Topshelf;
+using Topshelf.HostConfigurators;
 
 namespace CaldaiaBackend.SelfHosted
 {
@@ -68,8 +67,22 @@ namespace CaldaiaBackend.SelfHosted
 
                     Component
                         .For<TopshelfServiceRunner<Application>>()
-                        .DependsOn(Dependency.OnValue<LogLevel>(logLevel)),
+                        .DependsOn(Dependency.OnValue<LogLevel>(logLevel))
+                        .DependsOn(Dependency.OnValue<Action<HostConfigurator>>(
+                            new Action<HostConfigurator>(hc => {
+                                // The default configuration provided by TopShelfServiceRunner is suitable for most situations,
+                                // but if you need some advanced feature from topshelf, you can customize here the HostConfiguration.
+                                // Whatever you do here will take precedence over default config, and you can check what the default does
+                                // here: https://git.loccioni.com/IT/Loccioni.Infrastructure/-/blob/master/Infrastructure.Application.Hosting.WebApi.SelfHost.Topshelf/TopshelfServiceRunner.cs#L51
+                                hc.EnableServiceRecovery(sr =>
+                                {
+                                    sr.RestartService(delayInMinutes: 1);
+                                    sr.RestartService(delayInMinutes: 1);
+                                    sr.RestartService(delayInMinutes: 1);
 
+                                    sr.SetResetPeriod(days: 1);
+                                });
+                            }))),
 
                     Component
                         .For<Application>()
@@ -78,20 +91,6 @@ namespace CaldaiaBackend.SelfHosted
                             Dependency.OnValue<LogLevel>(logLevel)
                             )
                         .LifestyleSingleton()
-      //              Classes
-      //                  .FromThisAssembly()
-      //                  .Where(t =>    t != typeof(Config)		/* Excludes Config because already registered ! */ 
-      //                              && !typeof(ApiController).IsAssignableFrom(t) /* Excludes eventual WebApi Controllers because they will get registered by Castle Integration */
-      //                              && !typeof(IWindsorInstaller).IsAssignableFrom(t) /* Excludes Installers, as they may need more fine grained setup rules */       
-						//	)
-						//.WithServiceAllInterfaces()
-      //                  .WithServiceSelf()
-      //                  .Configure(
-      //                      c => c.DependsOn(
-      //                              Dependency.OnValue<Environments>(ENVIRONMENT),
-      //                              Dependency.OnValue<LogLevel>(logLevel)
-      //                          )
-      //                      )
                     );
 
                 // Sets up minimal infrastructure needs
