@@ -2,28 +2,28 @@ using System;
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
-using CaldaiaBackend.Application;
-using CaldaiaBackend.Application.Services;
 using Castle.Windsor;
+using Castle.MicroKernel.Registration;
 using Hangfire;
 using Hangfire.MemoryStorage;
-using Infrastructure.Application;
-using Microsoft.AspNet.SignalR;
 using Owin;
+using Microsoft.Owin;
+using Microsoft.Owin.FileSystems;
+using Microsoft.Owin.StaticFiles;
+using Microsoft.AspNet.SignalR;
 
+using Infrastructure.Application;
+using Infrastructure.Application.Hosting.WebApi.SelfHost;
 using Infrastructure.Events;
 using Infrastructure.Logging;
-using Infrastructure.Application.Hosting.WebApi.SelfHost;
 
 using CaldaiaBackend.SelfHosted.Hangfire;
 using CaldaiaBackend.SelfHosted.Infrastructure.Notification;
 using CaldaiaBackend.SelfHosted.Installers;
 using CaldaiaBackend.SelfHosted.IoC;
 using CaldaiaBackend.SelfHosted.Owin;
-using Castle.MicroKernel.Registration;
-using Microsoft.Owin;
-using Microsoft.Owin.FileSystems;
-using Microsoft.Owin.StaticFiles;
+using CaldaiaBackend.Application;
+using CaldaiaBackend.Application.Services;
 
 namespace CaldaiaBackend.SelfHosted
 {

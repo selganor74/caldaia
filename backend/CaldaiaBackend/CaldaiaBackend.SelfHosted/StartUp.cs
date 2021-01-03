@@ -1,13 +1,16 @@
 using System;
 using System.IO;
+using Newtonsoft.Json;
+
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using Newtonsoft.Json;
-using Infrastructure.Application.Hosting.WebApi.SelfHost.Topshelf;
-using Infrastructure.Logging;
-using CaldaiaBackend.SelfHosted.Installers;
 using Topshelf;
 using Topshelf.HostConfigurators;
+
+using Infrastructure.Application.Hosting.WebApi.SelfHost.Topshelf;
+using Infrastructure.Logging;
+
+using CaldaiaBackend.SelfHosted.Installers;
 
 namespace CaldaiaBackend.SelfHosted
 {
@@ -98,7 +101,7 @@ namespace CaldaiaBackend.SelfHosted
 
                 // Resolve the application and start !
                 var serviceRunner = container.Resolve<TopshelfServiceRunner<Application>>();
-                serviceRunner.Start();
+                serviceRunner.Start(param);
             }
         }
 
