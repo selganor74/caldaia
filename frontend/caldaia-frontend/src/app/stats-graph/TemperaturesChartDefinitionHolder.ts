@@ -12,12 +12,14 @@ export class TemperaturesChartDefinitionHolder {
   public chartDefinitions: { [possibleChartId: string]: TemperatureChartDefinition; } = {};
 
   constructor(private dataFromApi: ITemperaturesTimeSlot[]) {
-    for (const ts of dataFromApi) {
+    for (const ts of dataFromApi.sort((a, b) => {
+      return a.SlotStart > b.SlotStart ? 1 : (a.SlotStart < b.SlotStart ? -1 : 0);
+    })) {
       const label = moment(ts.SlotStart).format("MM/DD HH:mm");
       for (let chartId of this.allCharts) {
 
         this.chartDefinitions[chartId] = this.chartDefinitions[chartId] || new TemperatureChartDefinition();
-        let chartDef = this.chartDefinitions[chartId];
+        const chartDef = this.chartDefinitions[chartId];
 
         chartDef.header = chartId;
 
@@ -26,6 +28,10 @@ export class TemperaturesChartDefinitionHolder {
           chartDef.avgDataset.push((<IAggregatedValues>(ts.Content[chartId])).Avg);
           chartDef.minDataset.push((<IAggregatedValues>(ts.Content[chartId])).Min);
           chartDef.maxDataset.push((<IAggregatedValues>(ts.Content[chartId])).Max);
+        } else {
+          chartDef.avgDataset.push(null);
+          chartDef.minDataset.push(null);
+          chartDef.maxDataset.push(null);
         }
       }
     }
