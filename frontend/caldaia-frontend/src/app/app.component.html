@@ -8,15 +8,15 @@
     </p-panel>
 </p-dialog>
 
-<div class="fluid-container" >
-    <div class="row">
-        <p-tabView class="col-sm-12" (onChange)="onTabViewChange($event)">
+<div class="fluid-container no-gutter p-0 m-0" >
+    <div class="row p-0 m-0">
+        <p-tabView class="col-sm-12 p-0" (onChange)="onTabViewChange($event)">
             <p-tabPanel header="Dispositivi">
 
-                <div class="row">
+                <div class="row p-0">
                     <p-toolbar class="col-md-12 col-lg-12">
                         <div class="ui-toolbar-group-left">
-                            <button pButton type="button" class="ui-button-success" icon="pi pi-refresh" label="letto alle: {{data.timestamp | date:'HH:mm:ss' }}"
+                            <button pButton type="button" class="ui-button-success m-2" icon="pi pi-refresh" label="letto alle: {{data.timestamp | date:'HH:mm:ss' }}"
                                 (click)="refreshData()"></button>
                         </div>
                     </p-toolbar>
@@ -73,14 +73,18 @@
                 </div>
             </p-tabPanel>
 
+            <p-tabPanel header="Stats">
+                <app-stats-graph></app-stats-graph>
+            </p-tabPanel>
+
             <p-tabPanel header="Impostazioni">
                 <div class="row">
                     <p-toolbar class="col-md-12">
                         <div class="ui-toolbar-group-left">
-                            <button pButton type="button" icon="pi pi-refresh" label="{{settings.timestamp | date:'HH:mm:ss' }}"
-                                (click)="refreshSettings()"></button>
+                            <button pButton type="button" class="m-2" icon="pi pi-refresh" label="{{settings.timestamp | date:'HH:mm:ss' }}"
+                                (click)="refreshSettings()"> </button>
                             <span> </span>
-                            <button pButton type="button" icon="pi pi-save" label="Salva impostazioni" (click)="saveSettings()"></button>
+                            <button pButton type="button" class="m-2" icon="pi pi-save" label="Salva impostazioni" (click)="saveSettings()"></button>
                         </div>
                     </p-toolbar>
                 </div>
@@ -144,25 +148,22 @@
                 </div>
             </p-tabPanel>
             
-            <p-tabPanel header="Stats">
-                <app-stats-graph></app-stats-graph>
-            </p-tabPanel>
             
-            <p-tabPanel header="Terminale"  [cache]="false">
+            <!-- <p-tabPanel header="Terminale"  [cache]="false">
 
                 <app-terminal *ngIf="selectedTab ? selectedTab.index == 3 : false"></app-terminal>
 
-            </p-tabPanel>
+            </p-tabPanel> -->
 
         </p-tabView>
     </div>
 
-    <div class="row">
-        <p-panel header="Raw Data" class="col-md-12 col-lg-6" toggler="header" toggleable="true" collapsed="true">
+    <!-- <div class="row">
+        <p-panel header="Raw Data" class="col-md-12 col-lg-6 m-0" toggler="header" toggleable="true" collapsed="true">
             <pre>{{data | json}}</pre>
         </p-panel>
-        <p-panel header="Raw Settings" class="col-md-12 col-lg-6" toggler="header" toggleable="true" collapsed="true">
+        <p-panel header="Raw Settings" class="col-md-12 col-lg-6 m-0" toggler="header" toggleable="true" collapsed="true">
             <pre>{{settings | json}}</pre>
         </p-panel>
-    </div>
+    </div> -->
 </div>
