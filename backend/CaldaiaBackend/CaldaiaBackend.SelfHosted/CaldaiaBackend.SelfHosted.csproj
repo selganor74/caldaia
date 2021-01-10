@@ -357,6 +357,7 @@
   <ItemGroup>
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="Controllers\ApiController.cs" />
+    <Compile Include="Controllers\ClientInfoController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Hangfire\CastleJobActivator.cs" />
     <Compile Include="Hangfire\InfrastructureLogProvider.cs" />

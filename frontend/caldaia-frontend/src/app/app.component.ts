@@ -17,7 +17,6 @@ declare var $: any; // JQueryStatic;
 })
 export class AppComponent implements OnInit {
 
-  private signalrBaseUrl = environment.signalrBaseUrl;
   public data: IDataFromArduino = {};
   public settings: ISettingsFromArduino = {};
   public signalrStatus: string;

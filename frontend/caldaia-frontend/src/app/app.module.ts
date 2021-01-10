@@ -26,6 +26,7 @@ import { TerminalComponent } from './terminal/terminal.component';
 import { StatsGraphComponent } from './stats-graph/stats-graph.component';
 import { TemperatureChartComponent } from './chart/temperature-chart/temperature-chart.component';
 import { AccumulatorChartComponent } from './chart/accumulator-chart/accumulator-chart.component';
+import { ClientInfoComponent } from './client-info/client-info.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { AccumulatorChartComponent } from './chart/accumulator-chart/accumulator
     TerminalComponent,
     StatsGraphComponent,
     TemperatureChartComponent,
-    AccumulatorChartComponent
+    AccumulatorChartComponent,
+    ClientInfoComponent
   ],
   imports: [
     BrowserModule,
