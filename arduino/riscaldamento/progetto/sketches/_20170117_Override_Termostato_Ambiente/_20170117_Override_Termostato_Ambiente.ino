@@ -299,8 +299,19 @@ void doCrunchInputs() {
 
   //*/
 
+  
   /* La pompa del riscaldamento è direttamente collegata alla richiesta di calore nel da parte dei termostati ambiente.*/
-  currentState.inTermoAmbienteValue     == HIGH ? currentState.outPompaValue   = HIGH : currentState.outPompaValue = LOW;
+  /* Ma dobbiamo evitare oscillazioni, per cui gestiamo un tempo di isteresi */
+  static boolean previousTermoAmbienteState      = LOW;
+  static unsigned long tStateChangeTermoAmbiente = millis();
+  if ( currentState.inTermoAmbienteValue != previousTermoAmbienteState )
+    tStateChangeTermoAmbiente = millis();
+
+  /* lo stato del termostato ambiente deve rimanere tale per almeno 10 secondi, altrimenti non cambiamo stato alla pompa */ 
+  if ( calcolaIntervallo( tStateChangeTermoAmbiente, millis() ) > 10000 ) 
+    currentState.inTermoAmbienteValue     == HIGH ? currentState.outPompaValue   = HIGH : currentState.outPompaValue = LOW;
+
+  previousTermoAmbienteState = currentState.inTermoAmbienteValue;
 }
 
 void doManageOverrideTermostatoAmbiente() {
