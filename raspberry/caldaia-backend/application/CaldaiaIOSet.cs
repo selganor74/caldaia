@@ -18,7 +18,7 @@ public class CaldaiaAllValues
 public class CaldaiaIOSet
 {
     public DigitalOutput RELAY_POMPA_CAMINO { get; set; }
-    public DigitalInputMeter CaminoStatoPompaMeter { get; set; }
+    public DigitalIOMeter CaminoStatoPompaMeter { get; set; }
 
     public DigitalOutput RELAY_BYPASS_TERMOSTATO_AMBIENTE { get; set; }
     public DigitalOutput RELAY_POMPA_RISCALDAMENTO { get; set; }
@@ -29,13 +29,41 @@ public class CaldaiaIOSet
     public AnalogInput<Temperature> RotexTempPannelli { get; set; }
 
     public DigitalInput RotexStatoPompa { get; set; }
-    public DigitalInputMeter RotexStatoPompaMeter { get; set; }
+    public DigitalIOMeter RotexStatoPompaMeter { get; set; }
 
     public DigitalOutput RELAY_CALDAIA { get; set; }
-    public DigitalInputMeter CaldaiaStatoAccensioneMeter { get; set; }
+    public DigitalIOMeter CaldaiaStatoAccensioneMeter { get; set; }
 
     public DigitalInput TERMOSTATO_AMBIENTI { get; set; }
     public DigitalInput TERMOSTATO_ROTEX { get; set; }
+
+    public CaldaiaIOSet(
+        DigitalOutput rELAY_POMPA_CAMINO,
+        DigitalOutput rELAY_BYPASS_TERMOSTATO_AMBIENTE,
+        DigitalOutput rELAY_POMPA_RISCALDAMENTO,
+        DigitalOutput rELAY_CALDAIA,
+        DigitalInput tERMOSTATO_AMBIENTI,
+        DigitalInput tERMOSTATO_ROTEX,
+        AnalogInput<Temperature> caminoTemp,
+        AnalogInput<Temperature> rotexTempAccumulo,
+        AnalogInput<Temperature> rotexTempPannelli,
+        DigitalInput rotexStatoPompa
+        )
+    {
+        RELAY_POMPA_CAMINO = rELAY_POMPA_CAMINO;
+        CaminoStatoPompaMeter = new DigitalIOMeter(RELAY_POMPA_CAMINO);
+        RELAY_BYPASS_TERMOSTATO_AMBIENTE = rELAY_BYPASS_TERMOSTATO_AMBIENTE;
+        RELAY_POMPA_RISCALDAMENTO = rELAY_POMPA_RISCALDAMENTO;
+        CaminoTemp = caminoTemp;
+        RotexTempAccumulo = rotexTempAccumulo;
+        RotexTempPannelli = rotexTempPannelli;
+        RotexStatoPompa = rotexStatoPompa;
+        RotexStatoPompaMeter = new DigitalIOMeter(RotexStatoPompa);
+        RELAY_CALDAIA = rELAY_CALDAIA;
+        CaldaiaStatoAccensioneMeter = new DigitalIOMeter(RELAY_CALDAIA);
+        TERMOSTATO_AMBIENTI = tERMOSTATO_AMBIENTI;
+        TERMOSTATO_ROTEX = tERMOSTATO_ROTEX;
+    }
 
     public CaldaiaAllValues ReadAll()
     {

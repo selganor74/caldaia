@@ -29,6 +29,7 @@ public abstract class SimpleMeasure : IMeasure
                 newValue,
                 #pragma warning disable CS8601
                 newUtcTimeStamp
+                #pragma warning restore CS8601
             });
         }
 

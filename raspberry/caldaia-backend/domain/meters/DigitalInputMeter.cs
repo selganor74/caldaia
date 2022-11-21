@@ -3,7 +3,7 @@ using domain.systemComponents;
 
 namespace domain.meters;
 
-public class DigitalInputMeter
+public class DigitalIOMeter
 {
     public OnOff? LastKnownValue { get; protected set; }
 
@@ -46,7 +46,7 @@ public class DigitalInputMeter
     protected List<OnOff> history = new List<OnOff>();
     protected const int MAX_ITEMS_IN_HISTORY = 512;
 
-    public DigitalInputMeter(DigitalInput inputToMeasure)
+    public DigitalIOMeter(DigitalInput inputToMeasure)
     {
         inputToMeasure.ValueChanged += ValueChangedHandler;
         inputToMeasure.TransitionedFromOffToOn += OffToOnHandler;

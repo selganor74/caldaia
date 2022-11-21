@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "application", "application\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "domain", "domain\domain.csproj", "{43F5892B-0BE3-4F10-8377-3DE82DEAA58D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rotex-test", "rotex-test\rotex-test.csproj", "{B9C3458A-1513-4268-8F1D-4E1EA8844DB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "application-test", "application-test\application-test.csproj", "{B9C3458A-1513-4268-8F1D-4E1EA8844DB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

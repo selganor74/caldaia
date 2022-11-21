@@ -10,6 +10,7 @@ public class OnOff : SimpleMeasure
     public override string UoM => "";
     public override string FormattedValue => Value == 0 ? "Off" : "On";
 
+    public OnOffState DigitalValue => this.Value == 0 ? OnOffState.OFF : OnOffState.ON;
     public OnOff(OnOffState state, DateTime? utcTimeStamp = null) : base((decimal)state, utcTimeStamp)
     {
     }
