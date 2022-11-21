@@ -1,0 +1,14 @@
+[Unit]
+Description=Raspberry Caldaia Service
+After=network-online.target
+ 
+[Service]
+ExecStart=/home/pi/.dotnet/dotnet /home/pi/caldaia/bin/api.dll
+WorkingDirectory=/home/pi/caldaia/bin
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+ 
+[Install]
+WantedBy=multi-user.target

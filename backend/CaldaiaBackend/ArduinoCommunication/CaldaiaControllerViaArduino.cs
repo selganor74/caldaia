@@ -27,7 +27,7 @@ namespace ArduinoCommunication
         private static readonly TimeSpan CommandToResponseTimeout = TimeSpan.FromSeconds(4);
 
         private static readonly TimeSpan TimeoutBeforeResettingParsingFailures = CommandToResponseTimeout.Add(CommandToResponseTimeout);
-        private const int NumberOfJsonParsingFailuresBeforeReset = 10;
+        private const int NumberOfJsonParsingFailuresBeforeReset = 500;
         private static bool _recovering = false;
         private readonly Timer _commandToResponseTimeoutTimer;
         private readonly Timer _commandSender;

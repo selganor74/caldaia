@@ -63,10 +63,10 @@ pushd %CURRDIR%
 	IF errorlevel 1 GOTO :End
 
 	REM Copy the latest Frontend build into the deployable
-	SET DeployableFrontendPath=%DeployableServicePath%\AngularAppDist
-	robocopy ..\AngularAppDist %DeployableServicePath%\AngularAppDist /MIR /FFT /E /S /LOG:robocopy_log.txt /XD Logs /XD App_Data /W:1 /R:20
-	ECHO Deployed frontend to %DeployableFrontendPath%
-	type robocopy_log.txt
+	REM SET DeployableFrontendPath=%DeployableServicePath%\AngularAppDist
+	REM robocopy ..\AngularAppDist %DeployableServicePath%\AngularAppDist /MIR /FFT /E /S /LOG:robocopy_log.txt /XD Logs /XD App_Data /W:1 /R:20
+	REM ECHO Deployed frontend to %DeployableFrontendPath%
+	REM type robocopy_log.txt
 
 	REM Deploys binaries and installs the service on the remote server.
 	powershell -NoProfile -ExecutionPolicy Bypass -Command .\Deploy.ps1 -Username "%Username%" -Password "%Password%" -Server "%Server%" -NetworkShareName "%NetworkShareName%" -DestinationPathInShare "%DestinationPathInShare%" -DeployableServicePath "%DeployableServicePath%" -ServiceExecutableFullPathOnServer "%ServiceExecutableFullPathOnServer%" -ServiceName "%ServiceName%"
