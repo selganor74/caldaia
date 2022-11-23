@@ -6,7 +6,7 @@ using raspberry_gpio;
 
 namespace api.dependencyInjection;
 
-public static class RaspberryIoSet
+public static class RaspberryIoSetServiceCollectionExtensions
 {
     public static IServiceCollection AddRaspberryIOSet(this IServiceCollection services)
     {
@@ -70,10 +70,14 @@ public static class RaspberryIoSet
                 #pragma warning restore CS8604
             ),
 
-            caminoTemp: new MockAnalogInput<Temperature>(
-                nameof(CaldaiaIOSet.CaminoTemp), 
+            caminoTemp: new Ads1115I2cAnalogInput<Temperature>(
+                nameof(CaldaiaIOSet.CaminoTemp),
+                busId: 1,
+                addr: AdcAddress.GND, // Means ADDR pin on Ads1115 board is connected to GND
+                input: AdcInput.A0_SE,
+                readInterval: TimeSpan.FromSeconds(5),
                 #pragma warning disable CS8604
-                injector.GetService<ILogger<MockAnalogInput<Temperature>>>()
+                log: injector.GetService<ILogger<Ads1115I2cAnalogInput<Temperature>>>()
                 #pragma warning restore CS8604
             ),
 
@@ -99,6 +103,9 @@ public static class RaspberryIoSet
             )
         );
 
+        var config = new CaldaiaConfig(TimeSpan.FromSeconds(1));
+
+        services.AddSingleton(config);
         services.AddSingleton(caldaiaIoSet);
 
         return services;

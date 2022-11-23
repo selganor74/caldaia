@@ -7,5 +7,4 @@ public interface IMeasure
     string UoM { get; }
     string FormattedValue { get; }
 
-    T WithNewValue<T>(decimal newValue, DateTime? newUtcTimeStamp = null) where T : IMeasure;
 }

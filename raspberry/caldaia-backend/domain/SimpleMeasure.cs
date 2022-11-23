@@ -16,26 +16,4 @@ public abstract class SimpleMeasure : IMeasure
         Value = value;
         UtcTimeStamp = utcTimeStamp ?? DateTime.UtcNow;
     }
-
-    public virtual T WithNewValue<T>(decimal newValue, DateTime? newUtcTimeStamp = null) where T : IMeasure
-    {
-        T? toReturn = default(T);
-        Type type = typeof(T);
-        ConstructorInfo? ctor = type.GetConstructor(new[] { typeof(decimal), typeof(DateTime?) });
-        if (ctor != null)
-        {
-            toReturn = (T)ctor.Invoke(new object[]
-            {
-                newValue,
-                #pragma warning disable CS8601
-                newUtcTimeStamp
-                #pragma warning restore CS8601
-            });
-        }
-
-        if (toReturn == null)
-            throw new Exception($"Unable to create new instance of {typeof(T)}");
-
-        return toReturn;
-    }
 }

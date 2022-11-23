@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using domain.measures;
 using Microsoft.Extensions.Logging;
 
 namespace domain.systemComponents.mocks;
@@ -77,7 +78,7 @@ public class MockAnalogInput<TMeasure> : AnalogInput<TMeasure>, IDisposable wher
             var stepRadians = (2 * Math.PI) / this.sineInputParameters.measuresPerPeriod;
             var newValue = this.sineInputParameters.offset + (decimal)(this.sineInputParameters.amplitude * Math.Sin(step * stepRadians));
 
-            SetInput(this.sineInputParameters.min.WithNewValue<TMeasure>(newValue));
+            SetInput(this.sineInputParameters.min.WithNewValue(newValue));
 
             step += 1;
             if (step >= this.sineInputParameters.measuresPerPeriod)

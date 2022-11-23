@@ -15,7 +15,7 @@ public class CaldaiaAllValues
     public OnOffState TERMOSTATO_ROTEX { get; set; }
 }
 
-public class CaldaiaIOSet
+public class CaldaiaIOSet : IDisposable
 {
     public DigitalOutput RELAY_POMPA_CAMINO { get; set; }
     public DigitalIOMeter CaminoStatoPompaMeter { get; set; }
@@ -69,7 +69,7 @@ public class CaldaiaIOSet
     {
         var toReturn = new CaldaiaAllValues();
 
-        #pragma warning disable CS8602 
+#pragma warning disable CS8602
         toReturn.RELAY_BYPASS_TERMOSTATO_AMBIENTE = RELAY_BYPASS_TERMOSTATO_AMBIENTE.DigitalValue;
         toReturn.RELAY_POMPA_CAMINO = RELAY_POMPA_CAMINO.DigitalValue;
         toReturn.RELAY_CALDAIA = RELAY_CALDAIA.DigitalValue;
@@ -77,9 +77,21 @@ public class CaldaiaIOSet
 
         toReturn.TERMOSTATO_AMBIENTI = TERMOSTATO_AMBIENTI.DigitalValue;
         toReturn.TERMOSTATO_ROTEX = TERMOSTATO_ROTEX.DigitalValue;
-        #pragma warning restore CS8602 
+#pragma warning restore CS8602
 
         return toReturn;
+    }
+
+    // Disposes every property that can be disposed
+    public void Dispose()
+    {
+        var allProps = GetType().GetProperties();
+        var allDisposables = allProps.Where(p => typeof(IDisposable).IsAssignableFrom(p.PropertyType)).ToList();
+        foreach (var disposableProperty in allDisposables)
+        {
+            var disposable = disposableProperty.GetValue(this) as IDisposable;
+            disposable?.Dispose();
+        }
     }
 }
 #pragma warning restore CS8618

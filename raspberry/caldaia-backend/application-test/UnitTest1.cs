@@ -30,8 +30,14 @@ public class Tests
             rotexTempPannelli: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.RotexTempPannelli), new NullLogger<MockAnalogInput<Temperature>>()),
             rotexStatoPompa: new MockDigitalInput(nameof(CaldaiaIOSet.RotexStatoPompa), new NullLogger<DigitalInput>())
         );
+        
+        io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetMinTimeBetweenToggles(TimeSpan.Zero);
+        io.RELAY_CALDAIA.SetMinTimeBetweenToggles(TimeSpan.Zero);
+        io.RELAY_POMPA_CAMINO.SetMinTimeBetweenToggles(TimeSpan.Zero);
+        io.RELAY_POMPA_RISCALDAMENTO.SetMinTimeBetweenToggles(TimeSpan.Zero);
 
-        this.application = new CaldaiaApplication(io, new NullLogger<CaldaiaApplication>());
+        var config = new CaldaiaConfig(mainLoopPeriod: TimeSpan.FromMilliseconds(1));
+        this.application = new CaldaiaApplication(io, config, new NullLogger<CaldaiaApplication>());
     }
 
     [TearDown]
@@ -44,12 +50,14 @@ public class Tests
     public void Test1()
     {
         application.Start();
-        ((MockDigitalInput)io.TERMOSTATO_ROTEX).StartSquareInput(TimeSpan.FromSeconds(15));
+        ((MockDigitalInput)io.TERMOSTATO_ROTEX).StartSquareInput(TimeSpan.FromMilliseconds(150));
+        
         var sw = Stopwatch.StartNew();
-        while(sw.ElapsedMilliseconds < 20000) {
-            Thread.Sleep(2000);
+        while(sw.ElapsedMilliseconds < 400) {
+            Thread.Sleep(1);
             var reading = io.ReadAll();
-            Console.WriteLine(JsonConvert.SerializeObject(reading, Formatting.Indented));
+            Assert.IsTrue(reading.TERMOSTATO_ROTEX == reading.RELAY_CALDAIA);
+            // Console.WriteLine(JsonConvert.SerializeObject(reading, Formatting.Indented));
         }
         Assert.Pass();
     }

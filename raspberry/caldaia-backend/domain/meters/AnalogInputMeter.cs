@@ -1,3 +1,4 @@
+using domain.measures;
 using domain.systemComponents;
 
 namespace domain.meters;
@@ -25,7 +26,7 @@ public class AnalogInputMeter<TMeasure> where TMeasure : IMeasure
             return default(TMeasure);
 
         var average = history.Where(h => h.UtcTimeStamp > DateTime.UtcNow - period).Select(h => h.Value).Average();
-        return LastKnownValue.WithNewValue<TMeasure>(average, DateTime.UtcNow);
+        return LastKnownValue.WithNewValue(average, DateTime.UtcNow);
     }
 
     protected virtual void ValueChangedHandler(object? sender, TMeasure? newValue)
@@ -54,7 +55,7 @@ public class AnalogInputMeter<TMeasure> where TMeasure : IMeasure
         else
         {
             decimal newAverage = ComputeAverage(Average, newValue, removedValue);
-            Average = Average.WithNewValue<TMeasure>(newAverage, newValue.UtcTimeStamp);
+            Average = Average.WithNewValue(newAverage, newValue.UtcTimeStamp);
         }
     }
 
