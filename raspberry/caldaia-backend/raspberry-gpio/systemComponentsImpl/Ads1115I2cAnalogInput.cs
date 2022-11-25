@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace raspberry_gpio;
 
-public class Ads1115I2cAnalogInput<TMeasure> : AnalogInput<TMeasure>, IDisposable where TMeasure : IMeasure
+public class Ads1115I2cAnalogInput : AnalogInput<Voltage>, IDisposable
 {
     private readonly ADS1115Sensor adc;
     private readonly TimeSpan readInterval;
@@ -21,7 +21,7 @@ public class Ads1115I2cAnalogInput<TMeasure> : AnalogInput<TMeasure>, IDisposabl
         AdcAddress addr,
         AdcInput input,
         TimeSpan readInterval,
-        ILogger<Ads1115I2cAnalogInput<TMeasure>> log) : base(name, log)
+        ILogger<Ads1115I2cAnalogInput> log) : base(name, log)
     {
         try
         {
@@ -54,8 +54,9 @@ public class Ads1115I2cAnalogInput<TMeasure> : AnalogInput<TMeasure>, IDisposabl
             {
                 Thread.Sleep(readInterval);
                 var value = (decimal)adc.readContinuous();
-                LastMeasure = LastMeasure.WithNewValue<TMeasure>(value);
-                log.LogDebug($"{Name} Read new value: {LastMeasure.FormattedValue}");
+                var tensionValue = value * (3.3m / 32767m);
+                LastMeasure = LastMeasure.WithNewValue(value);
+                log.LogDebug($"{Name} Read new value: adc:{value} -> voltage: {LastMeasure.FormattedValue}");
             }
         }
         catch (Exception e)

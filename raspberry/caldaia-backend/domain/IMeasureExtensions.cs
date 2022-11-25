@@ -1,4 +1,4 @@
-namespace domain.measures;
+namespace domain;
 
 public static class IMeasureExtensions
 {

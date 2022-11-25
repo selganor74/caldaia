@@ -1,23 +1,34 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Logging.Abstractions;
+
 using application;
 using domain.measures;
 using domain.systemComponents;
 using domain.systemComponents.mocks;
-using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
 
 namespace rotex_test;
 
 public class Tests
 {
-    #pragma warning disable CS8618
+#pragma warning disable CS8618
     private CaldaiaIOSet io;
     private CaldaiaApplication application;
-    #pragma warning restore CS8618
+#pragma warning restore CS8618
 
     [SetUp]
     public void Setup()
     {
+        var adcInput = new MockAnalogInput<Voltage>("caminoTemp ADC", new NullLogger<MockAnalogInput<Voltage>>());
+        var caminoTemp = new AnalogInputConverter<Voltage, Temperature>(
+            nameof(CaldaiaIOSet.CaminoTemp),
+            adcInput,
+            (sourceVal) =>
+            {
+                return sourceVal / 750m;
+            },
+            new NullLogger<AnalogInput<Temperature>>()
+        );
+
         this.io = new CaldaiaIOSet(
             rELAY_POMPA_CAMINO: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_POMPA_CAMINO), new NullLogger<MockDigitalOutput>()),
             rELAY_BYPASS_TERMOSTATO_AMBIENTE: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_BYPASS_TERMOSTATO_AMBIENTE), new NullLogger<MockDigitalOutput>()),
@@ -30,7 +41,7 @@ public class Tests
             rotexTempPannelli: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.RotexTempPannelli), new NullLogger<MockAnalogInput<Temperature>>()),
             rotexStatoPompa: new MockDigitalInput(nameof(CaldaiaIOSet.RotexStatoPompa), new NullLogger<DigitalInput>())
         );
-        
+
         io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetMinTimeBetweenToggles(TimeSpan.Zero);
         io.RELAY_CALDAIA.SetMinTimeBetweenToggles(TimeSpan.Zero);
         io.RELAY_POMPA_CAMINO.SetMinTimeBetweenToggles(TimeSpan.Zero);
@@ -51,9 +62,10 @@ public class Tests
     {
         application.Start();
         ((MockDigitalInput)io.TERMOSTATO_ROTEX).StartSquareInput(TimeSpan.FromMilliseconds(150));
-        
+
         var sw = Stopwatch.StartNew();
-        while(sw.ElapsedMilliseconds < 400) {
+        while (sw.ElapsedMilliseconds < 400)
+        {
             Thread.Sleep(1);
             var reading = io.ReadAll();
             Assert.IsTrue(reading.TERMOSTATO_ROTEX == reading.RELAY_CALDAIA);
