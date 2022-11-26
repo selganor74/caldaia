@@ -22,11 +22,11 @@ public class CaldaiaAllValues
     // Legge il valore de
     public OnOff TERMOSTATO_AMBIENTI { get; set; }
     public OnOff TERMOSTATO_ROTEX { get; set; }
-    public Temperature TEMPERATURA_ROTEX { get; set; }
     public Temperature TEMPERATURA_CAMINO { get; set; }
 
     // Misura derivata da un comparatore con isteresi applicato a TEMPERATURA_CAMINO
     public OnOff CAMINO_ON_OFF { get; set; }
+    public Temperature? ROTEX_TEMP_ACCUMULO { get; internal set; }
 }
 
 public class CaldaiaIOSet : IDisposable
@@ -93,10 +93,11 @@ public class CaldaiaIOSet : IDisposable
             || RELAY_BYPASS_TERMOSTATO_AMBIENTE.LastMeasure == null
             || RELAY_POMPA_RISCALDAMENTO.LastMeasure == null
             || CAMINO_ON_OFF.LastMeasure == null
-            || CAMINO_TEMPERATURA == null
-            || RELAY_CALDAIA == null
-            || TERMOSTATO_AMBIENTI == null
-            || TERMOSTATO_ROTEX == null
+            || CAMINO_TEMPERATURA.LastMeasure == null
+            || RELAY_CALDAIA.LastMeasure == null
+            || TERMOSTATO_AMBIENTI.LastMeasure == null
+            || TERMOSTATO_ROTEX.LastMeasure == null
+            || ROTEX_TEMP_ACCUMULO.LastMeasure == null
         );
     }
 
@@ -104,7 +105,7 @@ public class CaldaiaIOSet : IDisposable
     {
         while(!IsReady())
             Thread.Sleep(100);
-            
+
         var toReturn = new CaldaiaAllValues();
 
 #pragma warning disable CS8601
@@ -115,6 +116,7 @@ public class CaldaiaIOSet : IDisposable
 
         toReturn.TERMOSTATO_AMBIENTI = TERMOSTATO_AMBIENTI.LastMeasure;
         toReturn.TERMOSTATO_ROTEX = TERMOSTATO_ROTEX.LastMeasure;
+        toReturn.ROTEX_TEMP_ACCUMULO = ROTEX_TEMP_ACCUMULO.LastMeasure;
 
         toReturn.TEMPERATURA_CAMINO = CAMINO_TEMPERATURA.LastMeasure ?? new Temperature(0);
         toReturn.CAMINO_ON_OFF = CAMINO_ON_OFF.LastMeasure ?? new OnOff(OnOffState.OFF);

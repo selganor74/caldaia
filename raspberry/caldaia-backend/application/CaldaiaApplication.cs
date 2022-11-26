@@ -61,7 +61,7 @@ public class CaldaiaApplication : IDisposable
     // This is the main control loop.
     private void MainLoop()
     {
-        var ROTEX_DISPONIBILE = (CaldaiaAllValues stato) => stato.TEMPERATURA_ROTEX.Value != 0m;
+        var ROTEX_DISPONIBILE = (CaldaiaAllValues stato) => stato.ROTEX_TEMP_ACCUMULO.Value != 0m;
 
         var CALDAIA_ACCESA = (CaldaiaAllValues stato) => stato.STATO_RELAY_CALDAIA.IsOn();
         var CALDAIA_SPENTA = (CaldaiaAllValues stato) => stato.STATO_RELAY_CALDAIA.IsOff();
@@ -69,7 +69,7 @@ public class CaldaiaApplication : IDisposable
         var TERMOSTATO_ROTEX_ATTIVO = (CaldaiaAllValues stato) => stato.TERMOSTATO_ROTEX.IsOn();
         var TERMOSTATO_ROTEX_NON_ATTIVO = (CaldaiaAllValues stato) => stato.TERMOSTATO_ROTEX.IsOff();
 
-        var TEMPERATURA_ROTEX = (CaldaiaAllValues stato) => stato.TEMPERATURA_ROTEX.Value;
+        var TEMPERATURA_ROTEX = (CaldaiaAllValues stato) => stato.ROTEX_TEMP_ACCUMULO.Value;
         var TEMPERATURA_CAMINO = (CaldaiaAllValues stato) => stato.TEMPERATURA_CAMINO.Value;
 
         var POMPA_CAMINO_ACCESA = (CaldaiaAllValues stato) => stato.STATO_RELAY_POMPA_CAMINO.IsOn() || io.RELAY_POMPA_CAMINO.IsDutyCycleStarted;
@@ -86,7 +86,7 @@ public class CaldaiaApplication : IDisposable
 
         var DELTA_T_CAMINO_T_ROTEX_SOPRA_SOGLIA = (CaldaiaAllValues stato) =>
         {
-            return stato.TEMPERATURA_CAMINO.Value > stato.TEMPERATURA_ROTEX.Value + config.DELTA_T_CAMINO_T_ROTEX_INNESCO
+            return stato.TEMPERATURA_CAMINO.Value > stato.ROTEX_TEMP_ACCUMULO.Value + config.DELTA_T_CAMINO_T_ROTEX_INNESCO;
         };
 
         var nextLoopStart = DateTime.Now;
@@ -128,7 +128,7 @@ public class CaldaiaApplication : IDisposable
             {
                 if (!POMPA_CAMINO_ACCESA(stato) && DELTA_T_CAMINO_T_ROTEX_SOPRA_SOGLIA(stato))
                 {
-                    
+
                 }
                 if (POMPA_CAMINO_ACCESA(stato) && DUTY_CYCLE_POMPA_CAMINO(stato) == 0m)
                 {

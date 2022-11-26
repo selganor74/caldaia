@@ -130,6 +130,12 @@ public static class RaspberryIoSetServiceCollectionExtensions
             )
         );
 
+        ((MockAnalogInput<Temperature>)caldaiaIoSet.ROTEX_TEMP_ACCUMULO).StartSineInput(
+            new Temperature(35),
+            new Temperature(80),
+            TimeSpan.FromMinutes(19),
+            100
+        );
         var config = new CaldaiaConfig(TimeSpan.FromSeconds(1));
 
         services.AddSingleton(config);
