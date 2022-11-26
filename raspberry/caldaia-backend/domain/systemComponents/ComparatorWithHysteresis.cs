@@ -28,7 +28,7 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput where TMeasure :
         this.riseThreshold = riseThreshold;
         this.fallThreshold = fallThreshold;
         this.logic = logic;
-        source.ValueChanged += OnSourceNewValue;
+        source.ValueRead += OnSourceNewValue;
     }
 
     private void OnSourceNewValue(object? source, TMeasure newValue)

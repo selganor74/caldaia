@@ -109,21 +109,21 @@ public static class RaspberryIoSetServiceCollectionExtensions
             cAMINO_ON_OFF: caminoOnOff,
 
             rotexStatoPompa: new MockDigitalInput(
-                nameof(CaldaiaIOSet.RotexStatoPompa),
+                nameof(CaldaiaIOSet.ROTEX_STATO_POMPA),
 #pragma warning disable CS8604
                 injector.GetService<ILogger<MockDigitalInput>>()
 #pragma warning restore CS8604
             ),
 
             rotexTempAccumulo: new MockAnalogInput<Temperature>(
-                nameof(CaldaiaIOSet.RotexTempAccumulo),
+                nameof(CaldaiaIOSet.ROTEX_TEMP_ACCUMULO),
 #pragma warning disable CS8604
                 injector.GetService<ILogger<MockAnalogInput<Temperature>>>()
 #pragma warning restore CS8604
             ),
 
             rotexTempPannelli: new MockAnalogInput<Temperature>(
-                nameof(CaldaiaIOSet.RotexTempPannelli),
+                nameof(CaldaiaIOSet.ROTEX_TEMP_PANNELLI),
 #pragma warning disable CS8604
                 injector.GetService<ILogger<MockAnalogInput<Temperature>>>()
 #pragma warning restore CS8604

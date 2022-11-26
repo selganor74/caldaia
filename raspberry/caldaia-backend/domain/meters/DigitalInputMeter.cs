@@ -47,7 +47,7 @@ public class DigitalIOMeter
 
     public DigitalIOMeter(DigitalInput inputToMeasure)
     {
-        inputToMeasure.ValueChanged += ValueChangedHandler;
+        inputToMeasure.ValueRead += ValueChangedHandler;
         inputToMeasure.TransitionedFromOffToOn += OffToOnHandler;
         inputToMeasure.TransitionedFromOnToOff += OnToOffHandler;
     }

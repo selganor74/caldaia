@@ -48,9 +48,9 @@ public class Tests
             tERMOSTATO_AMBIENTI: new MockDigitalInput(nameof(CaldaiaIOSet.TERMOSTATO_AMBIENTI), new NullLogger<MockDigitalInput>()),
             tERMOSTATO_ROTEX: new MockDigitalInput(nameof(CaldaiaIOSet.TERMOSTATO_ROTEX), new NullLogger<MockDigitalInput>()),
             caminoTemperatura: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.CAMINO_TEMPERATURA), new NullLogger<MockAnalogInput<Temperature>>()),
-            rotexTempAccumulo: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.RotexTempAccumulo), new NullLogger<MockAnalogInput<Temperature>>()),
-            rotexTempPannelli: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.RotexTempPannelli), new NullLogger<MockAnalogInput<Temperature>>()),
-            rotexStatoPompa: new MockDigitalInput(nameof(CaldaiaIOSet.RotexStatoPompa), new NullLogger<DigitalInput>()),
+            rotexTempAccumulo: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.ROTEX_TEMP_ACCUMULO), new NullLogger<MockAnalogInput<Temperature>>()),
+            rotexTempPannelli: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.ROTEX_TEMP_PANNELLI), new NullLogger<MockAnalogInput<Temperature>>()),
+            rotexStatoPompa: new MockDigitalInput(nameof(CaldaiaIOSet.ROTEX_STATO_POMPA), new NullLogger<DigitalInput>()),
             cAMINO_ON_OFF: camino_on_off
         );
 

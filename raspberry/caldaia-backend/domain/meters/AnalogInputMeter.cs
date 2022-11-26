@@ -15,7 +15,7 @@ public class AnalogInputMeter<TMeasure> where TMeasure : IMeasure
         if (inputToMeasure is null)
             throw new ArgumentNullException(nameof(inputToMeasure));
 
-        inputToMeasure.ValueChanged += ValueChangedHandler;
+        inputToMeasure.ValueRead += ValueChangedHandler;
         ValueChangedHandler(this, inputToMeasure.LastMeasure);
     }
 

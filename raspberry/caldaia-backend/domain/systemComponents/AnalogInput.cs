@@ -7,7 +7,7 @@ public abstract class AnalogInput<TMeasure> where TMeasure : IMeasure
     protected readonly ILogger<AnalogInput<TMeasure>> log;
     protected TMeasure? _lastMeasure;
 
-    public Exception? LastError {get; protected set;}
+    public Exception? LastError { get; protected set; }
 
     public decimal AnalogValue => LastMeasure?.Value ?? 0;
     public virtual TMeasure? LastMeasure
@@ -22,25 +22,16 @@ public abstract class AnalogInput<TMeasure> where TMeasure : IMeasure
                 return;
 
             if (_lastMeasure is null)
-            {
                 this.FirstTimeSet = value.UtcTimeStamp;
-                this._lastMeasure = value;
-                Fire(this.ValueChanged, value);
-            }
-            else
-            {
-                if (value.Value != _lastMeasure.Value)
-                {
-                    // value has changed
-                    this._lastMeasure = value;
-                    Fire(this.ValueChanged, value);
-                }
-            }
+
+            this._lastMeasure = value;
+            Fire(this.ValueRead, value);
         }
     }
 
     public DateTime? FirstTimeSet { get; protected set; }
     public string Name { get; protected set; }
+
     public AnalogInput(
         string name,
         ILogger<AnalogInput<TMeasure>> log
@@ -50,7 +41,7 @@ public abstract class AnalogInput<TMeasure> where TMeasure : IMeasure
         this.Name = name;
     }
 
-    public virtual event EventHandler<TMeasure>? ValueChanged;
+    public virtual event EventHandler<TMeasure>? ValueRead;
 
     protected virtual void Fire(EventHandler<TMeasure>? eventHandler, TMeasure measure)
     {

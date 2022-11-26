@@ -17,31 +17,32 @@ public abstract class DigitalInput : AnalogInput<OnOff>
             if (value is null)
                 return;
 
+            #pragma warning disable CS8600 
+            EventHandler<OnOff> eventToFire = this.TransitionedFromOffToOn;
+            #pragma warning restore CS8600
+
+            bool shouldFireTransitionEvent = false;
+
             if (_lastMeasure is null)
-            {
-                // this is the first time the value is set.
-                // we can't say if value has changed or transitioned 
                 this.FirstTimeSet = value.UtcTimeStamp;
-                Fire(this.ValueChanged, value);
-            }
-            else
+
+            if (!(_lastMeasure is null) && value.Value != _lastMeasure.Value)
             {
-                if (value.Value != _lastMeasure.Value)
-                {
-                    // value has changed
-                    Fire(this.ValueChanged, value);
-                    if (value.Value < this._lastMeasure.Value)
-                        Fire(this.TransitionedFromOnToOff, value);
-                    else
-                        Fire(this.TransitionedFromOffToOn, value);
-                }
+                shouldFireTransitionEvent = true;
+                #pragma warning disable CS8600 
+                eventToFire = value.Value < _lastMeasure.Value ? this.TransitionedFromOnToOff : this.TransitionedFromOffToOn;
+                #pragma warning restore CS8600
             }
 
             this._lastMeasure = value;
+            Fire(this.ValueRead, value);
+            
+            if (shouldFireTransitionEvent && eventToFire != null)
+                Fire(eventToFire, value);    
         }
     }
 
-    public override event EventHandler<OnOff>? ValueChanged;
+    public override event EventHandler<OnOff>? ValueRead;
     public event EventHandler<OnOff>? TransitionedFromOffToOn;
     public event EventHandler<OnOff>? TransitionedFromOnToOff;
 

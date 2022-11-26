@@ -24,7 +24,7 @@ public class CaldaiaAllValues
     public OnOff TERMOSTATO_ROTEX { get; set; }
     public Temperature TEMPERATURA_ROTEX { get; set; }
     public Temperature TEMPERATURA_CAMINO { get; set; }
-    
+
     // Misura derivata da un comparatore con isteresi applicato a TEMPERATURA_CAMINO
     public OnOff CAMINO_ON_OFF { get; set; }
 }
@@ -39,11 +39,11 @@ public class CaldaiaIOSet : IDisposable
     public AnalogInput<Temperature> CAMINO_TEMPERATURA { get; set; }
     public DigitalInput CAMINO_ON_OFF { get; set; }
 
-    public AnalogInput<Temperature> RotexTempAccumulo { get; set; }
+    public AnalogInput<Temperature> ROTEX_TEMP_ACCUMULO { get; set; }
 
-    public AnalogInput<Temperature> RotexTempPannelli { get; set; }
+    public AnalogInput<Temperature> ROTEX_TEMP_PANNELLI { get; set; }
 
-    public DigitalInput RotexStatoPompa { get; set; }
+    public DigitalInput ROTEX_STATO_POMPA { get; set; }
     public DigitalIOMeter RotexStatoPompaMeter { get; set; }
 
     public DigitalOutput RELAY_CALDAIA { get; set; }
@@ -67,19 +67,37 @@ public class CaldaiaIOSet : IDisposable
         )
     {
         RELAY_POMPA_CAMINO = rELAY_POMPA_CAMINO;
-        CaminoStatoPompaMeter = new DigitalIOMeter(RELAY_POMPA_CAMINO);
         RELAY_BYPASS_TERMOSTATO_AMBIENTE = rELAY_BYPASS_TERMOSTATO_AMBIENTE;
         RELAY_POMPA_RISCALDAMENTO = rELAY_POMPA_RISCALDAMENTO;
-        CAMINO_TEMPERATURA = caminoTemperatura;
-        RotexTempAccumulo = rotexTempAccumulo;
-        RotexTempPannelli = rotexTempPannelli;
-        RotexStatoPompa = rotexStatoPompa;
-        RotexStatoPompaMeter = new DigitalIOMeter(RotexStatoPompa);
         RELAY_CALDAIA = rELAY_CALDAIA;
-        CaldaiaStatoAccensioneMeter = new DigitalIOMeter(RELAY_CALDAIA);
+        
         TERMOSTATO_AMBIENTI = tERMOSTATO_AMBIENTI;
         TERMOSTATO_ROTEX = tERMOSTATO_ROTEX;
+        
+        CAMINO_TEMPERATURA = caminoTemperatura;
         CAMINO_ON_OFF = cAMINO_ON_OFF;
+        
+        ROTEX_TEMP_ACCUMULO = rotexTempAccumulo;
+        ROTEX_TEMP_PANNELLI = rotexTempPannelli;
+        ROTEX_STATO_POMPA = rotexStatoPompa;
+        
+        CaminoStatoPompaMeter = new DigitalIOMeter(RELAY_POMPA_CAMINO);
+        RotexStatoPompaMeter = new DigitalIOMeter(ROTEX_STATO_POMPA);
+        CaldaiaStatoAccensioneMeter = new DigitalIOMeter(RELAY_CALDAIA);
+    }
+
+    // true when all "real" inputs have a value
+    public bool IsReady()
+    {
+        return !(RELAY_POMPA_CAMINO.LastMeasure == null
+            || RELAY_BYPASS_TERMOSTATO_AMBIENTE.LastMeasure == null
+            || RELAY_POMPA_RISCALDAMENTO.LastMeasure == null
+            || CAMINO_ON_OFF.LastMeasure == null
+            || CAMINO_TEMPERATURA == null
+            || RELAY_CALDAIA == null
+            || TERMOSTATO_AMBIENTI == null
+            || TERMOSTATO_ROTEX == null
+        );
     }
 
     public CaldaiaAllValues ReadAll()
