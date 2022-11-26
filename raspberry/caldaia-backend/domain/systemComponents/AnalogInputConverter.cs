@@ -1,4 +1,3 @@
-using domain.measures;
 using Microsoft.Extensions.Logging;
 
 namespace domain.systemComponents;
@@ -22,7 +21,9 @@ public class AnalogInputConverter<TFromMeasure, TToMeasure> : AnalogInput<TToMea
             try
             {
                 this.LastError = null;
+                #pragma warning disable CS8604
                 LastMeasure = LastMeasure.WithNewValue<TToMeasure>(valueConverter(measure.Value), measure.UtcTimeStamp);
+                #pragma warning restore CS8604
             }
             catch (Exception e)
             {
@@ -34,6 +35,9 @@ public class AnalogInputConverter<TFromMeasure, TToMeasure> : AnalogInput<TToMea
 
     public void Dispose()
     {
-        (source as IDisposable)?.Dispose();
+        var disposable = (source as IDisposable);
+        if(disposable != null) {
+            Console.WriteLine($"{Name} is disposing its {nameof(source)} [{source.GetType().Name}]");
+        }
     }
 }

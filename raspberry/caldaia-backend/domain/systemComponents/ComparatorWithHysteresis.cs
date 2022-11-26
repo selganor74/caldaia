@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace domain.systemComponents;
@@ -8,8 +9,10 @@ public enum OnOffLogic
     OffWhenRaising
 }
 
-public class ComparatorWithHysteresis<TMeasure> : DigitalOutput where TMeasure : IMeasure
+public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
+    where TMeasure : IMeasure
 {
+    private readonly AnalogInput<TMeasure> source;
     private readonly decimal riseThreshold;
     private readonly decimal fallThreshold;
     private readonly OnOffLogic logic;
@@ -25,6 +28,7 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput where TMeasure :
         ) : base(name, log)
     {
         this.SetMinTimeBetweenToggles(minTimeBetweenToggles);
+        this.source = source;
         this.riseThreshold = riseThreshold;
         this.fallThreshold = fallThreshold;
         this.logic = logic;
@@ -68,6 +72,15 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput where TMeasure :
                 return;
             }
         }
+    }
+
+    public override void Dispose() {
+        base.Dispose();
+        
+        if (this.source as IDisposable != null) 
+            log.LogDebug($"{Name} is disposing its source {source.Name} [{source.GetType().Name}]");
+        
+        (this.source as IDisposable)?.Dispose();
     }
 
     protected override void SetToOffImplementation()

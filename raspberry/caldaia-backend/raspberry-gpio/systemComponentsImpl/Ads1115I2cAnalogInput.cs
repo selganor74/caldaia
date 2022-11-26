@@ -1,3 +1,4 @@
+using System.Threading;
 using domain;
 using domain.measures;
 using domain.systemComponents;
@@ -10,7 +11,7 @@ public class Ads1115I2cAnalogInput : AnalogInput<PureNumber>, IDisposable
     private readonly ADS1115Sensor adc;
     private readonly TimeSpan readInterval;
     private ADS1115SensorSetting settings;
-    private bool isRunning = true;
+    private bool isStarted = true;
 
     Thread readThread;
 
@@ -27,7 +28,11 @@ public class Ads1115I2cAnalogInput : AnalogInput<PureNumber>, IDisposable
             this.adc = new ADS1115Sensor(addr);
             this.readInterval = readInterval;
 
+#pragma warning disable CS8604
+#pragma warning disable CS8631
             LastMeasure = LastMeasure.WithNewValue(0m);
+#pragma warning restore CS8631
+#pragma warning restore CS8604
             adc.Initialize(busId);
 
             settings = new ADS1115SensorSetting();
@@ -49,11 +54,13 @@ public class Ads1115I2cAnalogInput : AnalogInput<PureNumber>, IDisposable
     {
         try
         {
-            while (isRunning)
+            while (isStarted)
             {
+#pragma warning disable CS8631
                 Thread.Sleep(readInterval);
                 var value = (decimal)adc.readContinuous();
                 LastMeasure = LastMeasure.WithNewValue(value);
+#pragma warning restore CS8604
                 log.LogDebug($"{Name} Read new value: adc:{value}");
             }
         }
@@ -64,9 +71,23 @@ public class Ads1115I2cAnalogInput : AnalogInput<PureNumber>, IDisposable
         }
     }
 
+    private Boolean isDisposing = false;
+    
     public void Dispose()
     {
-        isRunning = false;
+        lock(this) {
+            if(isDisposing)
+                return;
+
+            isDisposing = true;
+        }
+
+        log.LogDebug($"{Name} is disposing ...");
+        isStarted = false;
         readThread.Join();
+        log.LogDebug($"{Name} ... {nameof(readThread)} stopped ...");
+        adc.Dispose();
+        log.LogDebug($"{Name} ... {nameof(adc)} disposed ...");
+        log.LogDebug($"{Name} ... Disposed!");
     }
 }

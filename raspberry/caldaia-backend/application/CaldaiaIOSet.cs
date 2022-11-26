@@ -102,6 +102,9 @@ public class CaldaiaIOSet : IDisposable
 
     public CaldaiaAllValues ReadAll()
     {
+        while(!IsReady())
+            Thread.Sleep(100);
+            
         var toReturn = new CaldaiaAllValues();
 
 #pragma warning disable CS8601
@@ -127,8 +130,10 @@ public class CaldaiaIOSet : IDisposable
         foreach (var prop in allProps)
         {
             var disposable = prop.GetValue(this) as IDisposable;
+            
             if(disposable!=null)
                 Console.WriteLine($"Disposing {prop.Name} [{disposable.GetType().Name}]");
+            
             disposable?.Dispose();
         }
     }
