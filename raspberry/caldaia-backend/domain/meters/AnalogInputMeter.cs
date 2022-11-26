@@ -1,7 +1,6 @@
-using domain.measures;
 using domain.systemComponents;
 
-namespace domain.meters;
+namespace domain.measures.meters;
 
 public class AnalogInputMeter<TMeasure> where TMeasure : IMeasure
 {

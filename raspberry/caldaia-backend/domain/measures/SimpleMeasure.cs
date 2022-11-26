@@ -1,6 +1,4 @@
-using System.Reflection;
-
-namespace domain;
+namespace domain.measures;
 
 public abstract class SimpleMeasure : IMeasure
 {
@@ -43,5 +41,10 @@ public abstract class SimpleMeasure : IMeasure
     {
         Value = value;
         UtcTimeStamp = utcTimeStamp ?? DateTime.UtcNow;
+    }
+
+    public override string ToString()
+    {
+        return $"[{GetType().Name}] {Value} {UoM}";
     }
 }

@@ -21,11 +21,13 @@ public class AnalogInputConverter<TFromMeasure, TToMeasure> : AnalogInput<TToMea
         {
             try
             {
+                this.LastError = null;
                 LastMeasure = LastMeasure.WithNewValue<TToMeasure>(valueConverter(measure.Value), measure.UtcTimeStamp);
             }
             catch (Exception e)
             {
-                log.LogError($"{Name} cannot convert value from {source.Name}.{Environment.NewLine}{e}");
+                log.LogError($"{Name} cannot convert value {measure} from {source.Name}.{Environment.NewLine}{e}");
+                LastError = e;
             }
         };
     }

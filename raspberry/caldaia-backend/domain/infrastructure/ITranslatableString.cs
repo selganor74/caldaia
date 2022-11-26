@@ -1,4 +1,4 @@
-namespace domain.infrastructure;
+namespace domain.measures.infrastructure;
 
 public interface ITranslatableString
 {

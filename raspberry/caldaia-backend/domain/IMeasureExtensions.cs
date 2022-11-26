@@ -6,7 +6,7 @@ public static class IMeasureExtensions
     {
         TMeasure? toReturn = default(TMeasure);
         Type type = typeof(TMeasure);
-        toReturn = (TMeasure)Activator.CreateInstance(typeof(TMeasure), new object[] { 0m, null }) ?? throw new Exception($"Unable to create new instance of {typeof(TMeasure)}");
+        toReturn = (TMeasure)Activator.CreateInstance(typeof(TMeasure), new object[] { newValue, null }) ?? throw new Exception($"Unable to create new instance of {typeof(TMeasure)}");
 
         return toReturn;
     }

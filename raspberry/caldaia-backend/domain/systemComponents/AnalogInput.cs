@@ -7,6 +7,8 @@ public abstract class AnalogInput<TMeasure> where TMeasure : IMeasure
     protected readonly ILogger<AnalogInput<TMeasure>> log;
     protected TMeasure? _lastMeasure;
 
+    public Exception? LastError {get; protected set;}
+
     public decimal AnalogValue => LastMeasure?.Value ?? 0;
     public virtual TMeasure? LastMeasure
     {
@@ -21,9 +23,8 @@ public abstract class AnalogInput<TMeasure> where TMeasure : IMeasure
 
             if (_lastMeasure is null)
             {
-                // this is the first time the value is set.
-                // we can't say if value has changed or transitioned 
                 this.FirstTimeSet = value.UtcTimeStamp;
+                this._lastMeasure = value;
                 Fire(this.ValueChanged, value);
             }
             else
@@ -31,11 +32,10 @@ public abstract class AnalogInput<TMeasure> where TMeasure : IMeasure
                 if (value.Value != _lastMeasure.Value)
                 {
                     // value has changed
+                    this._lastMeasure = value;
                     Fire(this.ValueChanged, value);
                 }
             }
-
-            this._lastMeasure = value;
         }
     }
 
@@ -59,10 +59,12 @@ public abstract class AnalogInput<TMeasure> where TMeasure : IMeasure
 
         try
         {
+            LastError = null;
             eventHandler.Invoke(this, measure);
         }
         catch (Exception e)
         {
+            LastError = e;
             log.LogError($"Errors emitting event from {this.Name}.{Environment.NewLine}{e}");
         }
     }

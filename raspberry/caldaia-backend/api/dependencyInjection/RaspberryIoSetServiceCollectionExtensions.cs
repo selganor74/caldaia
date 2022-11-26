@@ -1,3 +1,4 @@
+using System.Xml.Serialization;
 using System.Device.Gpio;
 using application;
 using domain.measures;
@@ -15,7 +16,7 @@ public static class RaspberryIoSetServiceCollectionExtensions
         var gpioCtrl = new GpioController();
 
         var adcCamino = new Ads1115I2cAnalogInput(
-                nameof(CaldaiaIOSet.CaminoTemp) + " ADC",
+                nameof(CaldaiaIOSet.CAMINO_TEMPERATURA) + " ADC",
                 busId: 1,
                 addr: AdcAddress.GND, // Means ADDR pin on Ads1115 board is connected to GND
                 input: AdcInput.A0_SE,
@@ -24,17 +25,27 @@ public static class RaspberryIoSetServiceCollectionExtensions
                 log: injector.GetService<ILogger<Ads1115I2cAnalogInput>>()
 #pragma warning restore CS8604
             );
-        var ccaminoTmp = new AnalogInputConverter<Voltage, Temperature>(
-            nameof(CaldaiaIOSet.CaminoTemp),
+        
+        
+        var ccaminoTmp = new NtcVulcanoConverter(
+            nameof(CaldaiaIOSet.CAMINO_TEMPERATURA),
             adcCamino,
-            (from) =>
-            {
-                return 2 * from;
-            },
 #pragma warning disable CS8604
-                log: injector.GetService<ILogger<AnalogInputConverter<Voltage, Temperature>>>()
+            log: injector.GetService<ILogger<NtcVulcanoConverter>>()
 #pragma warning restore CS8604
             );
+
+        var caminoOnOff = new ComparatorWithHysteresis<Temperature>(
+            nameof(CaldaiaIOSet.CAMINO_ON_OFF),
+            ccaminoTmp,
+            riseThreshold: 45m,
+            fallThreshold: 40m,
+            logic: OnOffLogic.OnWhenRaising,
+            TimeSpan.FromSeconds(60),
+#pragma warning disable CS8604
+            log: injector.GetService<ILogger<ComparatorWithHysteresis<Temperature>>>()
+#pragma warning restore CS8604
+        );
 
         var caldaiaIoSet = new CaldaiaIOSet(
 
@@ -94,7 +105,8 @@ public static class RaspberryIoSetServiceCollectionExtensions
 #pragma warning restore CS8604
             ),
 
-            caminoTemp: ccaminoTmp,
+            caminoTemperatura: ccaminoTmp,
+            cAMINO_ON_OFF: caminoOnOff,
 
             rotexStatoPompa: new MockDigitalInput(
                 nameof(CaldaiaIOSet.RotexStatoPompa),

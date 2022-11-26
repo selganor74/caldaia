@@ -1,4 +1,4 @@
-﻿using domain;
+﻿using domain.measures;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace application.dependencyInjection

@@ -60,31 +60,45 @@ public class CaldaiaApplication : IDisposable
     private void MainLoop()
     {
         var nextLoopStart = DateTime.Now;
+
         while (isStarted)
         {
             nextLoopStart = WaitForNextLoopStart(config.MainLoopPeriod, nextLoopStart);
 
             var stato = io.ReadAll();
 
-            if (stato.TERMOSTATO_AMBIENTI == OnOffState.OFF && stato.RELAY_POMPA_RISCALDAMENTO == OnOffState.ON)
+            if (stato.TERMOSTATO_AMBIENTI.IsOff() && stato.STATO_RELAY_POMPA_RISCALDAMENTO.IsOn())
             {
                 io.RELAY_POMPA_RISCALDAMENTO.SetToOff("Temperatura termostato ambienti raggiunta.");
             }
 
-            if (stato.TERMOSTATO_AMBIENTI == OnOffState.ON && stato.RELAY_POMPA_RISCALDAMENTO == OnOffState.OFF)
+            if (stato.TERMOSTATO_AMBIENTI.IsOn() && stato.STATO_RELAY_POMPA_RISCALDAMENTO.IsOff())
             {
                 io.RELAY_POMPA_RISCALDAMENTO.SetToOn("Temperatura ambienti inferiore a temperatura su termostato.");
             }
 
-            if (stato.TERMOSTATO_ROTEX == OnOffState.OFF && stato.RELAY_CALDAIA == OnOffState.ON)
+            if (stato.CAMINO_ON_OFF.IsOff() /* aggiungere controllo su rotex disponibile */)
             {
-                io.RELAY_CALDAIA.SetToOff("Il termostato ROTEX rileva temperatura sufficiente.");
+                // Camino "spento"
+
+                if (stato.TERMOSTATO_ROTEX.IsOff() && stato.STATO_RELAY_CALDAIA.IsOn())
+                {
+                    io.RELAY_CALDAIA.SetToOff("Il termostato ROTEX rileva temperatura sufficiente.");
+                }
+
+                if (stato.TERMOSTATO_ROTEX.IsOff() && stato.STATO_RELAY_CALDAIA.IsOff())
+                {
+                    io.RELAY_CALDAIA.SetToOn("Il termostato ROTEX indica temperatura inferiore al setpoint.");
+                }
             }
 
-            if (stato.TERMOSTATO_ROTEX == OnOffState.ON && stato.RELAY_CALDAIA == OnOffState.OFF)
+            if (stato.CAMINO_ON_OFF.IsOn())
             {
-                io.RELAY_CALDAIA.SetToOn("Il termostato ROTEX indica temperatura inferiore al setpoint.");
+                // Il camino è acceso, ignoriamo lo stato del termostato ROTEX.
+                // Gestione Pompa Camino
+
             }
+
         }
     }
 
@@ -96,9 +110,9 @@ public class CaldaiaApplication : IDisposable
         {
             nextLoopStart += LOOP_PERIOD;
             delay = nextLoopStart - DateTime.Now;
-            skipped ++;
+            skipped++;
         }
-        if(skipped > 1)    
+        if (skipped > 1)
             log.LogWarning($"Last {nameof(MainLoop)} execution exceeded {skipped - 1} times configure loop length ({LOOP_PERIOD.TotalMilliseconds} ms).{Environment.NewLine}Consider either optimizing {nameof(MainLoop)} or increasing {nameof(config.MainLoopPeriod)} parameter");
 
         Thread.Sleep(delay);

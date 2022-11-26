@@ -20,7 +20,7 @@ public class Tests
     {
         var adcInput = new MockAnalogInput<Voltage>("caminoTemp ADC", new NullLogger<MockAnalogInput<Voltage>>());
         var caminoTemp = new AnalogInputConverter<Voltage, Temperature>(
-            nameof(CaldaiaIOSet.CaminoTemp),
+            nameof(CaldaiaIOSet.CAMINO_TEMPERATURA),
             adcInput,
             (sourceVal) =>
             {
@@ -29,6 +29,17 @@ public class Tests
             new NullLogger<AnalogInput<Temperature>>()
         );
 
+        var camino_on_off = new ComparatorWithHysteresis<Temperature>(
+            nameof(CaldaiaIOSet.CAMINO_ON_OFF),
+            caminoTemp,
+            45m,
+            40m,
+            OnOffLogic.OnWhenRaising,
+            TimeSpan.FromSeconds(1),
+            new NullLogger<ComparatorWithHysteresis<Temperature>>()
+            );
+
+
         this.io = new CaldaiaIOSet(
             rELAY_POMPA_CAMINO: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_POMPA_CAMINO), new NullLogger<MockDigitalOutput>()),
             rELAY_BYPASS_TERMOSTATO_AMBIENTE: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_BYPASS_TERMOSTATO_AMBIENTE), new NullLogger<MockDigitalOutput>()),
@@ -36,10 +47,11 @@ public class Tests
             rELAY_CALDAIA: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_CALDAIA), new NullLogger<MockDigitalOutput>()),
             tERMOSTATO_AMBIENTI: new MockDigitalInput(nameof(CaldaiaIOSet.TERMOSTATO_AMBIENTI), new NullLogger<MockDigitalInput>()),
             tERMOSTATO_ROTEX: new MockDigitalInput(nameof(CaldaiaIOSet.TERMOSTATO_ROTEX), new NullLogger<MockDigitalInput>()),
-            caminoTemp: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.CaminoTemp), new NullLogger<MockAnalogInput<Temperature>>()),
+            caminoTemperatura: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.CAMINO_TEMPERATURA), new NullLogger<MockAnalogInput<Temperature>>()),
             rotexTempAccumulo: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.RotexTempAccumulo), new NullLogger<MockAnalogInput<Temperature>>()),
             rotexTempPannelli: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.RotexTempPannelli), new NullLogger<MockAnalogInput<Temperature>>()),
-            rotexStatoPompa: new MockDigitalInput(nameof(CaldaiaIOSet.RotexStatoPompa), new NullLogger<DigitalInput>())
+            rotexStatoPompa: new MockDigitalInput(nameof(CaldaiaIOSet.RotexStatoPompa), new NullLogger<DigitalInput>()),
+            cAMINO_ON_OFF: camino_on_off
         );
 
         io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetMinTimeBetweenToggles(TimeSpan.Zero);
@@ -68,7 +80,7 @@ public class Tests
         {
             Thread.Sleep(1);
             var reading = io.ReadAll();
-            Assert.IsTrue(reading.TERMOSTATO_ROTEX == reading.RELAY_CALDAIA);
+            Assert.IsTrue(reading.TERMOSTATO_ROTEX == reading.STATO_RELAY_CALDAIA);
             // Console.WriteLine(JsonConvert.SerializeObject(reading, Formatting.Indented));
         }
         Assert.Pass();

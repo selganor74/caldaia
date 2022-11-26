@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.ComTypes;
 using domain;
 using domain.measures;
 using domain.systemComponents;
@@ -6,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace raspberry_gpio;
 
-public class Ads1115I2cAnalogInput : AnalogInput<Voltage>, IDisposable
+public class Ads1115I2cAnalogInput : AnalogInput<PureNumber>, IDisposable
 {
     private readonly ADS1115Sensor adc;
     private readonly TimeSpan readInterval;
@@ -54,9 +53,8 @@ public class Ads1115I2cAnalogInput : AnalogInput<Voltage>, IDisposable
             {
                 Thread.Sleep(readInterval);
                 var value = (decimal)adc.readContinuous();
-                var tensionValue = value * (3.3m / 32767m);
                 LastMeasure = LastMeasure.WithNewValue(value);
-                log.LogDebug($"{Name} Read new value: adc:{value} -> voltage: {LastMeasure.FormattedValue}");
+                log.LogDebug($"{Name} Read new value: adc:{value}");
             }
         }
         catch (Exception e)
