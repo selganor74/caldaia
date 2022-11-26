@@ -40,6 +40,8 @@ public class CaldaiaApplication : IDisposable
     {
         if (isStarted)
             Stop();
+        
+        io.Dispose();
     }
 
     public void Start()

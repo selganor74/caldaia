@@ -12,13 +12,13 @@ namespace application.dependencyInjection
             return services;
         }
 
-        public static IServiceProvider StartCaldaiaApplication(this IServiceProvider injector)
+        public static CaldaiaApplication StartCaldaiaApplication(this IServiceProvider injector)
         {
             var app = injector.GetService<CaldaiaApplication>();
             
             app?.Start();
 
-            return injector;
+            return app;
         }
     }
 }

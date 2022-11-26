@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace domain.systemComponents;
 
-public class AnalogInputConverter<TFromMeasure, TToMeasure> : AnalogInput<TToMeasure>
+public class AnalogInputConverter<TFromMeasure, TToMeasure> : AnalogInput<TToMeasure>, IDisposable
     where TFromMeasure : IMeasure
     where TToMeasure : IMeasure
 {
@@ -30,5 +30,10 @@ public class AnalogInputConverter<TFromMeasure, TToMeasure> : AnalogInput<TToMea
                 LastError = e;
             }
         };
+    }
+
+    public void Dispose()
+    {
+        (source as IDisposable)?.Dispose();
     }
 }

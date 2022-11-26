@@ -123,11 +123,12 @@ public class CaldaiaIOSet : IDisposable
     // Disposes every property that can be disposed
     public void Dispose()
     {
-        var allProps = GetType().GetProperties();
-        var allDisposables = allProps.Where(p => typeof(IDisposable).IsAssignableFrom(p.PropertyType)).ToList();
-        foreach (var disposableProperty in allDisposables)
+        var allProps = GetType().GetProperties().ToList();
+        foreach (var prop in allProps)
         {
-            var disposable = disposableProperty.GetValue(this) as IDisposable;
+            var disposable = prop.GetValue(this) as IDisposable;
+            if(disposable!=null)
+                Console.WriteLine($"Disposing {prop.Name} [{disposable.GetType().Name}]");
             disposable?.Dispose();
         }
     }

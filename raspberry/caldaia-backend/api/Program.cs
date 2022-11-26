@@ -48,6 +48,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 
-app.Services.StartCaldaiaApplication();
+var caldaiaApp = app.Services.StartCaldaiaApplication();
 
+app.Lifetime.ApplicationStopping.Register(() => caldaiaApp.Dispose());
 app.Run();
