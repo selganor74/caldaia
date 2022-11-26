@@ -81,13 +81,13 @@ Registered {Name} reading from {adcInput.Name}
             ┃
        Vadc ●━━━━━━━━┓   
             ┃        ┃
-           ┏┻┓       ⃝͏
+           ┏┻┓       O
       Radc ┃ ┃    Adc Input
-           ┗┳┛       ⃝
+           ┗┳┛       O
             ┃        ┃
             ●━━━━━━━━┛
             ┃
-            ⏚
+           ===
 "
             );
     }
