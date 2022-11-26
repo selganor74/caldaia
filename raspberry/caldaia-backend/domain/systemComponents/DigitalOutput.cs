@@ -3,14 +3,21 @@ using Microsoft.Extensions.Logging;
 
 namespace domain.systemComponents;
 
-public abstract class DigitalOutput : DigitalInput
+public abstract class DigitalOutput : DigitalInput, IDisposable
 {
     private TimeSpan MIN_TIME_BETWEEN_TOGGLES;
     private DateTime lastMinTimeBetweenTogglesLog;
+
+    private Thread dutyCycleThread;
+    public bool IsDutyCycleStarted { get; private set; }
+    private decimal percentOn_0_1;
+    private TimeSpan dutyCyclePeriod;
+
     protected DigitalOutput(string name, ILogger<DigitalOutput> log) : base(name, log)
     {
         MIN_TIME_BETWEEN_TOGGLES = TimeSpan.FromSeconds(10);
         lastMinTimeBetweenTogglesLog = DateTime.Now - MIN_TIME_BETWEEN_TOGGLES;
+        dutyCycleThread = new Thread(() => DutyCycle());
     }
 
     private bool IsGoingToToggle(OnOff newMeasure)
@@ -49,6 +56,59 @@ public abstract class DigitalOutput : DigitalInput
     {
         this.MIN_TIME_BETWEEN_TOGGLES = newMinTime;
         this.lastMinTimeBetweenTogglesLog = DateTime.Now - newMinTime;
+    }
+
+
+    // Avvia un ciclo di durata "dutyCyclePe" e duty cycle "percentOn_0_1"
+    public void StartDutyCycle(decimal percentOn_0_1, TimeSpan dutyCyclePeriod)
+    {
+        this.percentOn_0_1 = percentOn_0_1;
+        this.dutyCyclePeriod = dutyCyclePeriod;
+        var minPeriod = 0.99 * dutyCyclePeriod * (double)Math.Min(percentOn_0_1, 1 - percentOn_0_1);
+        SetMinTimeBetweenToggles(minPeriod);
+
+        if (!IsDutyCycleStarted)
+        {
+            IsDutyCycleStarted = true;
+            dutyCycleThread.Start();
+        }
+    }
+
+    public void StopDutyCycle()
+    {
+        if (!IsDutyCycleStarted)
+            return;
+        this.IsDutyCycleStarted = false;
+        this.dutyCycleThread.Join();
+    }
+
+
+    private void DutyCycle()
+    {
+        try
+        {
+            while (IsDutyCycleStarted)
+            {
+                TimeSpan tOn = TimeSpan.FromMilliseconds((int)(dutyCyclePeriod.TotalMilliseconds * (double)percentOn_0_1));
+                TimeSpan tOff = dutyCyclePeriod - tOn;
+
+                if (tOn.TotalMilliseconds > 0)
+                {
+                    SetToOn($"{Name} duty cycle {percentOn_0_1 * 100:F0}%, tOn: {tOn.TotalSeconds} s");
+                    Thread.Sleep(tOn);
+                }
+
+                if (tOff.TotalMilliseconds > 0)
+                {
+                    SetToOn($"{Name} duty cycle {percentOn_0_1 * 100:F0}%, tOff: {tOff.TotalSeconds} s");
+                    Thread.Sleep(tOff);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            log.LogError($"{Name} Errors in {nameof(DutyCycle)}.{Environment.NewLine}{e}");
+        }
     }
 
     public void SetToOn(string reason)
@@ -95,4 +155,9 @@ public abstract class DigitalOutput : DigitalInput
 
     protected abstract void SetToOnImplementation();
     protected abstract void SetToOffImplementation();
+
+    public virtual void Dispose()
+    {
+        SetToOffImplementation();
+    }
 }
