@@ -18,7 +18,7 @@ public class RaspberryDigitalOutput : DigitalOutput
         this.gpioId = gpioId;
         this.gpio = gpio;
 
-        this.gpio.OpenPin(gpioId, PinMode.Output);
+        this.gpio.OpenPin(gpioId, PinMode.Output, PinValue.Low);
         this.SetToOff("Inizializzazione.");
         log.LogInformation($"{nameof(RaspberryDigitalOutput)}: Initialized {name} on GPIO {gpioId}");
     }
@@ -26,14 +26,14 @@ public class RaspberryDigitalOutput : DigitalOutput
     protected override void SetToOffImplementation()
     {
         log.LogDebug($"Setting {Name} ({gpioId}) to Off ...");
-        this.gpio.Write(gpioId, 1);
+        this.gpio.Write(gpioId, PinValue.High);
         log.LogDebug($"... {Name} ({gpioId}) set to Off");
     }
 
     protected override void SetToOnImplementation()
     {
         log.LogDebug($"Setting {Name} ({gpioId}) to On ...");
-        this.gpio.Write(gpioId, 0);
+        this.gpio.Write(gpioId, PinValue.Low);
         log.LogDebug($"... {Name} ({gpioId}) set to On");
     }
 }

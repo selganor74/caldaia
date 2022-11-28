@@ -1,10 +1,10 @@
-using System.Xml.Serialization;
 using System.Device.Gpio;
 using application;
 using domain.measures;
 using domain.systemComponents;
 using domain.systemComponents.mocks;
 using raspberry_gpio;
+using application.subSystems;
 
 namespace api.dependencyInjection;
 
@@ -15,6 +15,31 @@ public static class RaspberryIoSetServiceCollectionExtensions
         var injector = services.BuildServiceProvider();
         var gpioCtrl = new GpioController();
 
+        var rotex = BuildRotex(injector, gpioCtrl);
+        var camino = BuildCamino(injector, gpioCtrl);
+        var caldaia = BuildCaldaiaMetano(injector, gpioCtrl);
+        var riscaldamento = BuildRiscaldamento(injector, gpioCtrl);
+        
+        var caldaiaIoSet = new CaldaiaIOSet(
+            cAMINO: camino,
+            cALDAIA: caldaia,
+            rOTEX: rotex,
+            rISCALDAMENTO: riscaldamento
+        );
+
+        var config = new CaldaiaConfig(TimeSpan.FromSeconds(1));
+
+        services.AddSingleton(config);
+        services.AddSingleton(caldaiaIoSet);
+
+        return services;
+    }
+
+    private static Camino BuildCamino(
+        ServiceProvider injector,
+        GpioController gpioCtrl
+    )
+    {
         var adcCamino = new Ads1115I2cAnalogInput(
                 nameof(CaldaiaIOSet.CAMINO_TEMPERATURA) + " ADC",
                 busId: 1,
@@ -25,8 +50,8 @@ public static class RaspberryIoSetServiceCollectionExtensions
                 log: injector.GetService<ILogger<Ads1115I2cAnalogInput>>()
 #pragma warning restore CS8604
             );
-        
-        
+
+
         var ccaminoTmp = new NtcVulcanoConverter(
             nameof(CaldaiaIOSet.CAMINO_TEMPERATURA),
             adcCamino,
@@ -47,100 +72,136 @@ public static class RaspberryIoSetServiceCollectionExtensions
 #pragma warning restore CS8604
         );
 
-        var caldaiaIoSet = new CaldaiaIOSet(
-
-            // Relay Outputs
-            rELAY_CALDAIA: new RaspberryDigitalOutput(
-                nameof(CaldaiaIOSet.RELAY_CALDAIA),
-                17, // GPIO=17, PIN=11
-                gpioCtrl,
-#pragma warning disable CS8604
-                injector.GetService<ILogger<RaspberryDigitalOutput>>()
-#pragma warning restore CS8604
-            ),
-
-            rELAY_POMPA_CAMINO: new RaspberryDigitalOutput(
+        var relayPompaCamino = new RaspberryDigitalOutput(
                 nameof(CaldaiaIOSet.RELAY_POMPA_CAMINO),
                 27, // GPIO=27, PIN=13
                 gpioCtrl,
 #pragma warning disable CS8604
                 injector.GetService<ILogger<RaspberryDigitalOutput>>()
 #pragma warning restore CS8604
-            ),
+            );
+        var camino = new Camino(
+            cAMINO_TEMPERATURA: ccaminoTmp,
+            cAMINO_ON_OFF: caminoOnOff,
+            rELAY_POMPA_CAMINO: relayPompaCamino
+        );
 
-            rELAY_BYPASS_TERMOSTATO_AMBIENTE: new RaspberryDigitalOutput(
-                nameof(CaldaiaIOSet.RELAY_BYPASS_TERMOSTATO_AMBIENTE),
-                22, // GPIO=22, PIN15
+        return camino;
+
+    }
+
+    private static CaldaiaMetano BuildCaldaiaMetano(
+        ServiceProvider injector,
+        GpioController gpioCtrl
+    )
+    {
+        var relayAccensioneCaldaia = new RaspberryDigitalOutput(
+                nameof(CaldaiaIOSet.RELAY_CALDAIA),
+                17, // GPIO=17, PIN=11
                 gpioCtrl,
 #pragma warning disable CS8604
                 injector.GetService<ILogger<RaspberryDigitalOutput>>()
 #pragma warning restore CS8604
-            ),
+            );
 
-            rELAY_POMPA_RISCALDAMENTO: new RaspberryDigitalOutput(
-                nameof(CaldaiaIOSet.RELAY_POMPA_RISCALDAMENTO),
-                23, // GPIO=23, PIN=16
-                gpioCtrl,
+        var caldaia = new CaldaiaMetano(
+            rELAY_ACCENSIONE_CALDAIA: relayAccensioneCaldaia
+        );
+
+        return caldaia;
+    }
+
+    private static Rotex BuildRotex(
+        ServiceProvider injector,
+        GpioController gpioCtrl
+    )
+    { 
+        var tempAccumulo = new MockAnalogInput<Temperature>(
+                nameof(CaldaiaIOSet.ROTEX_TEMP_ACCUMULO),
 #pragma warning disable CS8604
-                injector.GetService<ILogger<RaspberryDigitalOutput>>()
+                injector.GetService<ILogger<MockAnalogInput<Temperature>>>()
 #pragma warning restore CS8604
-            ),
+            );
 
-            // Digital Inputs
-            tERMOSTATO_AMBIENTI: new RaspberryDigitalInput(
-                nameof(CaldaiaIOSet.TERMOSTATO_AMBIENTI),
-                5,    // GPIO=5, PIN=29
-                gpioCtrl,
+        var tempPannelli = new MockAnalogInput<Temperature>(
+                nameof(CaldaiaIOSet.ROTEX_TEMP_PANNELLI),
 #pragma warning disable CS8604
-                injector.GetService<ILogger<RaspberryDigitalInput>>()
+                injector.GetService<ILogger<MockAnalogInput<Temperature>>>()
 #pragma warning restore CS8604
-            ),
+            );
 
-            tERMOSTATO_ROTEX: new RaspberryDigitalInput(
+        var statoPompaRotex = new MockDigitalInput(
+                nameof(CaldaiaIOSet.ROTEX_STATO_POMPA),
+#pragma warning disable CS8604
+                injector.GetService<ILogger<MockDigitalInput>>()
+#pragma warning restore CS8604
+            );
+
+        var termostatoRotex = new RaspberryDigitalInput(
                 nameof(CaldaiaIOSet.TERMOSTATO_ROTEX),
                 6,        // GPIO=6, PIN=31
                 gpioCtrl,
 #pragma warning disable CS8604
                 injector.GetService<ILogger<RaspberryDigitalInput>>()
 #pragma warning restore CS8604
-            ),
+            );
 
-            caminoTemperatura: ccaminoTmp,
-            cAMINO_ON_OFF: caminoOnOff,
 
-            rotexStatoPompa: new MockDigitalInput(
-                nameof(CaldaiaIOSet.ROTEX_STATO_POMPA),
-#pragma warning disable CS8604
-                injector.GetService<ILogger<MockDigitalInput>>()
-#pragma warning restore CS8604
-            ),
-
-            rotexTempAccumulo: new MockAnalogInput<Temperature>(
-                nameof(CaldaiaIOSet.ROTEX_TEMP_ACCUMULO),
-#pragma warning disable CS8604
-                injector.GetService<ILogger<MockAnalogInput<Temperature>>>()
-#pragma warning restore CS8604
-            ),
-
-            rotexTempPannelli: new MockAnalogInput<Temperature>(
-                nameof(CaldaiaIOSet.ROTEX_TEMP_PANNELLI),
-#pragma warning disable CS8604
-                injector.GetService<ILogger<MockAnalogInput<Temperature>>>()
-#pragma warning restore CS8604
-            )
-        );
-
-        ((MockAnalogInput<Temperature>)caldaiaIoSet.ROTEX_TEMP_ACCUMULO).StartSineInput(
+        tempAccumulo.StartSineInput(
             new Temperature(35),
             new Temperature(80),
             TimeSpan.FromMinutes(19),
             100
         );
-        var config = new CaldaiaConfig(TimeSpan.FromSeconds(1));
 
-        services.AddSingleton(config);
-        services.AddSingleton(caldaiaIoSet);
+        var rotex = new Rotex(
+            rOTEX_TEMP_ACCUMULO: tempAccumulo,
+            rOTEX_TEMP_PANNELLI: tempPannelli,
+            rOTEX_STATO_POMPA: statoPompaRotex,
+            tERMOSTATO_ROTEX: termostatoRotex 
+        );
 
-        return services;
+        return rotex;
+    }
+
+    private static Riscaldamento BuildRiscaldamento(
+        ServiceProvider injector,
+        GpioController gpioCtrl
+    ) 
+    {
+        var relayBypassTermostatoAmbiente = new RaspberryDigitalOutput(
+                nameof(CaldaiaIOSet.RELAY_BYPASS_TERMOSTATO_AMBIENTE),
+                22, // GPIO=22, PIN15
+                gpioCtrl,
+#pragma warning disable CS8604
+                injector.GetService<ILogger<RaspberryDigitalOutput>>()
+#pragma warning restore CS8604
+            );
+
+        var termostatoAmbienti = new RaspberryDigitalInput(
+                nameof(CaldaiaIOSet.TERMOSTATO_AMBIENTI),
+                5,    // GPIO=5, PIN=29
+                gpioCtrl,
+#pragma warning disable CS8604
+                injector.GetService<ILogger<RaspberryDigitalInput>>()
+#pragma warning restore CS8604
+            );
+
+        var relayPompaRiscaldamento = new RaspberryDigitalOutput(
+                nameof(CaldaiaIOSet.RELAY_POMPA_RISCALDAMENTO),
+                23, // GPIO=23, PIN=16
+                gpioCtrl,
+#pragma warning disable CS8604
+                injector.GetService<ILogger<RaspberryDigitalOutput>>()
+#pragma warning restore CS8604
+            );
+
+        var riscaldamento = new Riscaldamento(
+            rELAY_BYPASS_TERMOSTATO_AMBIENTE: relayBypassTermostatoAmbiente,
+            tERMOSTATO_AMBIENTI: termostatoAmbienti,
+            rELAY_POMPA_RISCALDAMENTO: relayPompaRiscaldamento  
+        );
+
+        return riscaldamento;
     }
 }

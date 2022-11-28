@@ -6,6 +6,10 @@ namespace domain.systemComponents;
 public abstract class DigitalInput : AnalogInput<OnOff>
 {
     public OnOffState DigitalValue => (LastMeasure?.Value ?? 0) == 0 ? OnOffState.OFF : OnOffState.ON;
+    public override event EventHandler<OnOff>? ValueRead;
+    public event EventHandler<OnOff>? TransitionedFromOffToOn;
+    public event EventHandler<OnOff>? TransitionedFromOnToOff;
+
     public override OnOff? LastMeasure
     {
         get
@@ -41,10 +45,6 @@ public abstract class DigitalInput : AnalogInput<OnOff>
                 Fire(eventToFire, value);    
         }
     }
-
-    public override event EventHandler<OnOff>? ValueRead;
-    public event EventHandler<OnOff>? TransitionedFromOffToOn;
-    public event EventHandler<OnOff>? TransitionedFromOnToOff;
 
     public DigitalInput(string name, ILogger<DigitalInput> log) : base(name, log)
     {

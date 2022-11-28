@@ -1,89 +1,43 @@
 using domain.systemComponents;
 using domain.measures;
-using domain.measures.meters;
+using application.subSystems;
+using application.infrastructure;
 
 namespace application;
 
-#pragma warning disable CS8618
-public class CaldaiaAllValues
-{
-    // Comanda la pompa di ricircolo tra CAMINO e ACCUMULO ROTEX
-    public OnOff STATO_RELAY_POMPA_CAMINO { get; set; }
-
-    // Permette di attivare i riscaldamenti dell'appartamento, per abbassare la temperatura dell'accumulo
-    public OnOff STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE { get; set; }
-
-    // Attiva la pompa del riscaldamento a pavimento, quando i termostati ambiente lo richiedono.
-    public OnOff STATO_RELAY_POMPA_RISCALDAMENTO { get; set; }
-
-    // Comanda l'accensione della caldaia.
-    public OnOff STATO_RELAY_CALDAIA { get; set; }
-
-    // Legge il valore de
-    public OnOff TERMOSTATO_AMBIENTI { get; set; }
-    public OnOff TERMOSTATO_ROTEX { get; set; }
-    public Temperature TEMPERATURA_CAMINO { get; set; }
-
-    // Misura derivata da un comparatore con isteresi applicato a TEMPERATURA_CAMINO
-    public OnOff CAMINO_ON_OFF { get; set; }
-    public Temperature? ROTEX_TEMP_ACCUMULO { get; internal set; }
-}
-
 public class CaldaiaIOSet : IDisposable
 {
-    public DigitalOutput RELAY_POMPA_CAMINO { get; set; }
-    public DigitalIOMeter CaminoStatoPompaMeter { get; set; }
+    // Tutti i sotto sistemi
+    public Rotex ROTEX { get; set; }
+    public Camino CAMINO { get; set; }
+    public CaldaiaMetano CALDAIA { get; set; }
+    public Riscaldamento RISCALDAMENTO { get; set; }
 
-    public DigitalOutput RELAY_BYPASS_TERMOSTATO_AMBIENTE { get; set; }
-    public DigitalOutput RELAY_POMPA_RISCALDAMENTO { get; set; }
-    public AnalogInput<Temperature> CAMINO_TEMPERATURA { get; set; }
-    public DigitalInput CAMINO_ON_OFF { get; set; }
+    // Variabili per l'accesso di tutti i singoli dispositivi
+    public DigitalOutput RELAY_POMPA_CAMINO => CAMINO.RELAY_POMPA_CAMINO;
+    public DigitalOutput RELAY_BYPASS_TERMOSTATO_AMBIENTE => RISCALDAMENTO.RELAY_BYPASS_TERMOSTATO_AMBIENTE;
+    public DigitalOutput RELAY_POMPA_RISCALDAMENTO => RISCALDAMENTO.RELAY_POMPA_RISCALDAMENTO;
+    public AnalogInput<Temperature> CAMINO_TEMPERATURA => CAMINO.CAMINO_TEMPERATURA;
+    public DigitalInput CAMINO_ON_OFF => CAMINO.CAMINO_ON_OFF;
 
-    public AnalogInput<Temperature> ROTEX_TEMP_ACCUMULO { get; set; }
+    public AnalogInput<Temperature> ROTEX_TEMP_ACCUMULO => ROTEX.ROTEX_TEMP_ACCUMULO;
+    public AnalogInput<Temperature> ROTEX_TEMP_PANNELLI => ROTEX.ROTEX_TEMP_PANNELLI;
+    public DigitalInput ROTEX_STATO_POMPA => ROTEX.ROTEX_STATO_POMPA;
+    public DigitalOutput RELAY_CALDAIA => CALDAIA.RELAY_ACCENSIONE_CALDAIA;
 
-    public AnalogInput<Temperature> ROTEX_TEMP_PANNELLI { get; set; }
-
-    public DigitalInput ROTEX_STATO_POMPA { get; set; }
-    public DigitalIOMeter RotexStatoPompaMeter { get; set; }
-
-    public DigitalOutput RELAY_CALDAIA { get; set; }
-    public DigitalIOMeter CaldaiaStatoAccensioneMeter { get; set; }
-
-    public DigitalInput TERMOSTATO_AMBIENTI { get; set; }
-    public DigitalInput TERMOSTATO_ROTEX { get; set; }
+    public DigitalInput TERMOSTATO_AMBIENTI => RISCALDAMENTO.TERMOSTATO_AMBIENTI;
+    public DigitalInput TERMOSTATO_ROTEX => ROTEX.TERMOSTATO_ROTEX;
 
     public CaldaiaIOSet(
-        DigitalOutput rELAY_POMPA_CAMINO,
-        DigitalOutput rELAY_BYPASS_TERMOSTATO_AMBIENTE,
-        DigitalOutput rELAY_POMPA_RISCALDAMENTO,
-        DigitalOutput rELAY_CALDAIA,
-        DigitalInput tERMOSTATO_AMBIENTI,
-        DigitalInput tERMOSTATO_ROTEX,
-        AnalogInput<Temperature> caminoTemperatura,
-        AnalogInput<Temperature> rotexTempAccumulo,
-        AnalogInput<Temperature> rotexTempPannelli,
-        DigitalInput rotexStatoPompa,
-        DigitalInput cAMINO_ON_OFF
-        )
+        Rotex rOTEX,
+        Camino cAMINO,
+        CaldaiaMetano cALDAIA,
+        Riscaldamento rISCALDAMENTO)
     {
-        RELAY_POMPA_CAMINO = rELAY_POMPA_CAMINO;
-        RELAY_BYPASS_TERMOSTATO_AMBIENTE = rELAY_BYPASS_TERMOSTATO_AMBIENTE;
-        RELAY_POMPA_RISCALDAMENTO = rELAY_POMPA_RISCALDAMENTO;
-        RELAY_CALDAIA = rELAY_CALDAIA;
-        
-        TERMOSTATO_AMBIENTI = tERMOSTATO_AMBIENTI;
-        TERMOSTATO_ROTEX = tERMOSTATO_ROTEX;
-        
-        CAMINO_TEMPERATURA = caminoTemperatura;
-        CAMINO_ON_OFF = cAMINO_ON_OFF;
-        
-        ROTEX_TEMP_ACCUMULO = rotexTempAccumulo;
-        ROTEX_TEMP_PANNELLI = rotexTempPannelli;
-        ROTEX_STATO_POMPA = rotexStatoPompa;
-        
-        CaminoStatoPompaMeter = new DigitalIOMeter(RELAY_POMPA_CAMINO);
-        RotexStatoPompaMeter = new DigitalIOMeter(ROTEX_STATO_POMPA);
-        CaldaiaStatoAccensioneMeter = new DigitalIOMeter(RELAY_CALDAIA);
+        ROTEX = rOTEX;
+        CAMINO = cAMINO;
+        CALDAIA = cALDAIA;
+        RISCALDAMENTO = rISCALDAMENTO;
     }
 
     // true when all "real" inputs have a value
@@ -103,7 +57,7 @@ public class CaldaiaIOSet : IDisposable
 
     public CaldaiaAllValues ReadAll()
     {
-        while(!IsReady())
+        while (!IsReady())
             Thread.Sleep(100);
 
         var toReturn = new CaldaiaAllValues();
@@ -128,16 +82,7 @@ public class CaldaiaIOSet : IDisposable
     // Disposes every property that can be disposed
     public void Dispose()
     {
-        var allProps = GetType().GetProperties().ToList();
-        foreach (var prop in allProps)
-        {
-            var disposable = prop.GetValue(this) as IDisposable;
-            
-            if(disposable!=null)
-                Console.WriteLine($"Disposing {prop.Name} [{disposable.GetType().Name}]");
-            
-            disposable?.Dispose();
-        }
+        this.DisposeDisposables();
     }
 }
 #pragma warning restore CS8618
