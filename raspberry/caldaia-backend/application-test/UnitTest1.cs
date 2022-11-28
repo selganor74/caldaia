@@ -5,6 +5,7 @@ using application;
 using domain.measures;
 using domain.systemComponents;
 using domain.systemComponents.mocks;
+using application.subSystems;
 
 namespace rotex_test;
 
@@ -39,19 +40,36 @@ public class Tests
             new NullLogger<ComparatorWithHysteresis<Temperature>>()
             );
 
+        var relayPompaCamino = new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_POMPA_CAMINO), new NullLogger<MockDigitalOutput>());
 
-        this.io = new CaldaiaIOSet(
-            rELAY_POMPA_CAMINO: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_POMPA_CAMINO), new NullLogger<MockDigitalOutput>()),
+        var camino = new Camino(
+            cAMINO_TEMPERATURA: caminoTemp,
+            cAMINO_ON_OFF: camino_on_off,
+            rELAY_POMPA_CAMINO: relayPompaCamino
+        );
+
+        var riscaldamento = new Riscaldamento(
             rELAY_BYPASS_TERMOSTATO_AMBIENTE: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_BYPASS_TERMOSTATO_AMBIENTE), new NullLogger<MockDigitalOutput>()),
             rELAY_POMPA_RISCALDAMENTO: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_POMPA_RISCALDAMENTO), new NullLogger<MockDigitalOutput>()),
-            rELAY_CALDAIA: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_CALDAIA), new NullLogger<MockDigitalOutput>()),
-            tERMOSTATO_AMBIENTI: new MockDigitalInput(nameof(CaldaiaIOSet.TERMOSTATO_AMBIENTI), new NullLogger<MockDigitalInput>()),
+            tERMOSTATO_AMBIENTI: new MockDigitalInput(nameof(CaldaiaIOSet.TERMOSTATO_AMBIENTI), new NullLogger<MockDigitalInput>()) 
+        );
+
+        var rotex = new Rotex(
             tERMOSTATO_ROTEX: new MockDigitalInput(nameof(CaldaiaIOSet.TERMOSTATO_ROTEX), new NullLogger<MockDigitalInput>()),
-            caminoTemperatura: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.CAMINO_TEMPERATURA), new NullLogger<MockAnalogInput<Temperature>>()),
-            rotexTempAccumulo: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.ROTEX_TEMP_ACCUMULO), new NullLogger<MockAnalogInput<Temperature>>()),
-            rotexTempPannelli: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.ROTEX_TEMP_PANNELLI), new NullLogger<MockAnalogInput<Temperature>>()),
-            rotexStatoPompa: new MockDigitalInput(nameof(CaldaiaIOSet.ROTEX_STATO_POMPA), new NullLogger<DigitalInput>()),
-            cAMINO_ON_OFF: camino_on_off
+            rOTEX_STATO_POMPA: new MockDigitalInput(nameof(CaldaiaIOSet.ROTEX_STATO_POMPA), new NullLogger<DigitalInput>()),
+            rOTEX_TEMP_ACCUMULO: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.ROTEX_TEMP_ACCUMULO), new NullLogger<MockAnalogInput<Temperature>>()),
+            rOTEX_TEMP_PANNELLI: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.ROTEX_TEMP_PANNELLI), new NullLogger<MockAnalogInput<Temperature>>())
+        );
+
+        var caldaia = new CaldaiaMetano(
+            rELAY_ACCENSIONE_CALDAIA: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_CALDAIA), new NullLogger<MockDigitalOutput>())
+        );
+
+        this.io = new CaldaiaIOSet(
+            cALDAIA: caldaia,
+            rOTEX: rotex,
+            cAMINO: camino,
+            rISCALDAMENTO: riscaldamento
         );
 
         io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetMinTimeBetweenToggles(TimeSpan.Zero);
@@ -60,6 +78,7 @@ public class Tests
         io.RELAY_POMPA_RISCALDAMENTO.SetMinTimeBetweenToggles(TimeSpan.Zero);
 
         var config = new CaldaiaConfig(mainLoopPeriod: TimeSpan.FromMilliseconds(1));
+        
         this.application = new CaldaiaApplication(io, config, new NullLogger<CaldaiaApplication>());
     }
 

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\application\application.csproj" />
+    <ProjectReference Include="..\domain\domain.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="runtime.linux-arm.runtime.native.System.IO.Ports" Version="7.0.0" />

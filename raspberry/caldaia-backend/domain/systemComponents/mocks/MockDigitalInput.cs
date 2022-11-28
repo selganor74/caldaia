@@ -14,7 +14,7 @@ public class MockDigitalInput : DigitalInput, IDisposable
         this._squareInputThread = new Thread((obj) => SquareInput());
     }
 
-    public void Set(OnOffState state, DateTime? utcTimeStamp)
+    public void Set(OnOffState state, DateTime? utcTimeStamp = null)
     {
         this.LastMeasure = new OnOff(state, utcTimeStamp);
     }
