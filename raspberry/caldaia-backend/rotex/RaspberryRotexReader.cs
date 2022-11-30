@@ -54,8 +54,9 @@ public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
         this.serialPort = new SerialPort(config.SerialPortName, config.BaudRate);
 
         // Set the read/write timeouts in milliseconds
-        this.serialPort.ReadTimeout = 500;
+        serialPort.ReadTimeout = 500;
         serialPort.WriteTimeout = 500;
+        serialPort.NewLine = "" + (char)0x0; // Sets New Line to null char
 
         // this.serialPort.DataReceived += this.DataReceivedHandler;
         this.serialPort.Open();
@@ -99,16 +100,16 @@ public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
         }
     }
 
-    enum RotexField {
-        HA = 0,
-        BK = 1,
-        P1_Percent = 2,
-        P2 = 3,
-        TK_Pannelli = 4,
-        TR_Mandata = 5,
-        TS_Accumulo = 6,
-        TV_Ritorno = 7,
-        V_Portata = 8
+    struct RotexField {
+        public static readonly int HA = 0;
+        public static readonly int BK = 1;
+        public static readonly int P1_Percent = 2;
+        public static readonly int P2 = 3;
+        public static readonly int TK_Pannelli = 4;
+        public static readonly int TR_Mandata = 5;
+        public static readonly int TS_Accumulo = 6;
+        public static readonly int TV_Ritorno = 7;
+        public static readonly int V_Portata = 8;
     }
 
     private void ParseLine(string? line)
@@ -123,13 +124,13 @@ public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
 
         var components = line.Split(";");
 
-        var tAccumulo = Decimal.Parse(components[(int)RotexField.TS_Accumulo]);
+        var tAccumulo = Decimal.Parse(components[RotexField.TS_Accumulo]);
         _ROTEX_TEMPERATURA_ACCUMULO.SetInput(new Temperature(tAccumulo));
 
-        var tPannelli = Decimal.Parse(components[(int)RotexField.TK_Pannelli]);
+        var tPannelli = Decimal.Parse(components[RotexField.TK_Pannelli]);
         _ROTEX_TEMPERATURA_PANNELLI.SetInput(new Temperature(tPannelli));
 
-        var statoPompaRotex = Decimal.Parse(components[(int)RotexField.P1_Percent]) != 0;
+        var statoPompaRotex = Decimal.Parse(components[RotexField.P1_Percent]) != 0;
         _ROTEX_STATO_POMPA.Set(statoPompaRotex ? OnOffState.ON : OnOffState.OFF);
     }
 

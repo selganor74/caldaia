@@ -22,7 +22,8 @@ public class CaldaiaConfig
     // Temperatura di innesco della Pompa Camino
     public decimal CAMINO_T_INNESCO_75_25 { get; }
     public decimal CAMINO_T_INNESCO_100 { get; }
-    public decimal CAMINO_T_BYPASS_AMBIENTI { get; }
+    public decimal CAMINO_T_INNESCO_BYPASS_AMBIENTI { get; }
+    public decimal CAMINO_T_DISINNESCO_BYPASS_AMBIENTI { get; }
 
     public decimal DELTA_T_CAMINO_T_ROTEX_INNESCO { get; }
 
@@ -42,7 +43,7 @@ public class CaldaiaConfig
         CAMINO_T_INNESCO_50_50 = cAMINO_T_INNESCO_50_50;
         CAMINO_T_INNESCO_75_25 = cAMINO_T_INNESCO_75_25;
         CAMINO_T_INNESCO_100 = cAMINO_T_INNESCO_100;
-        CAMINO_T_BYPASS_AMBIENTI = cAMINO_T_BYPASS_AMBIENTI;
+        CAMINO_T_INNESCO_BYPASS_AMBIENTI = cAMINO_T_BYPASS_AMBIENTI;
         DELTA_T_CAMINO_T_ROTEX_INNESCO = dELTA_T_CAMINO_T_ROTEX_INNESCO;
     }
 }

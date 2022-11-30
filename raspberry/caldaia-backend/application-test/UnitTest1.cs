@@ -85,6 +85,7 @@ public class Tests
     [TearDown]
     public void TearDown()
     {
+        application.Stop();
         application.Dispose();
     }
 
