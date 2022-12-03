@@ -99,7 +99,7 @@ public class Tests
         while (sw.ElapsedMilliseconds < 400)
         {
             Thread.Sleep(1);
-            var reading = io.ReadAll();
+            var reading = io.ReadAll(null);
             Assert.IsTrue(reading.TERMOSTATO_ROTEX == reading.STATO_RELAY_CALDAIA);
             // Console.WriteLine(JsonConvert.SerializeObject(reading, Formatting.Indented));
         }

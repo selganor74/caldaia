@@ -23,5 +23,7 @@ public class ConfigurationController : ControllerBase
     [HttpGet(Name = "GetRotexConfig")]
     public object GetRotexConfig() {
         return rotexReader.GetRotexConfig();
-    } 
+    }
+
+    
 }

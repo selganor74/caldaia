@@ -5,6 +5,7 @@ using domain.systemComponents;
 using domain.systemComponents.mocks;
 using raspberry_gpio;
 using application.subSystems;
+using rotex;
 
 namespace api.dependencyInjection;
 
@@ -74,7 +75,7 @@ public static class RaspberryIoSetServiceCollectionExtensions
 
         var relayPompaCamino = new RaspberryDigitalOutput(
                 nameof(CaldaiaIOSet.RELAY_POMPA_CAMINO),
-                27, // GPIO=27, PIN=13
+                22, // GPIO=22, PIN15
                 gpioCtrl,
 #pragma warning disable CS8604
                 injector.GetService<ILogger<RaspberryDigitalOutput>>()
@@ -96,11 +97,11 @@ public static class RaspberryIoSetServiceCollectionExtensions
     )
     {
         var relayAccensioneCaldaia = new RaspberryDigitalOutput(
-                nameof(CaldaiaIOSet.RELAY_CALDAIA),
-                17, // GPIO=17, PIN=11
-                gpioCtrl,
+                name: nameof(CaldaiaIOSet.RELAY_CALDAIA),
+                gpioId: 23, // GPIO=23, PIN=16
+                gpio: gpioCtrl,
 #pragma warning disable CS8604
-                injector.GetService<ILogger<RaspberryDigitalOutput>>()
+                log: injector.GetService<ILogger<RaspberryDigitalOutput>>()
 #pragma warning restore CS8604
             );
 
@@ -147,12 +148,24 @@ public static class RaspberryIoSetServiceCollectionExtensions
             );
 
 
-        tempAccumulo.StartSineInput(
-            new Temperature(35),
-            new Temperature(80),
-            TimeSpan.FromMinutes(19),
-            100
+        // tempAccumulo.StartSineInput(
+        //     new Temperature(35),
+        //     new Temperature(80),
+        //     TimeSpan.FromMinutes(19),
+        //     100
+        // );
+
+        var serialRotex = new RaspberryRotexReader(
+            new RaspberryRotexReaderConfig(),
+            rOTEX_TEMPERATURA_PANNELLI: tempPannelli,
+            rOTEX_TEMPERATURA_ACCUMULO: tempAccumulo,
+            rOTEX_STATO_POMPA: statoPompaRotex,
+#pragma warning disable CS8604
+            injector.GetService<ILogger<RaspberryRotexReader>>()
+#pragma warning restore CS8604
         );
+
+        serialRotex.Start();
 
         var rotex = new Rotex(
             rOTEX_TEMP_ACCUMULO: tempAccumulo,
@@ -171,7 +184,7 @@ public static class RaspberryIoSetServiceCollectionExtensions
     {
         var relayBypassTermostatoAmbiente = new RaspberryDigitalOutput(
                 nameof(CaldaiaIOSet.RELAY_BYPASS_TERMOSTATO_AMBIENTE),
-                22, // GPIO=22, PIN15
+                27, // GPIO=27, PIN=13
                 gpioCtrl,
 #pragma warning disable CS8604
                 injector.GetService<ILogger<RaspberryDigitalOutput>>()
@@ -187,9 +200,17 @@ public static class RaspberryIoSetServiceCollectionExtensions
 #pragma warning restore CS8604
             );
 
+        var negatedTermostatoAmbienti = new LogicNot(
+            nameof(CaldaiaIOSet.TERMOSTATO_AMBIENTI) + " Negated",
+            termostatoAmbienti,
+#pragma warning disable CS8604
+                injector.GetService<ILogger<LogicNot>>()
+#pragma warning restore CS8604
+        );
+
         var relayPompaRiscaldamento = new RaspberryDigitalOutput(
                 nameof(CaldaiaIOSet.RELAY_POMPA_RISCALDAMENTO),
-                23, // GPIO=23, PIN=16
+                gpioId: 17, // GPIO=17, PIN=11
                 gpioCtrl,
 #pragma warning disable CS8604
                 injector.GetService<ILogger<RaspberryDigitalOutput>>()
@@ -198,7 +219,7 @@ public static class RaspberryIoSetServiceCollectionExtensions
 
         var riscaldamento = new Riscaldamento(
             rELAY_BYPASS_TERMOSTATO_AMBIENTE: relayBypassTermostatoAmbiente,
-            tERMOSTATO_AMBIENTI: termostatoAmbienti,
+            tERMOSTATO_AMBIENTI: negatedTermostatoAmbienti,
             rELAY_POMPA_RISCALDAMENTO: relayPompaRiscaldamento  
         );
 

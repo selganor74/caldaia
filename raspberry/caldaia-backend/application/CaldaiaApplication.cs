@@ -1,5 +1,7 @@
-﻿using domain.measures;
+﻿using application.infrastructure;
+using domain.measures;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace application;
 
@@ -39,15 +41,14 @@ public class CaldaiaApplication : IDisposable
     public void Dispose()
     {
         Stop();
-        ;
-        io.Dispose();
+        this.DisposeDisposables(log);
     }
 
     public void Start()
     {
         this.isStarted = true;
         this.mainLoopThread.Start();
-        log.LogInformation($"{nameof(CaldaiaApplication)} Started!");
+        log.LogInformation($"{nameof(CaldaiaApplication)} Started with config:{Environment.NewLine}{JsonConvert.SerializeObject(config, Formatting.Indented)}");
     }
 
     public void Stop()
@@ -57,6 +58,7 @@ public class CaldaiaApplication : IDisposable
 
         this.isStarted = false;
         this.mainLoopThread.Join();
+
         log.LogInformation($"{nameof(CaldaiaApplication)} Stopped!");
     }
 
@@ -67,39 +69,48 @@ public class CaldaiaApplication : IDisposable
 
         log.LogInformation($"{nameof(MainLoop)}: Waiting for {nameof(io)} to become Ready ...");
 
-        while (!io.IsReady())
+        while (!io.IsReady(log))
             Thread.Sleep(100);
 
         log.LogInformation($"{nameof(MainLoop)}: ... ok, {nameof(io)} Ready ...");
 
+        var lastOutput = DateTime.Now;
         while (isStarted)
         {
             nextLoopStart = WaitForNextLoopStart(config.MainLoopPeriod, nextLoopStart);
+
+            stato = io.ReadAll(log);
+            if (DateTime.Now > (lastOutput + TimeSpan.FromSeconds(10)))
+            {
+                lastOutput = DateTime.Now;
+                log.LogDebug(stato.ToString());
+            }
+
             CrunchInputs();
         }
 
 
     }
 
-    private Func<CaldaiaAllValues, bool> 
-        ROTEX_DISPONIBILE = (CaldaiaAllValues stato) => stato.ROTEX_TEMP_ACCUMULO.UtcTimeStamp < DateTime.UtcNow - TimeSpan.FromMinutes(5);
-    
-    private Func<CaldaiaAllValues, bool> 
+    private Func<CaldaiaAllValues, bool>
+        ROTEX_DISPONIBILE = (CaldaiaAllValues stato) => stato.ROTEX_TEMP_ACCUMULO.UtcTimeStamp > DateTime.UtcNow - TimeSpan.FromMinutes(5);
+
+    private Func<CaldaiaAllValues, bool>
         CALDAIA_ACCESA = (CaldaiaAllValues stato) => stato.STATO_RELAY_CALDAIA.IsOn();
-    
-    private Func<CaldaiaAllValues, bool> 
+
+    private Func<CaldaiaAllValues, bool>
         CALDAIA_SPENTA = (CaldaiaAllValues stato) => stato.STATO_RELAY_CALDAIA.IsOff();
 
-    private Func<CaldaiaAllValues, bool> 
+    private Func<CaldaiaAllValues, bool>
         TERMOSTATO_ROTEX_ATTIVO = (CaldaiaAllValues stato) => stato.TERMOSTATO_ROTEX.IsOn();
-    
-    private Func<CaldaiaAllValues, bool> 
+
+    private Func<CaldaiaAllValues, bool>
         TERMOSTATO_ROTEX_NON_ATTIVO = (CaldaiaAllValues stato) => stato.TERMOSTATO_ROTEX.IsOff();
 
-    private Func<CaldaiaAllValues, decimal> 
+    private Func<CaldaiaAllValues, decimal>
         TEMPERATURA_ROTEX = (CaldaiaAllValues stato) => stato.ROTEX_TEMP_ACCUMULO.Value;
-    
-    private Func<CaldaiaAllValues, decimal> 
+
+    private Func<CaldaiaAllValues, decimal>
         TEMPERATURA_CAMINO = (CaldaiaAllValues stato) => stato.TEMPERATURA_CAMINO.Value;
 
     private Func<CaldaiaAllValues, CaldaiaIOSet, bool> POMPA_CAMINO_ACCESA = (CaldaiaAllValues stato, CaldaiaIOSet io) => stato.STATO_RELAY_POMPA_CAMINO.IsOn() || io.RELAY_POMPA_CAMINO.IsDutyCycleStarted;
@@ -124,8 +135,6 @@ public class CaldaiaApplication : IDisposable
 
     private void CrunchInputs()
     {
-        stato = io.ReadAll();
-
         Manage_ACCENSIONE_CALDAIA();
 
         Manage_POMPA_RISCALDAMENTO();
@@ -169,11 +178,37 @@ public class CaldaiaApplication : IDisposable
 
     private void Manage_BYPASS_TERMO_AMBIENTI()
     {
-        if (TEMPERATURA_CAMINO(stato) > config.CAMINO_T_INNESCO_BYPASS_AMBIENTI && stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOff())
-            io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOn($"Attivazione BYPASS Termostati. Temperatura Rotex non disponibile e temperatura CAMINO {TEMPERATURA_CAMINO(stato)} > {nameof(config.CAMINO_T_INNESCO_BYPASS_AMBIENTI)} {config.CAMINO_T_INNESCO_BYPASS_AMBIENTI}");
+        if (!ROTEX_DISPONIBILE(stato))
+        {
+            if (TEMPERATURA_CAMINO(stato) > config.CAMINO_T_INNESCO_BYPASS_AMBIENTI && stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOff())
+                io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOn($"Attivazione BYPASS Termostati Ambiente. Temperatura Rotex non disponibile e temperatura CAMINO {TEMPERATURA_CAMINO(stato)} > {nameof(config.CAMINO_T_INNESCO_BYPASS_AMBIENTI)} {config.CAMINO_T_INNESCO_BYPASS_AMBIENTI}");
 
-        if (TEMPERATURA_CAMINO(stato) < config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI && stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOn())
-            io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOff($"Disattivazione BYPASS Termostati. Temperatura Rotex non disponibile e temperatura CAMINO {TEMPERATURA_CAMINO(stato)} < {nameof(config.CAMINO_T_INNESCO_BYPASS_AMBIENTI)} {config.CAMINO_T_INNESCO_BYPASS_AMBIENTI} ");
+            if (TEMPERATURA_CAMINO(stato) < config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI && stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOn())
+                io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOff($"Disattivazione BYPASS Termostati Ambiente. Temperatura Rotex non disponibile e temperatura CAMINO {TEMPERATURA_CAMINO(stato)} < {nameof(config.CAMINO_T_INNESCO_BYPASS_AMBIENTI)} {config.CAMINO_T_INNESCO_BYPASS_AMBIENTI} ");
+        }
+
+        if (ROTEX_DISPONIBILE(stato) && stato.CAMINO_ON_OFF.IsOn())
+        {
+            if (    stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOff()
+                && (
+                        TEMPERATURA_ROTEX(stato) > config.ROTEX_T_INNESCO_BYPASS_AMBIENTI
+                    || TEMPERATURA_CAMINO(stato) > config.CAMINO_T_INNESCO_BYPASS_AMBIENTI
+                    )
+            )
+            {
+                io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOn($"Attivazione BYPASS Termostati Ambiente. Temperatura Rotex {TEMPERATURA_ROTEX(stato)} > {nameof(config.ROTEX_T_INNESCO_BYPASS_AMBIENTI)} {config.ROTEX_T_INNESCO_BYPASS_AMBIENTI} o temperatura CAMINO {TEMPERATURA_CAMINO(stato)} > {nameof(config.CAMINO_T_INNESCO_BYPASS_AMBIENTI)} ({config.CAMINO_T_INNESCO_BYPASS_AMBIENTI})");
+            }
+
+            if (    stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOn()
+                && (
+                        TEMPERATURA_ROTEX(stato) < config.ROTEX_T_DISINNESCO_BYPASS_AMBIENTI
+                    && TEMPERATURA_CAMINO(stato) < config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI
+                    )
+            )
+            {
+                io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOff($"Disattivazione BYPASS Termostati Ambiente. Temperatura Rotex {TEMPERATURA_ROTEX(stato)} < {nameof(config.ROTEX_T_DISINNESCO_BYPASS_AMBIENTI)} {config.ROTEX_T_DISINNESCO_BYPASS_AMBIENTI} e temperatura CAMINO {TEMPERATURA_CAMINO(stato)} < {nameof(config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI)} ({config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI})");
+            }
+        }
     }
 
     private void Manage_POMPA_RISCALDAMENTO()

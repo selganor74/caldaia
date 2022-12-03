@@ -56,7 +56,7 @@ public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
         // Set the read/write timeouts in milliseconds
         serialPort.ReadTimeout = 500;
         serialPort.WriteTimeout = 500;
-        serialPort.NewLine = "" + (char)0x0; // Sets New Line to null char
+        serialPort.NewLine = "" + (char)0x0a; 
 
         // this.serialPort.DataReceived += this.DataReceivedHandler;
         this.serialPort.Open();
@@ -126,12 +126,15 @@ public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
 
         var tAccumulo = Decimal.Parse(components[RotexField.TS_Accumulo]);
         _ROTEX_TEMPERATURA_ACCUMULO.SetInput(new Temperature(tAccumulo));
+        log.LogDebug($"{nameof(ParseLine)}: read {nameof(tAccumulo)}: {tAccumulo}");
 
         var tPannelli = Decimal.Parse(components[RotexField.TK_Pannelli]);
         _ROTEX_TEMPERATURA_PANNELLI.SetInput(new Temperature(tPannelli));
+        log.LogDebug($"{nameof(ParseLine)}: read {nameof(tPannelli)}: {tPannelli}");
 
         var statoPompaRotex = Decimal.Parse(components[RotexField.P1_Percent]) != 0;
         _ROTEX_STATO_POMPA.Set(statoPompaRotex ? OnOffState.ON : OnOffState.OFF);
+        log.LogDebug($"{nameof(ParseLine)}: read {nameof(statoPompaRotex)}: {statoPompaRotex}");
     }
 
     public void Stop()

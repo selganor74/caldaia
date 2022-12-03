@@ -23,19 +23,23 @@ public class CaldaiaConfig
     public decimal CAMINO_T_INNESCO_75_25 { get; }
     public decimal CAMINO_T_INNESCO_100 { get; }
     public decimal CAMINO_T_INNESCO_BYPASS_AMBIENTI { get; }
+    public decimal ROTEX_T_INNESCO_BYPASS_AMBIENTI { get; }
     public decimal CAMINO_T_DISINNESCO_BYPASS_AMBIENTI { get; }
-
+    public decimal ROTEX_T_DISINNESCO_BYPASS_AMBIENTI {get; }
     public decimal DELTA_T_CAMINO_T_ROTEX_INNESCO { get; }
 
     public CaldaiaConfig(
         TimeSpan mainLoopPeriod,
         decimal rOTEX_T_SOGLIA_ACCENSIONE_CALDAIA = 45m,
         decimal rOTEX_T_SOGLIA_SPEGNIMENTO_CALDAIA = 52m,
-        decimal cAMINO_T_INNESCO_50_50 = 50,
-        decimal cAMINO_T_INNESCO_75_25 = 55,
-        decimal cAMINO_T_INNESCO_100 = 60,
+        decimal cAMINO_T_INNESCO_50_50 = 51,
+        decimal cAMINO_T_INNESCO_75_25 = 68,
+        decimal cAMINO_T_INNESCO_100 = 65,
         decimal cAMINO_T_BYPASS_AMBIENTI = 62,
-        decimal dELTA_T_CAMINO_T_ROTEX_INNESCO = 5)
+        decimal dELTA_T_CAMINO_T_ROTEX_INNESCO = 5,
+        decimal rOTEX_T_INNESCO_BYPASS_AMBIENTI = 70,
+        decimal rOTEX_T_DISINNESCO_BYPASS_AMBIENTI = 65
+        )
     {
         MainLoopPeriod = mainLoopPeriod;
         ROTEX_T_SOGLIA_ACCENSIONE_CALDAIA = rOTEX_T_SOGLIA_ACCENSIONE_CALDAIA;
@@ -45,5 +49,7 @@ public class CaldaiaConfig
         CAMINO_T_INNESCO_100 = cAMINO_T_INNESCO_100;
         CAMINO_T_INNESCO_BYPASS_AMBIENTI = cAMINO_T_BYPASS_AMBIENTI;
         DELTA_T_CAMINO_T_ROTEX_INNESCO = dELTA_T_CAMINO_T_ROTEX_INNESCO;
+        ROTEX_T_INNESCO_BYPASS_AMBIENTI = rOTEX_T_INNESCO_BYPASS_AMBIENTI;
+        ROTEX_T_DISINNESCO_BYPASS_AMBIENTI = rOTEX_T_DISINNESCO_BYPASS_AMBIENTI;
     }
 }

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using domain.measures;
 using Microsoft.Extensions.Logging;
 
 namespace domain.systemComponents;
@@ -32,6 +33,9 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
         this.riseThreshold = riseThreshold;
         this.fallThreshold = fallThreshold;
         this.logic = logic;
+
+        this._lastMeasure = new OnOff(OnOffState.OFF);
+
         source.ValueRead += OnSourceNewValue;
     }
 
@@ -40,7 +44,7 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
         if ((this.LastMeasure?.IsOff() ?? true) && logic == OnOffLogic.OnWhenRaising)
         {
             if (newValue.Value > riseThreshold)
-                this.SetToOn($"value ({newValue.Value}) > rise threshold ({riseThreshold})");
+                this.SetToOn($"{this.source.Name} value ({newValue.FormattedValue}) > rise threshold ({riseThreshold})");
 
             return;
         }
@@ -48,7 +52,7 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
         if ((this.LastMeasure?.IsOn() ?? false) && logic == OnOffLogic.OnWhenRaising)
         {
             if (newValue.Value < fallThreshold)
-                this.SetToOff($"value ({newValue.Value}) < fall threshold ({fallThreshold})");
+                this.SetToOff($"{this.source.Name} value ({newValue.FormattedValue}) < fall threshold ({fallThreshold})");
 
             return;
         }
@@ -57,7 +61,7 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
         {
             if (newValue.Value < fallThreshold)
             {
-                this.SetToOn($"value ({newValue.Value}) > threshold ({fallThreshold})");
+                this.SetToOn($"{this.source.Name} value ({newValue.FormattedValue}) > threshold ({fallThreshold})");
 
                 return;
             }
@@ -67,19 +71,26 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
         {
             if (newValue.Value > fallThreshold)
             {
-                this.SetToOff($"value ({newValue.Value}) > threshold ({fallThreshold})");
+                this.SetToOff($"{this.source.Name} value ({newValue.FormattedValue}) > threshold ({fallThreshold})");
 
                 return;
             }
         }
     }
 
-    public override void Dispose() {
+    private bool isDisposing = false;
+    public override void Dispose()
+    {
+        if (isDisposing)
+            return;
+        
+        isDisposing = true;
+
         base.Dispose();
-        
-        if (this.source as IDisposable != null) 
+
+        if (this.source as IDisposable != null)
             log.LogDebug($"{Name} is disposing its source {source.Name} [{source.GetType().Name}]");
-        
+
         (this.source as IDisposable)?.Dispose();
     }
 

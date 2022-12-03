@@ -14,7 +14,7 @@ public class CaldaiaMetano : IDisposable
 
     public void Dispose()
     {
-        this.DisposeDisposables();
+        this.DisposeDisposables(null);
     }
 }
 #pragma warning restore CS8618

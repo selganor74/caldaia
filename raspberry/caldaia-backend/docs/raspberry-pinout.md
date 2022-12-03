@@ -5,9 +5,9 @@
 |                       adc SCL  | GPIO 3 (SCL)     |  5 |  6 | Ground             | GND relay board                     |
 |                                | GPIO 4 (GPCLK0)  |  7 |  8 | GPIO 14 (TXD)      |                                     |
 |                       adc GND  | Ground           |  9 | 10 | GPIO 15 (RXD)      | TXD rotex                           |
-|  ACC. CALDAIA  relay board IN4 | GPIO 17          | 11 | 12 | GPIO 18 (PCM_CLK)  |                                     |
-|  POMPA CAMINO  relay board IN3 | GPIO 27          | 13 | 14 | Ground             | GND txd rotex                       |
-|  BYPASS T.AMB  relay board IN2 | GPIO 22          | 15 | 16 | GPIO 23            | IN1 relay board POMPA RISCALDAMENTO |
+|  POMPA RISCALD relay board IN4 | GPIO 17          | 11 | 12 | GPIO 18 (PCM_CLK)  |                                     |
+|  BYPASS T.AMB  relay board IN3 | GPIO 27          | 13 | 14 | Ground             | GND txd rotex                       |
+|  POMPA CAMINO  relay board IN2 | GPIO 22          | 15 | 16 | GPIO 23            | IN1 relay board ACCENSIONE CALDAIA  |
 |                    ntc vulcano | 3.3V power       | 17 | 18 | GPIO 24            |                                     |
 |                                | GPIO 10 (MOSI)   | 19 | 20 | Ground             |                                     |
 |                                | GPIO  9 (MISO)   | 21 | 22 | GPIO 25            |                                     |

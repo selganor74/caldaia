@@ -2,6 +2,8 @@ using domain.systemComponents;
 using domain.measures;
 using application.subSystems;
 using application.infrastructure;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace application;
 
@@ -40,10 +42,16 @@ public class CaldaiaIOSet : IDisposable
         RISCALDAMENTO = rISCALDAMENTO;
     }
 
+    private static DateTime LastPrinted = DateTime.Now;
+
     // true when all "real" inputs have a value
-    public bool IsReady()
+    public bool IsReady(ILogger? log)
     {
-        return !(RELAY_POMPA_CAMINO.LastMeasure == null
+        if (log == null)
+            log = NullLoggerFactory.Instance.CreateLogger(nameof(CaldaiaIOSet));
+
+
+        var isReady =  !(RELAY_POMPA_CAMINO.LastMeasure == null
             || RELAY_BYPASS_TERMOSTATO_AMBIENTE.LastMeasure == null
             || RELAY_POMPA_RISCALDAMENTO.LastMeasure == null
             || CAMINO_ON_OFF.LastMeasure == null
@@ -53,11 +61,37 @@ public class CaldaiaIOSet : IDisposable
             || TERMOSTATO_ROTEX.LastMeasure == null
             || ROTEX_TEMP_ACCUMULO.LastMeasure == null
         );
+
+        if (!isReady) {
+            LogIsReadyDetail(log);
+        }
+
+        return isReady;
     }
 
-    public CaldaiaAllValues ReadAll()
+    private void LogIsReadyDetail(ILogger log)
     {
-        while (!IsReady())
+        if (DateTime.Now > (LastPrinted + TimeSpan.FromSeconds(10)))
+        {
+            LastPrinted = DateTime.Now;
+            log.LogInformation(@$"
+{nameof(RELAY_POMPA_CAMINO)}:{RELAY_POMPA_CAMINO.LastMeasure == null}
+{nameof(RELAY_BYPASS_TERMOSTATO_AMBIENTE)}: {RELAY_BYPASS_TERMOSTATO_AMBIENTE.LastMeasure == null}
+{nameof(RELAY_POMPA_RISCALDAMENTO)}: {RELAY_POMPA_RISCALDAMENTO.LastMeasure == null}
+{nameof(CAMINO_ON_OFF)}: {CAMINO_ON_OFF.LastMeasure == null}
+{nameof(CAMINO_TEMPERATURA)}: {CAMINO_TEMPERATURA.LastMeasure == null}
+{nameof(RELAY_CALDAIA)}: {RELAY_CALDAIA.LastMeasure == null}
+{nameof(TERMOSTATO_AMBIENTI)}: {TERMOSTATO_AMBIENTI.LastMeasure == null}
+{nameof(TERMOSTATO_ROTEX)}: {TERMOSTATO_ROTEX.LastMeasure == null}
+{nameof(ROTEX_TEMP_ACCUMULO)}: {ROTEX_TEMP_ACCUMULO.LastMeasure == null}
+"
+    );
+        }
+    }
+
+    public CaldaiaAllValues ReadAll(ILogger? log)
+    {
+        while (!IsReady(log))
             Thread.Sleep(100);
 
         var toReturn = new CaldaiaAllValues();
@@ -71,9 +105,11 @@ public class CaldaiaIOSet : IDisposable
         toReturn.TERMOSTATO_AMBIENTI = TERMOSTATO_AMBIENTI.LastMeasure;
         toReturn.TERMOSTATO_ROTEX = TERMOSTATO_ROTEX.LastMeasure;
         toReturn.ROTEX_TEMP_ACCUMULO = ROTEX_TEMP_ACCUMULO.LastMeasure;
+        toReturn.ROTEX_TEMP_PANNELLI = ROTEX_TEMP_PANNELLI.LastMeasure;
 
         toReturn.TEMPERATURA_CAMINO = CAMINO_TEMPERATURA.LastMeasure ?? new Temperature(0);
         toReturn.CAMINO_ON_OFF = CAMINO_ON_OFF.LastMeasure ?? new OnOff(OnOffState.OFF);
+        toReturn.ROTEX_STATO_POMPA = ROTEX_STATO_POMPA.LastMeasure ?? new OnOff(OnOffState.OFF);
 #pragma warning restore CS8601
 
         return toReturn;
@@ -82,7 +118,7 @@ public class CaldaiaIOSet : IDisposable
     // Disposes every property that can be disposed
     public void Dispose()
     {
-        this.DisposeDisposables();
+        this.DisposeDisposables(null);
     }
 }
 #pragma warning restore CS8618

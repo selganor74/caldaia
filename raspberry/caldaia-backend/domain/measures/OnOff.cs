@@ -38,4 +38,8 @@ public class OnOff : SimpleMeasure
     public OnOff(OnOffState state, DateTime? utcTimeStamp = null) : base((decimal)state, utcTimeStamp)
     {
     }
+
+    public OnOff(decimal state, DateTime? utcTimeStamp = null) : base(state, utcTimeStamp)
+    {
+    }
 }

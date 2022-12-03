@@ -7,7 +7,30 @@ using LogLevel = NLog.LogLevel;
 using rotex;
 using api.dependencyInjection;
 
+LogManager.Setup().LoadConfiguration(logBuilder =>
+{
+    logBuilder.ForLogger()
+        .FilterMinLevel(LogLevel.Info)
+        .WriteToFile(
+            fileName: "../logs/INFO.log", 
+            archiveAboveSize: 9 * 1024 * 1024, 
+            maxArchiveFiles: 1
+        );
+
+    logBuilder
+        .ForLogger()
+        .FilterMinLevel(LogLevel.Debug)
+        .WriteToFile(
+            fileName: "../logs/DEBUG.log", 
+            archiveAboveSize: 9 * 1024 * 1024, 
+            maxArchiveFiles: 2
+        );
+});
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseNLog();
 
 
 // Add services to the container.
@@ -18,13 +41,6 @@ builder.Services.AddSwaggerGen();
 builder.WebHost.UseUrls(new string[] { "http://0.0.0.0:32767" });
 
 // NLog Configuration
-LogManager.Setup().LoadConfiguration(builder =>
-{
-    builder.ForLogger().FilterMinLevel(LogLevel.Info).WriteToConsole();
-    builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteToFile("../logs/DEBUG.log");
-});
-
-builder.Host.UseNLog();
 
 // Adds the caldaia application to the Service Collection
 builder.Services.AddSerialRotexReader(new RaspberryRotexReaderConfig());
