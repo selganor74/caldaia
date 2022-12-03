@@ -16,7 +16,7 @@ public class AnalogInputConverter<TFromMeasure, TToMeasure> : AnalogInput<TToMea
     {
         this.source = source;
 
-        source.ValueRead += (src, measure) =>
+        source.OnValueRead += (src, measure) =>
         {
             try
             {

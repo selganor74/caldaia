@@ -15,7 +15,7 @@ public class LogicNot : DigitalInput
         if (source.LastMeasure != null)
             OnSourceChanged(null, source.LastMeasure);
 
-        source.ValueRead += OnSourceChanged;
+        source.OnValueRead += OnSourceChanged;
     }
 
     private void OnSourceChanged(object? source, OnOff newValue) 

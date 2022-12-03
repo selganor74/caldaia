@@ -36,7 +36,7 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
 
         this._lastMeasure = new OnOff(OnOffState.OFF);
 
-        source.ValueRead += OnSourceNewValue;
+        source.OnValueRead += OnSourceNewValue;
     }
 
     private void OnSourceNewValue(object? source, TMeasure newValue)

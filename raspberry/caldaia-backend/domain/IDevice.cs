@@ -17,14 +17,14 @@ public interface IDevice
 public interface IDevice<TMeasure> : IDevice where TMeasure : IMeasure
 {
     TMeasure? LastMeasure { get; }
-    event EventHandler<TMeasure>? ValueRead;
+    event EventHandler<TMeasure>? OnValueRead;
 }
 
 public abstract class Device<TMeasure> : IDevice<TMeasure>
     where TMeasure : IMeasure
 {
     public string Name { get; protected set; }
-    public virtual event EventHandler<TMeasure>? ValueRead;
+    public virtual event EventHandler<TMeasure>? OnValueRead;
 
     public DateTime? FirstTimeSet { get; protected set; }
 
@@ -47,7 +47,7 @@ public abstract class Device<TMeasure> : IDevice<TMeasure>
                 this.FirstTimeSet = value.UtcTimeStamp;
 
             this._lastMeasure = value;
-            Fire(this.ValueRead, value);
+            Fire(this.OnValueRead, value);
         }
     }
 

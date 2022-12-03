@@ -6,7 +6,7 @@ namespace domain.systemComponents;
 public abstract class DigitalInput : AnalogInput<OnOff>
 {
     public OnOffState DigitalValue => (LastMeasure?.Value ?? 0) == 0 ? OnOffState.OFF : OnOffState.ON;
-    public override event EventHandler<OnOff>? ValueRead;
+    public override event EventHandler<OnOff>? OnValueRead;
     public event EventHandler<OnOff>? TransitionedFromOffToOn;
     public event EventHandler<OnOff>? TransitionedFromOnToOff;
 
@@ -39,7 +39,7 @@ public abstract class DigitalInput : AnalogInput<OnOff>
             }
 
             this._lastMeasure = value;
-            Fire(this.ValueRead, value);
+            Fire(this.OnValueRead, value);
             
             if (shouldFireTransitionEvent && eventToFire != null)
                 Fire(eventToFire, value);    
