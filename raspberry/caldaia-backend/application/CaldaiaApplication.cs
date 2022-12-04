@@ -118,6 +118,40 @@ public class CaldaiaApplication : IDisposable
 
     private decimal CALCOLA_DUTY_CYCLE_POMPA_CAMINO(CaldaiaAllValues stato)
     {
+        if (!ROTEX_DISPONIBILE(stato))
+        {
+            return CalcolaDutyCycleSoloSuTemperaturaCamino(stato);
+        }
+
+        if (ROTEX_DISPONIBILE(stato))
+        {
+            if (TEMPERATURA_CAMINO(stato) < config.CAMINO_T_INNESCO_50_50)
+                return 0m;
+
+            // La temperatura del rotex non deve scendere sotto i 60
+            // Quindi se il camino è sotto a 60, fermiamo la pompa 
+            if (TEMPERATURA_ROTEX(stato) > TEMPERATURA_CAMINO(stato)
+                && TEMPERATURA_ROTEX(stato) < 60
+                )
+                return 0m;
+
+            if (TEMPERATURA_ROTEX(stato) < TEMPERATURA_CAMINO(stato))
+                return CalcolaDutyCycleSoloSuTemperaturaCamino(stato);
+
+            // La temperatura del rotex non deve scendere sotto i 60
+            // Quindi se il camino è sotto a 60, fermiamo la pompa 
+            if (TEMPERATURA_ROTEX(stato) > TEMPERATURA_CAMINO(stato)
+                && TEMPERATURA_ROTEX(stato) >= 60
+                )
+                return CalcolaDutyCycleSoloSuTemperaturaCamino(stato);
+
+        }
+
+        // Come fall back ... ma non ci dovremmo mai cadere!
+        return CalcolaDutyCycleSoloSuTemperaturaCamino(stato);
+    }
+    private decimal CalcolaDutyCycleSoloSuTemperaturaCamino(CaldaiaAllValues stato)
+    {
         if (TEMPERATURA_CAMINO(stato) < config.CAMINO_T_INNESCO_50_50)
             return 0m;
         if (TEMPERATURA_CAMINO(stato) < config.CAMINO_T_INNESCO_75_25)
@@ -155,9 +189,9 @@ public class CaldaiaApplication : IDisposable
                 io.RELAY_POMPA_CAMINO.SetToOff($"Temperatura camino sotto soglia minima innesco {config.CAMINO_T_INNESCO_50_50}");
             }
 
-            if (!POMPA_CAMINO_ACCESA(stato, io) && dutyCyclePompaCamino != 0m)
+            if (dutyCyclePompaCamino != 0m)
             {
-                io.RELAY_POMPA_CAMINO.StartDutyCycle(dutyCyclePompaCamino, TimeSpan.FromMinutes(5));
+                io.RELAY_POMPA_CAMINO.SetDutyCycle(dutyCyclePompaCamino, TimeSpan.FromMinutes(5));
             }
         }
 
@@ -171,7 +205,7 @@ public class CaldaiaApplication : IDisposable
 
             if (dutyCyclePompaCamino != 0m)
             {
-                io.RELAY_POMPA_CAMINO.StartDutyCycle(dutyCyclePompaCamino, TimeSpan.FromMinutes(5));
+                io.RELAY_POMPA_CAMINO.SetDutyCycle(dutyCyclePompaCamino, TimeSpan.FromMinutes(5));
             }
         }
     }
@@ -190,24 +224,18 @@ public class CaldaiaApplication : IDisposable
         if (ROTEX_DISPONIBILE(stato) && stato.CAMINO_ON_OFF.IsOn())
         {
             if (    stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOff()
-                && (
-                        TEMPERATURA_ROTEX(stato) > config.ROTEX_T_INNESCO_BYPASS_AMBIENTI
-                    || TEMPERATURA_CAMINO(stato) > config.CAMINO_T_INNESCO_BYPASS_AMBIENTI
-                    )
-            )
-            {
-                io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOn($"Attivazione BYPASS Termostati Ambiente. Temperatura Rotex {TEMPERATURA_ROTEX(stato)} > {nameof(config.ROTEX_T_INNESCO_BYPASS_AMBIENTI)} {config.ROTEX_T_INNESCO_BYPASS_AMBIENTI} o temperatura CAMINO {TEMPERATURA_CAMINO(stato)} > {nameof(config.CAMINO_T_INNESCO_BYPASS_AMBIENTI)} ({config.CAMINO_T_INNESCO_BYPASS_AMBIENTI})");
-            }
+                &&  TEMPERATURA_ROTEX(stato) > 60
+                &&  TEMPERATURA_CAMINO(stato) > config.CAMINO_T_INNESCO_BYPASS_AMBIENTI
+                )
+                io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOn($"Attivazione BYPASS Termostati Ambiente. Temperatura Rotex {TEMPERATURA_ROTEX(stato)} > 60 e temperatura CAMINO {TEMPERATURA_CAMINO(stato)} > {nameof(config.CAMINO_T_INNESCO_BYPASS_AMBIENTI)} ({config.CAMINO_T_INNESCO_BYPASS_AMBIENTI})");
 
             if (    stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOn()
-                && (
-                        TEMPERATURA_ROTEX(stato) < config.ROTEX_T_DISINNESCO_BYPASS_AMBIENTI
-                    && TEMPERATURA_CAMINO(stato) < config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI
+                &&  (
+                        TEMPERATURA_ROTEX(stato) <= 60
+                    || TEMPERATURA_CAMINO(stato) <= config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI
                     )
-            )
-            {
-                io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOff($"Disattivazione BYPASS Termostati Ambiente. Temperatura Rotex {TEMPERATURA_ROTEX(stato)} < {nameof(config.ROTEX_T_DISINNESCO_BYPASS_AMBIENTI)} {config.ROTEX_T_DISINNESCO_BYPASS_AMBIENTI} e temperatura CAMINO {TEMPERATURA_CAMINO(stato)} < {nameof(config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI)} ({config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI})");
-            }
+                )
+                io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOff($"Disattivazione BYPASS Termostati Ambiente. Temperatura Rotex {TEMPERATURA_ROTEX(stato)} < 60 o temperatura CAMINO {TEMPERATURA_CAMINO(stato)} < {nameof(config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI)} ({config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI})");
         }
     }
 

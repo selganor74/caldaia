@@ -12,6 +12,8 @@ public abstract class DigitalOutput : DigitalInput, IDisposable
     public bool IsDutyCycleStarted { get; private set; }
     private decimal percentOn_0_1;
     private TimeSpan dutyCyclePeriod;
+    private TimeSpan tOn;
+    private TimeSpan tOff;
 
     protected DigitalOutput(string name, ILogger<DigitalOutput> log) : base(name, log)
     {
@@ -56,15 +58,24 @@ public abstract class DigitalOutput : DigitalInput, IDisposable
     {
         this.MIN_TIME_BETWEEN_TOGGLES = newMinTime;
         this.lastMinTimeBetweenTogglesLog = DateTime.Now - newMinTime;
+        log.LogInformation($"{Name}: Setting min time between toggles to {newMinTime.TotalSeconds}s");    
     }
 
 
     // Avvia un ciclo di durata "dutyCyclePe" e duty cycle "percentOn_0_1"
-    public void StartDutyCycle(decimal percentOn_0_1, TimeSpan dutyCyclePeriod)
+    public void SetDutyCycle(decimal percentOn_0_1, TimeSpan dutyCyclePeriod)
     {
+        if(this.percentOn_0_1 == percentOn_0_1)
+            return;
+
+        log.LogInformation($"{Name}: Changing dutyCycle from {this.percentOn_0_1 * 100}% to {percentOn_0_1 * 100}% on a period of {dutyCyclePeriod.TotalSeconds}s");    
         this.percentOn_0_1 = percentOn_0_1;
         this.dutyCyclePeriod = dutyCyclePeriod;
         var minPeriod = 0.99 * dutyCyclePeriod * (double)Math.Min(percentOn_0_1, 1 - percentOn_0_1);
+
+        tOn = TimeSpan.FromMilliseconds((int)(dutyCyclePeriod.TotalMilliseconds * (double)percentOn_0_1));
+        tOff = dutyCyclePeriod - tOn;
+
         SetMinTimeBetweenToggles(minPeriod);
 
         if (!IsDutyCycleStarted)
@@ -78,10 +89,11 @@ public abstract class DigitalOutput : DigitalInput, IDisposable
     {
         if (!IsDutyCycleStarted)
             return;
+
         this.IsDutyCycleStarted = false;
         this.dutyCycleThread.Join();
+        log.LogInformation($"{Name}: Stopping {this.percentOn_0_1 * 100}% duty cycle.");    
     }
-
 
     private void DutyCycle()
     {
@@ -89,9 +101,6 @@ public abstract class DigitalOutput : DigitalInput, IDisposable
         {
             while (IsDutyCycleStarted)
             {
-                TimeSpan tOn = TimeSpan.FromMilliseconds((int)(dutyCyclePeriod.TotalMilliseconds * (double)percentOn_0_1));
-                TimeSpan tOff = dutyCyclePeriod - tOn;
-
                 if (tOn.TotalMilliseconds > 0)
                 {
                     SetToOn($"{Name} duty cycle {percentOn_0_1 * 100:F0}%, tOn: {tOn.TotalSeconds} s");
@@ -100,7 +109,7 @@ public abstract class DigitalOutput : DigitalInput, IDisposable
 
                 if (tOff.TotalMilliseconds > 0)
                 {
-                    SetToOn($"{Name} duty cycle {percentOn_0_1 * 100:F0}%, tOff: {tOff.TotalSeconds} s");
+                    SetToOff($"{Name} duty cycle {percentOn_0_1 * 100:F0}%, tOff: {tOff.TotalSeconds} s");
                     Thread.Sleep(tOff);
                 }
             }

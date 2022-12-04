@@ -32,8 +32,11 @@ public class NtcVulcanoConverter : AnalogInputConverter<PureNumber, Temperature>
 
                 // ... and then convert it back to Decimal
                 var Tcelsius = CapConvertDoubleToDecimal(Tk) - 273.15m;
-
-                logger?.LogDebug($"adc value {adcReading} converted to Resistance {Rntc} and Temperature {Tcelsius}");
+                
+                var Rmeasure = new Resistance(Rntc);
+                var Tmeasure = new Temperature(Tcelsius);
+                
+                logger?.LogDebug($"adc value {adcReading} converted to Resistance {Rmeasure.FormattedValue} and Temperature {Tmeasure.FormattedValue}");
 
                 return Tcelsius;
             }

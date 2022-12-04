@@ -6,7 +6,8 @@ Push-Location ..
     dotnet publish
 
     Write-host "Stopping service on pi ..."
-    ssh -i ${keyPath} ${toPi} 'sudo systemctl stop raspberry-caldaia.service'
+    # ssh -i ${keyPath} ${toPi} 'sudo systemctl stop raspberry-caldaia.service'
+    ssh -i ${keyPath} ${toPi} './stop'
     Write-host "... done"
 
     Write-host "Copying files to pi ..."
@@ -15,4 +16,7 @@ Push-Location ..
     Write-host "Starting service on pi ..."
     ssh -i ${keyPath} ${toPi} 'sudo systemctl start raspberry-caldaia.service'
     Write-host "... done"
+
 Pop-Location
+
+.\tail-debug.ps1
