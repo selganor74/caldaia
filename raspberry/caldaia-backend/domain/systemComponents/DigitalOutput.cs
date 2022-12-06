@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using domain.measures;
 using Microsoft.Extensions.Logging;
 
@@ -58,17 +59,17 @@ public abstract class DigitalOutput : DigitalInput, IDisposable
     {
         this.MIN_TIME_BETWEEN_TOGGLES = newMinTime;
         this.lastMinTimeBetweenTogglesLog = DateTime.Now - newMinTime;
-        log.LogInformation($"{Name}: Setting min time between toggles to {newMinTime.TotalSeconds}s");    
+        log.LogInformation($"{Name}: Setting min time between toggles to {newMinTime.TotalSeconds}s");
     }
 
 
     // Avvia un ciclo di durata "dutyCyclePe" e duty cycle "percentOn_0_1"
     public void SetDutyCycle(decimal percentOn_0_1, TimeSpan dutyCyclePeriod)
     {
-        if(this.percentOn_0_1 == percentOn_0_1)
+        if (this.percentOn_0_1 == percentOn_0_1)
             return;
 
-        log.LogInformation($"{Name}: Changing dutyCycle from {this.percentOn_0_1 * 100}% to {percentOn_0_1 * 100}% on a period of {dutyCyclePeriod.TotalSeconds}s");    
+        log.LogInformation($"{Name}: Changing dutyCycle from {this.percentOn_0_1 * 100}% to {percentOn_0_1 * 100}% on a period of {dutyCyclePeriod.TotalSeconds}s");
         this.percentOn_0_1 = percentOn_0_1;
         this.dutyCyclePeriod = dutyCyclePeriod;
         var minPeriod = 0.99 * dutyCyclePeriod * (double)Math.Min(percentOn_0_1, 1 - percentOn_0_1);
@@ -92,31 +93,38 @@ public abstract class DigitalOutput : DigitalInput, IDisposable
 
         this.IsDutyCycleStarted = false;
         this.dutyCycleThread.Join();
-        log.LogInformation($"{Name}: Stopping {this.percentOn_0_1 * 100}% duty cycle.");    
+        log.LogInformation($"{Name}: Stopping {this.percentOn_0_1 * 100}% duty cycle.");
     }
 
     private void DutyCycle()
     {
+        var sw = new Stopwatch();
+        var currentState = () => this._lastMeasure?.DigitalValue ?? OnOffState.OFF;
         try
         {
+            sw.Start();
             while (IsDutyCycleStarted)
             {
-                if (tOn.TotalMilliseconds > 0)
-                {
-                    SetToOn($"{Name} duty cycle {percentOn_0_1 * 100:F0}%, tOn: {tOn.TotalSeconds} s");
-                    Thread.Sleep(tOn);
-                }
-
-                if (tOff.TotalMilliseconds > 0)
+                if (currentState() == OnOffState.ON && sw.Elapsed > tOn && tOff.Ticks > 0)
                 {
                     SetToOff($"{Name} duty cycle {percentOn_0_1 * 100:F0}%, tOff: {tOff.TotalSeconds} s");
-                    Thread.Sleep(tOff);
+                    sw.Restart();
                 }
+                if (currentState() == OnOffState.OFF && sw.Elapsed > tOff && tOn.Ticks > 0)
+                {
+                    SetToOn($"{Name} duty cycle {percentOn_0_1 * 100:F0}%, tOn: {tOn.TotalSeconds} s");
+                    sw.Restart();
+                }
+                Thread.Sleep(10);
             }
         }
         catch (Exception e)
         {
             log.LogError($"{Name} Errors in {nameof(DutyCycle)}.{Environment.NewLine}{e}");
+        }
+        finally
+        {
+            sw.Stop();
         }
     }
 

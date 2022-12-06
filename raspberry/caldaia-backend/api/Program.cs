@@ -1,11 +1,12 @@
-using NLog;
-using NLog.Web;
+using api.dependencyInjection;
 using application.dependencyInjection;
+using rotex;
 using rotex.dependencyInjection;
 
+
+using NLog;
+using NLog.Web;
 using LogLevel = NLog.LogLevel;
-using rotex;
-using api.dependencyInjection;
 
 LogManager.Setup().LoadConfiguration(logBuilder =>
 {

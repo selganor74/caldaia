@@ -282,7 +282,7 @@ public class CaldaiaApplication : IDisposable
             skipped++;
         }
         if (skipped > 1)
-            log.LogWarning($"Last {nameof(MainLoop)} execution exceeded {skipped - 1} times configure loop length ({LOOP_PERIOD.TotalMilliseconds} ms).{Environment.NewLine}Consider either optimizing {nameof(MainLoop)} or increasing {nameof(config.MainLoopPeriod)} parameter");
+            log.LogWarning($"Last {nameof(MainLoop)} execution exceeded {skipped - 1} times configured loop length ({LOOP_PERIOD.TotalMilliseconds} ms).{Environment.NewLine}Consider either optimizing {nameof(MainLoop)} or increasing {nameof(config.MainLoopPeriod)} parameter");
 
         Thread.Sleep(delay);
         return nextLoopStart;
