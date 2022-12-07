@@ -245,7 +245,7 @@ public class CaldaiaApplication : IDisposable
         if (ROTEX_DISPONIBILE(stato) && stato.CAMINO_ON_OFF.IsOn())
         {
             if (stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOff()
-                && TEMPERATURA_ROTEX(stato) > 60
+                && TEMPERATURA_ROTEX(stato) > 62
                 && TEMPERATURA_CAMINO(stato) > config.CAMINO_T_INNESCO_BYPASS_AMBIENTI
                 )
                 io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOn($"Attivazione BYPASS Termostati Ambiente. Temperatura Rotex {TEMPERATURA_ROTEX(stato)} > 60 e temperatura CAMINO {TEMPERATURA_CAMINO(stato)} > {nameof(config.CAMINO_T_INNESCO_BYPASS_AMBIENTI)} ({config.CAMINO_T_INNESCO_BYPASS_AMBIENTI})");

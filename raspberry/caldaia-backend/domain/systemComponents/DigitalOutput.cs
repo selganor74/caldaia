@@ -100,17 +100,27 @@ public abstract class DigitalOutput : DigitalInput, IDisposable
     {
         var sw = new Stopwatch();
         var currentState = () => this._lastMeasure?.DigitalValue ?? OnOffState.OFF;
+        var lastStateChange = () => this._lastMeasure?.UtcTimeStamp ?? DateTime.MinValue;
+        var canToggle = () => (DateTime.UtcNow - lastStateChange() > TimeSpan.FromSeconds(10));
         try
         {
             sw.Start();
             while (IsDutyCycleStarted)
             {
-                if (currentState() == OnOffState.ON && sw.Elapsed > tOn && tOff.Ticks > 0)
+                if (    currentState() == OnOffState.ON 
+                    &&  sw.Elapsed > tOn 
+                    && tOff.Ticks > 0 
+                    && canToggle()
+                    )
                 {
                     SetToOff($"{Name} duty cycle {percentOn_0_1 * 100:F0}%, tOff: {tOff.TotalSeconds} s");
                     sw.Restart();
                 }
-                if (currentState() == OnOffState.OFF && sw.Elapsed > tOff && tOn.Ticks > 0)
+                if (    currentState() == OnOffState.OFF 
+                    && sw.Elapsed > tOff 
+                    && tOn.Ticks > 0
+                    && canToggle()
+                    )
                 {
                     SetToOn($"{Name} duty cycle {percentOn_0_1 * 100:F0}%, tOn: {tOn.TotalSeconds} s");
                     sw.Restart();
