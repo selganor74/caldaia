@@ -115,9 +115,10 @@ public class CaldaiaApplication : IDisposable
 
     private Func<CaldaiaAllValues, CaldaiaIOSet, bool> POMPA_CAMINO_ACCESA = (CaldaiaAllValues stato, CaldaiaIOSet io) => stato.STATO_RELAY_POMPA_CAMINO.IsOn() || io.RELAY_POMPA_CAMINO.IsDutyCycleStarted;
     private CaldaiaAllValues stato;
+    private decimal prevDutyCycle;
 
     private decimal CALCOLA_DUTY_CYCLE_POMPA_CAMINO(CaldaiaAllValues stato)
-    {
+    {        
         if (!ROTEX_DISPONIBILE(stato))
         {
             return CalcolaDutyCycleSoloSuTemperaturaCamino(stato);
@@ -181,6 +182,11 @@ public class CaldaiaApplication : IDisposable
     private void Manage_POMPA_CAMINO()
     {
         var dutyCyclePompaCamino = CALCOLA_DUTY_CYCLE_POMPA_CAMINO(stato);
+        if (prevDutyCycle != dutyCyclePompaCamino) {
+            log.LogDebug($"{nameof(Manage_POMPA_CAMINO)}: Different DutyCycle computed from {prevDutyCycle} to {dutyCyclePompaCamino}.");       
+            prevDutyCycle = dutyCyclePompaCamino;
+        }
+
         if (ROTEX_DISPONIBILE(stato))
         {
             if (POMPA_CAMINO_ACCESA(stato, io) && dutyCyclePompaCamino == 0m)
@@ -191,7 +197,7 @@ public class CaldaiaApplication : IDisposable
 
             if (dutyCyclePompaCamino != 0m)
             {
-                if (TEMPERATURA_ROTEX(stato) < TEMPERATURA_CAMINO(stato))
+                if (TEMPERATURA_ROTEX(stato) > TEMPERATURA_CAMINO(stato))
                 {
                     if (TEMPERATURA_ROTEX(stato) > 60)
                     {
