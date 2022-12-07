@@ -191,7 +191,22 @@ public class CaldaiaApplication : IDisposable
 
             if (dutyCyclePompaCamino != 0m)
             {
-                io.RELAY_POMPA_CAMINO.SetDutyCycle(dutyCyclePompaCamino, TimeSpan.FromMinutes(5));
+                if (TEMPERATURA_ROTEX(stato) < TEMPERATURA_CAMINO(stato))
+                {
+                    if (TEMPERATURA_ROTEX(stato) > 60)
+                    {
+                        io.RELAY_POMPA_CAMINO.SetDutyCycle(0.25m, TimeSpan.FromMinutes(5));
+                    }
+                    if (TEMPERATURA_ROTEX(stato) <= 60)
+                    {
+                        io.RELAY_POMPA_CAMINO.StopDutyCycle();
+                        io.RELAY_POMPA_CAMINO.SetToOff($"Temperatura camino ({TEMPERATURA_CAMINO(stato):F1}) inferiore a temperatura ROTEX ({TEMPERATURA_ROTEX(stato):F1}) e temperatura ROTEX <= 60.");
+                    }
+                }
+                else
+                {
+                    io.RELAY_POMPA_CAMINO.SetDutyCycle(dutyCyclePompaCamino, TimeSpan.FromMinutes(5));
+                }
             }
         }
 
@@ -223,14 +238,14 @@ public class CaldaiaApplication : IDisposable
 
         if (ROTEX_DISPONIBILE(stato) && stato.CAMINO_ON_OFF.IsOn())
         {
-            if (    stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOff()
-                &&  TEMPERATURA_ROTEX(stato) > 60
-                &&  TEMPERATURA_CAMINO(stato) > config.CAMINO_T_INNESCO_BYPASS_AMBIENTI
+            if (stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOff()
+                && TEMPERATURA_ROTEX(stato) > 60
+                && TEMPERATURA_CAMINO(stato) > config.CAMINO_T_INNESCO_BYPASS_AMBIENTI
                 )
                 io.RELAY_BYPASS_TERMOSTATO_AMBIENTE.SetToOn($"Attivazione BYPASS Termostati Ambiente. Temperatura Rotex {TEMPERATURA_ROTEX(stato)} > 60 e temperatura CAMINO {TEMPERATURA_CAMINO(stato)} > {nameof(config.CAMINO_T_INNESCO_BYPASS_AMBIENTI)} ({config.CAMINO_T_INNESCO_BYPASS_AMBIENTI})");
 
-            if (    stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOn()
-                &&  (
+            if (stato.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE.IsOn()
+                && (
                         TEMPERATURA_ROTEX(stato) <= 60
                     || TEMPERATURA_CAMINO(stato) <= config.CAMINO_T_DISINNESCO_BYPASS_AMBIENTI
                     )
