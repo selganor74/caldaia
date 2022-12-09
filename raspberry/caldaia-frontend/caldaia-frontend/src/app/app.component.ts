@@ -22,7 +22,11 @@ export class AppComponent {
   public termoAmbienti: string = "";
   public termoRotex: string = "";
 
+  public consoleOut: string = "";
+  public oldConsoleOut: string = "";
+
   public state: Measure[] = [];
+  drawing: boolean = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -33,6 +37,10 @@ export class AppComponent {
   }
 
   onCaldaiaStateReceived(d: any): void {
+    if (this.drawing)
+      return;
+    this.drawing = true;
+    
     const q = <State>d;
     this.state = [];
     for (const i in q) {
@@ -51,7 +59,34 @@ export class AppComponent {
     this.termoAmbienti = q["termostatO_AMBIENTI"]?.formattedValue ?? this.termoAmbienti;
     this.termoRotex = q["termostatO_ROTEX"]?.formattedValue ?? this.termoRotex;
 
-    this.cdr.markForCheck();
+
+    let c = 
+` Temperatura Accumulo : ${this.tAccumulo}             
+   Temperatura Camino : ${this.tCamino}                   
+ Temperatura Pannelli : ${this.tPannelli}               
+  Termostato Ambienti : ${this.termoAmbienti}    
+     Termostato Rotex : ${this.termoRotex}
+         Pompa Camino : ${this.rPompaCamino}
+       Pompa Pannelli : ${this.pompaPannelli}
+Bypass Termo Ambienti : ${this.termoAmbienti}
+`;
+    let start = 0;
+    let current = 0;
+    let end = Math.max(c.length, this.consoleOut.length);
+    this.oldConsoleOut = this.consoleOut;
+    let cancel = setInterval(() => {
+      current++;
+      if (current <= end) {
+        let crLf = this.oldConsoleOut.substring(current,current+1) == "\n" ? "\n" : "";
+        this.consoleOut = c.substring(start, current) + "_" + crLf + this.oldConsoleOut.substring(current+1);
+      }
+      if (current > end) {
+        clearInterval(cancel);
+        this.drawing = false;
+        this.consoleOut = c;
+      }        
+      //this.cdr.markForCheck();
+    }, 2);
   }
 
   private onDataReceived(d: IDataFromArduino) {
