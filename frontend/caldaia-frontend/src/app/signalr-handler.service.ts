@@ -1,3 +1,4 @@
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { Injectable } from '@angular/core';
 import { SignalRIntegration } from './signalr-integration';
 import { environment } from '../environments/environment';
@@ -21,7 +22,7 @@ export class SignalrHandlerService {
 
   private configSignalR() {
 
-    const _hubConnection = $.hubConnection(environment.signalrBaseUrl);
+    const _hubConnection = new HubConnectionBuilder().withUrl(environment.signalrBaseUrl).configureLogging(LogLevel.Debug).build();
     this._signalrIntegration = new SignalRIntegration(_hubConnection)
       .start();
   }

@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  signalrBaseUrl: '../signalr',
-  apiBaseUrl: '../api'
+  signalrBaseUrl: '/datahub',
+  apiBaseUrl: '/api'
 };

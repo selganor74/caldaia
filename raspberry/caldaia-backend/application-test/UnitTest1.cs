@@ -6,6 +6,7 @@ using domain.measures;
 using domain.systemComponents;
 using domain.systemComponents.mocks;
 using application.subSystems;
+using application.infrastructure;
 
 namespace rotex_test;
 
@@ -14,6 +15,9 @@ public class Tests
 #pragma warning disable CS8618
     private CaldaiaIOSet io;
     private CaldaiaApplication application;
+
+    private InProcessNotificationHub notificationHub;
+    
 #pragma warning restore CS8618
 
     [SetUp]
@@ -79,7 +83,12 @@ public class Tests
 
         var config = new CaldaiaConfig(mainLoopPeriod: TimeSpan.FromMilliseconds(1));
         
-        this.application = new CaldaiaApplication(io, config, new NullLogger<CaldaiaApplication>());
+        this.application = new CaldaiaApplication(
+            io: io,
+            config: config,
+            notificationHub: notificationHub,
+            log: new NullLogger<CaldaiaApplication>()
+            );
     }
 
     [TearDown]

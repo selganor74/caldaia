@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  signalrBaseUrl: 'http://192.168.2.44:32767/signalr', // 'http://localhost:32767/signalr',
-  apiBaseUrl: 'http://192.168.2.44:32767/api' // 'http://localhost:32767/api'
+  signalrBaseUrl: '/datahub', // 'http://localhost:32767/signalr',
+  apiBaseUrl: '/api' // 'http://localhost:32767/api'
 };
 
 /*

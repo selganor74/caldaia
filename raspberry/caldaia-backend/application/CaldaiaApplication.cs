@@ -1,5 +1,4 @@
 ﻿using application.infrastructure;
-using domain.measures;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -9,6 +8,7 @@ public class CaldaiaApplication : IDisposable
 {
     private readonly CaldaiaIOSet io;
     private readonly CaldaiaConfig config;
+    private readonly INotificationPublisher notificationHub;
     private readonly ILogger log;
 
     private Thread mainLoopThread;
@@ -17,11 +17,13 @@ public class CaldaiaApplication : IDisposable
     public CaldaiaApplication(
         CaldaiaIOSet io,
         CaldaiaConfig config,
+        INotificationPublisher notificationHub,
         ILogger<CaldaiaApplication> log
         )
     {
         this.io = io;
         this.config = config;
+        this.notificationHub = notificationHub;
         this.log = log;
 
         mainLoopThread = new Thread((obj) =>
@@ -58,7 +60,8 @@ public class CaldaiaApplication : IDisposable
 
         this.isStarted = false;
         this.mainLoopThread.Join();
-
+        this.io.Dispose();
+        
         log.LogInformation($"{nameof(CaldaiaApplication)} Stopped!");
     }
 
@@ -87,9 +90,13 @@ public class CaldaiaApplication : IDisposable
             }
 
             CrunchInputs();
+            NotifyState();
         }
+    }
 
-
+    private void NotifyState() {
+        log.LogDebug($"Publishing to status-reading channel");
+        notificationHub.Publish("status-reading", stato);
     }
 
     private Func<CaldaiaAllValues, bool>
