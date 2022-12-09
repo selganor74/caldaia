@@ -1,7 +1,8 @@
 
+using api.arduinoMimic;
 using Microsoft.AspNetCore.SignalR;
 
-namespace api.arduinoMimic;
+namespace api.signalr;
 
 public class DataHub : Hub
 {
@@ -11,9 +12,6 @@ public class DataHub : Hub
     {
         this._log = log;
     }
-
-    public Task NotifyAll(DataFromArduino data) => Clients.All.SendAsync("data", data);
-
     public override Task OnConnectedAsync()
     {
         _log.LogInformation($"Client connected to {GetType().Name}");

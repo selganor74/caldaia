@@ -1,3 +1,4 @@
+using api.signalr;
 using application;
 using application.infrastructure;
 using Microsoft.AspNetCore.SignalR;
@@ -31,6 +32,15 @@ public class SignalRNotificationAdapter
                     _log.LogDebug($"Converting {nameof(CaldaiaAllValues)} to {nameof(DataFromArduino)}");
                     NotifyData(DataFromArduino.From(data));
                 });
+
+        notificationHub.Subscribe<CaldaiaAllValues>(
+            "status-reading",
+            (CaldaiaAllValues data) =>
+                {
+                    _log.LogDebug($"Directly sending CaldaiaAllValues to channel caldaia-state.");
+                    signalrDataHub.Clients.All.SendAsync("caldaia-state", data);
+                });
+
         //_appObservable.Subscribe("settings", (SettingsFromArduino settings) => { NotifyToChannel("settings", settings); });
         //_appObservable.Subscribe("raw", (string rawData) => { NotifyToChannel("raw", rawData); });
     }

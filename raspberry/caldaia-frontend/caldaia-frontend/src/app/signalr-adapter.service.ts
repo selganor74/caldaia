@@ -9,6 +9,7 @@ export class SignalrAdapterService {
 
   private _dataReceivedHandlers: ((data: IDataFromArduino) => void)[] = [];
   private _hubConnection: HubConnection // SignalR.Hub.Connection;
+  private _caldaiaStateReceivedHandlers: ((data: any) => void)[] = [];
 
 
   constructor() {
@@ -30,21 +31,36 @@ export class SignalrAdapterService {
     }
   }
 
-  public onDataReceived(handler: (data: IDataFromArduino) => void) {
-    if (handler) {
-      this._dataReceivedHandlers.push(handler);
+  public onCaldaiaStateReceived(handler: (data: any) => void ) {
+    if(!handler)
+      return;
+
+      this._caldaiaStateReceivedHandlers.push(handler);
+      return this;
     }
+
+  public onDataReceived(handler: (data: IDataFromArduino) => void) {
+    if (!handler)
+      return this;
+
+    this._dataReceivedHandlers.push(handler);
     return this;
   }
 
-  private fireDataReceived(data: IDataFromArduino) {
-    for (const handler of this._dataReceivedHandlers) {
+  private fire(handlers: ((data: any) => void)[], data: any) 
+  {
+    var errors: any[] = [];
+    for (const handler of handlers) {
       try {
         console.info("received data", data);
         handler(data);
       } catch (err) {
-        console.error('fireDataReceived: Errors while executing handler', handler.toString());
+        errors.push(err);
+        console.error('fire: Errors while executing handler', handler.toString());
       }
+    }
+    if (errors.length > 0) {
+      throw new Error("errors while executing handlers.");
     }
   }
 
@@ -57,8 +73,13 @@ export class SignalrAdapterService {
       .build();
 
     this._hubConnection.on('notify', (payload: any) => {
-      console.log('SignalR: Received data on dataProxy', payload);
-      this.fireDataReceived(payload);
+      console.log('SignalR: Received data on notify', payload);
+      this.fire(this._dataReceivedHandlers, payload);
+    });
+
+    this._hubConnection.on('caldaia-state', (payload: any) => {
+      console.log('SignalR: Received data on caldaia-state', payload);
+      this.fire(this._caldaiaStateReceivedHandlers, payload);
     });
 
     this._hubConnection

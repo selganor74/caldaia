@@ -10,6 +10,7 @@ using NLog;
 using NLog.Web;
 using LogLevel = NLog.LogLevel;
 using api.arduinoMimic;
+using api.signalr;
 
 LogManager.Setup().LoadConfiguration(logBuilder =>
 {

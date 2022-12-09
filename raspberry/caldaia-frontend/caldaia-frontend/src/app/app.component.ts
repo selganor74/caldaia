@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { IDataFromArduino } from './idata-from-arduino';
 import { SignalrAdapterService } from './signalr-adapter.service';
+import { Measure, State } from "./caldaia-state";
 
 @Component({
   selector: 'app-root',
@@ -10,36 +11,62 @@ import { SignalrAdapterService } from './signalr-adapter.service';
 export class AppComponent {
   title = 'caldaia-frontend';
 
-  public tAccumulo: number = 0;
-  public tCamino: number = 0;
-  public tPannelli: number = 0;
-  public rPompaCamino: boolean = false;
-  public rPompaRiscaldamento: boolean = false;
-  public rBypassTermostatoAmbiente: boolean = false;
-  public rCaldaia: boolean = false;
-  public pompaPannelli: boolean = false;
-  public termoAmbienti: boolean = false;
-  public termoRotex: boolean = false;
+  public tAccumulo: string = "";
+  public tCamino: string = "";
+  public tPannelli: string = "";
+  public rPompaCamino: string = "";
+  public rPompaRiscaldamento: string = "";
+  public rBypassTermostatoAmbiente: string = "";
+  public rCaldaia: string = "";
+  public pompaPannelli: string = "";
+  public termoAmbienti: string = "";
+  public termoRotex: string = "";
+
+  public state: Measure[] = [];
 
   constructor(
-    private adapter: SignalrAdapterService
+    private cdr: ChangeDetectorRef,
+    adapter: SignalrAdapterService
   ) {
     adapter.onDataReceived(d => this.onDataReceived(d));
+    adapter.onCaldaiaStateReceived(d => this.onCaldaiaStateReceived(d));
+  }
+
+  onCaldaiaStateReceived(d: any): void {
+    const q = <State>d;
+    this.state = [];
+    for (const i in q) {
+      q[i].name = i;
+      this.state.push(q[i]);
+    }
+
+    this.tAccumulo = q["roteX_TEMP_ACCUMULO"]?.formattedValue ?? this.tAccumulo;
+    this.tCamino = q["temperaturA_CAMINO"]?.formattedValue ?? this.tCamino;
+    this.tPannelli = q["roteX_TEMP_PANNELLI"]?.formattedValue ?? this.tPannelli;
+    this.rPompaCamino = q["statO_RELAY_POMPA_CAMINO"]?.formattedValue ?? this.rPompaCamino;
+    this.rPompaRiscaldamento = q["statO_RELAY_POMPA_RISCALDAMENTO"]?.formattedValue ?? this.rPompaRiscaldamento;
+    this.rBypassTermostatoAmbiente = q["statO_RELAY_BYPASS_TERMOSTATO_AMBIENTE"]?.formattedValue ?? this.rBypassTermostatoAmbiente;
+    this.rCaldaia = q["statO_RELAY_CALDAIA"]?.formattedValue ?? this.rCaldaia;
+    this.pompaPannelli = q["roteX_STATO_POMPA"]?.formattedValue ?? this.pompaPannelli;
+    this.termoAmbienti = q["termostatO_AMBIENTI"]?.formattedValue ?? this.termoAmbienti;
+    this.termoRotex = q["termostatO_ROTEX"]?.formattedValue ?? this.termoRotex;
+
+    this.cdr.markForCheck();
   }
 
   private onDataReceived(d: IDataFromArduino) {
     if (!d)
       return;
 
-    this.tAccumulo = d.rotexTS || 0;
-    this.tCamino = Math.round((d.ainTempCaminoValueCentigradi || 0) * 10) / 10 ;
-    this.tPannelli = d.rotexTK || 0;
-    this.rPompaCamino = d.outPompaCaminoValue == 1;
-    this.rPompaRiscaldamento = d.outPompaValue == 1;
-    this.rBypassTermostatoAmbiente = d.outOverrideTermoAmbienteValue == 1;
-    this.rCaldaia = d.outCaldaiaValue == 1;
-    this.pompaPannelli = d.rotexP1 == 1;
-    this.termoAmbienti = d.inTermoAmbienteValue == 1;
-    this.termoRotex = d.inTermoAccumulatoreValue == 1;
+    // this.tAccumulo = d.rotexTS || 0;
+    // this.tCamino = Math.round((d.ainTempCaminoValueCentigradi || 0) * 10) / 10;
+    // this.tPannelli = d.rotexTK || 0;
+    // this.rPompaCamino = d.outPompaCaminoValue == 1;
+    // this.rPompaRiscaldamento = d.outPompaValue == 1;
+    // this.rBypassTermostatoAmbiente = d.outOverrideTermoAmbienteValue == 1;
+    // this.rCaldaia = d.outCaldaiaValue == 1;
+    // this.pompaPannelli = d.rotexP1 == 1;
+    // this.termoAmbienti = d.inTermoAmbienteValue == 1;
+    // this.termoRotex = d.inTermoAccumulatoreValue == 1;
   }
 }
