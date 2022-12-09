@@ -13,7 +13,8 @@ public class NtcVulcanoConverter : AnalogInputConverter<PureNumber, Temperature>
     const decimal steps = 32767m;               // 2^15 - 1 valori positivi
     const decimal Radc = 1000m;                 // Resistenza di carico
 
-    const decimal Beta = 3327.356479m;          // Beta calcolato tra 0° e 100° (vedi "Calcolo Beta Ntc.xlsx")
+    // const decimal Beta = 3327.356479m;          // Beta calcolato tra 0° e 100° (vedi "Calcolo Beta Ntc.xlsx")
+    const decimal Beta = 3500m;                 // Beta calcolato tra 0° e 100° (vedi "Calcolo Beta Ntc.xlsx")
     const decimal Tbeta0 = 273.15m;             // T riferimento calcolo Beta = 0°C = 273.15 K
     const decimal Rntc0 = 16452.46338m;         // Resistenza dell'ntc a 0°
 

@@ -30,6 +30,5 @@ namespace CaldaiaBackend.SelfHosted.Owin.SignalRHubs
             _log.Info($"Client reconnected to {GetType().Name}");
             return base.OnReconnected();
         }
-
     }
 }
