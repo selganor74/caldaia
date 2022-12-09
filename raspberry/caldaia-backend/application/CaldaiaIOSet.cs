@@ -19,11 +19,11 @@ public class CaldaiaIOSet : IDisposable
     public DigitalOutput RELAY_POMPA_CAMINO => CAMINO.RELAY_POMPA_CAMINO;
     public DigitalOutput RELAY_BYPASS_TERMOSTATO_AMBIENTE => RISCALDAMENTO.RELAY_BYPASS_TERMOSTATO_AMBIENTE;
     public DigitalOutput RELAY_POMPA_RISCALDAMENTO => RISCALDAMENTO.RELAY_POMPA_RISCALDAMENTO;
-    public AnalogInput<Temperature> CAMINO_TEMPERATURA => CAMINO.CAMINO_TEMPERATURA;
+    public AnalogInput CAMINO_TEMPERATURA => CAMINO.CAMINO_TEMPERATURA;
     public DigitalInput CAMINO_ON_OFF => CAMINO.CAMINO_ON_OFF;
 
-    public AnalogInput<Temperature> ROTEX_TEMP_ACCUMULO => ROTEX.ROTEX_TEMP_ACCUMULO;
-    public AnalogInput<Temperature> ROTEX_TEMP_PANNELLI => ROTEX.ROTEX_TEMP_PANNELLI;
+    public AnalogInput ROTEX_TEMP_ACCUMULO => ROTEX.ROTEX_TEMP_ACCUMULO;
+    public AnalogInput ROTEX_TEMP_PANNELLI => ROTEX.ROTEX_TEMP_PANNELLI;
     public DigitalInput ROTEX_STATO_POMPA => ROTEX.ROTEX_STATO_POMPA;
     public DigitalOutput RELAY_CALDAIA => CALDAIA.RELAY_ACCENSIONE_CALDAIA;
 
@@ -96,21 +96,23 @@ public class CaldaiaIOSet : IDisposable
 
         var toReturn = new CaldaiaAllValues();
 
+#pragma warning disable CS8600
 #pragma warning disable CS8601
-        toReturn.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE = RELAY_BYPASS_TERMOSTATO_AMBIENTE.LastMeasure;
-        toReturn.STATO_RELAY_POMPA_CAMINO = RELAY_POMPA_CAMINO.LastMeasure;
-        toReturn.STATO_RELAY_CALDAIA = RELAY_CALDAIA.LastMeasure;
-        toReturn.STATO_RELAY_POMPA_RISCALDAMENTO = RELAY_POMPA_RISCALDAMENTO.LastMeasure;
+        toReturn.STATO_RELAY_BYPASS_TERMOSTATO_AMBIENTE = (OnOff)RELAY_BYPASS_TERMOSTATO_AMBIENTE.LastMeasure;
+        toReturn.STATO_RELAY_POMPA_CAMINO = (OnOff)RELAY_POMPA_CAMINO.LastMeasure;
+        toReturn.STATO_RELAY_CALDAIA = (OnOff)RELAY_CALDAIA.LastMeasure;
+        toReturn.STATO_RELAY_POMPA_RISCALDAMENTO = (OnOff)RELAY_POMPA_RISCALDAMENTO.LastMeasure;
 
-        toReturn.TERMOSTATO_AMBIENTI = TERMOSTATO_AMBIENTI.LastMeasure;
-        toReturn.TERMOSTATO_ROTEX = TERMOSTATO_ROTEX.LastMeasure;
-        toReturn.ROTEX_TEMP_ACCUMULO = ROTEX_TEMP_ACCUMULO.LastMeasure;
-        toReturn.ROTEX_TEMP_PANNELLI = ROTEX_TEMP_PANNELLI.LastMeasure;
+        toReturn.TERMOSTATO_AMBIENTI = (OnOff)TERMOSTATO_AMBIENTI.LastMeasure;
+        toReturn.TERMOSTATO_ROTEX = (OnOff)TERMOSTATO_ROTEX.LastMeasure;
+        toReturn.ROTEX_TEMP_ACCUMULO = (Temperature)ROTEX_TEMP_ACCUMULO.LastMeasure;
+        toReturn.ROTEX_TEMP_PANNELLI = (Temperature)ROTEX_TEMP_PANNELLI.LastMeasure;
 
-        toReturn.TEMPERATURA_CAMINO = CAMINO_TEMPERATURA.LastMeasure ?? new Temperature(0);
-        toReturn.CAMINO_ON_OFF = CAMINO_ON_OFF.LastMeasure ?? new OnOff(OnOffState.OFF);
-        toReturn.ROTEX_STATO_POMPA = ROTEX_STATO_POMPA.LastMeasure ?? new OnOff(OnOffState.OFF);
+        toReturn.TEMPERATURA_CAMINO = (Temperature)CAMINO_TEMPERATURA.LastMeasure ?? new Temperature(0);
+        toReturn.CAMINO_ON_OFF = (OnOff)CAMINO_ON_OFF.LastMeasure ?? new OnOff(OnOffState.OFF);
+        toReturn.ROTEX_STATO_POMPA = (OnOff)ROTEX_STATO_POMPA.LastMeasure ?? new OnOff(OnOffState.OFF);
 #pragma warning restore CS8601
+#pragma warning restore CS8600
 
         return toReturn;
     }

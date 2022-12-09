@@ -6,13 +6,13 @@ namespace application.subSystems;
 
 public class Camino : IDisposable
 {
-    public AnalogInput<Temperature> CAMINO_TEMPERATURA { get; set; }
-    public ComparatorWithHysteresis<Temperature> CAMINO_ON_OFF { get; set; }
+    public AnalogInput CAMINO_TEMPERATURA { get; set; }
+    public ComparatorWithHysteresis CAMINO_ON_OFF { get; set; }
     public DigitalOutput RELAY_POMPA_CAMINO { get; set; }
 
     public Camino(
-        AnalogInput<Temperature> cAMINO_TEMPERATURA,
-        ComparatorWithHysteresis<Temperature> cAMINO_ON_OFF,
+        AnalogInput cAMINO_TEMPERATURA,
+        ComparatorWithHysteresis cAMINO_ON_OFF,
         DigitalOutput rELAY_POMPA_CAMINO
         )
     {

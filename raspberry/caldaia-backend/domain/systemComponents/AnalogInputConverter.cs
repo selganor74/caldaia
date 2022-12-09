@@ -2,17 +2,16 @@ using Microsoft.Extensions.Logging;
 
 namespace domain.systemComponents;
 
-public class AnalogInputConverter<TFromMeasure, TToMeasure> : AnalogInput<TToMeasure>, IDisposable
-    where TFromMeasure : IMeasure
+public class AnalogInputConverter<TToMeasure> : AnalogInput, IDisposable
     where TToMeasure : IMeasure
 {
-    private readonly AnalogInput<TFromMeasure> source;
+    private readonly AnalogInput source;
 
     public AnalogInputConverter(
         string name,
-        AnalogInput<TFromMeasure> source,
+        AnalogInput source,
         Func<decimal, decimal> valueConverter,
-        ILogger<AnalogInput<TToMeasure>> log) : base(name, log)
+        ILogger<AnalogInput> log) : base(name, log)
     {
         this.source = source;
 

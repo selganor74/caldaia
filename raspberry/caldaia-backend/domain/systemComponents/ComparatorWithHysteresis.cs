@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using domain.measures;
 using Microsoft.Extensions.Logging;
 
@@ -10,22 +9,21 @@ public enum OnOffLogic
     OffWhenRaising
 }
 
-public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
-    where TMeasure : IMeasure
+public class ComparatorWithHysteresis : DigitalOutput, IDisposable
 {
-    private readonly AnalogInput<TMeasure> source;
+    private readonly AnalogInput source;
     private readonly decimal riseThreshold;
     private readonly decimal fallThreshold;
     private readonly OnOffLogic logic;
 
     public ComparatorWithHysteresis(
         string name,
-        AnalogInput<TMeasure> source,
+        AnalogInput source,
         decimal riseThreshold,
         decimal fallThreshold,
         OnOffLogic logic,
         TimeSpan minTimeBetweenToggles,
-        ILogger<ComparatorWithHysteresis<TMeasure>> log
+        ILogger<ComparatorWithHysteresis> log
         ) : base(name, log)
     {
         this.SetMinTimeBetweenToggles(minTimeBetweenToggles);
@@ -39,9 +37,9 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
         source.OnValueRead += OnSourceNewValue;
     }
 
-    private void OnSourceNewValue(object? source, TMeasure newValue)
+    private void OnSourceNewValue(object? source, IMeasure newValue)
     {
-        if ((this.LastMeasure?.IsOff() ?? true) && logic == OnOffLogic.OnWhenRaising)
+        if ((((OnOff)this.LastMeasure)?.IsOff() ?? true) && logic == OnOffLogic.OnWhenRaising)
         {
             if (newValue.Value > riseThreshold)
                 this.SetToOn($"{this.source.Name} value ({newValue.FormattedValue}) > rise threshold ({riseThreshold})");
@@ -49,7 +47,7 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
             return;
         }
 
-        if ((this.LastMeasure?.IsOn() ?? false) && logic == OnOffLogic.OnWhenRaising)
+        if ((((OnOff)this.LastMeasure)?.IsOn() ?? false) && logic == OnOffLogic.OnWhenRaising)
         {
             if (newValue.Value < fallThreshold)
                 this.SetToOff($"{this.source.Name} value ({newValue.FormattedValue}) < fall threshold ({fallThreshold})");
@@ -57,7 +55,7 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
             return;
         }
 
-        if (this.LastMeasure.IsOff() && logic == OnOffLogic.OffWhenRaising)
+        if (((OnOff)this.LastMeasure).IsOff() && logic == OnOffLogic.OffWhenRaising)
         {
             if (newValue.Value < fallThreshold)
             {
@@ -67,7 +65,7 @@ public class ComparatorWithHysteresis<TMeasure> : DigitalOutput, IDisposable
             }
         }
 
-        if (this.LastMeasure.IsOn() && logic == OnOffLogic.OffWhenRaising)
+        if (((OnOff)this.LastMeasure).IsOn() && logic == OnOffLogic.OffWhenRaising)
         {
             if (newValue.Value > fallThreshold)
             {

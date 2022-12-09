@@ -7,7 +7,7 @@ namespace raspberry_gpio;
 // Converts a value from the ADS1115 ADC to a Temperature using a model based on a pre-calculated Beta value
 // see https://www.giangrandi.org/electronics/ntc/ntc.shtml
 // and https://svelto.faculty.polimi.it/didattica/materiale_didattico/materiale_didattico_MA/Sensori%20di%20Temperatura.pdf
-public class NtcVulcanoConverter : AnalogInputConverter<PureNumber, Temperature>
+public class NtcVulcanoConverter : AnalogInputConverter<Temperature>
 {
     const decimal Vdd = 3.3m;                   // tensione di alimentazione del circuito
     const decimal steps = 32767m;               // 2^15 - 1 valori positivi
@@ -26,6 +26,9 @@ public class NtcVulcanoConverter : AnalogInputConverter<PureNumber, Temperature>
             try
             {
                 var Vradc = (Vdd / steps) * adcReading;     // La tensione letta dall'adc
+                if (Vradc == 0m)
+                    return decimal.MaxValue;
+                    
                 decimal Rntc = Radc * (Vdd - Vradc) / Vradc;
 
                 // Make all calculations as Double ...
@@ -33,10 +36,10 @@ public class NtcVulcanoConverter : AnalogInputConverter<PureNumber, Temperature>
 
                 // ... and then convert it back to Decimal
                 var Tcelsius = CapConvertDoubleToDecimal(Tk) - 273.15m;
-                
+
                 var Rmeasure = new Resistance(Rntc);
                 var Tmeasure = new Temperature(Tcelsius);
-                
+
                 logger?.LogDebug($"adc value {adcReading} converted to Resistance {Rmeasure.FormattedValue} and Temperature {Tmeasure.FormattedValue}");
 
                 return Tcelsius;
@@ -51,24 +54,27 @@ public class NtcVulcanoConverter : AnalogInputConverter<PureNumber, Temperature>
     private static decimal CapConvertDoubleToDecimal(double doubleInput)
     {
         decimal toReturn;
-        if (doubleInput < (double)Decimal.MinValue)
+        if (doubleInput < (double)Decimal.MinValue || Double.IsNegativeInfinity(doubleInput))
         {
             toReturn = Decimal.MinValue;
             return toReturn;
         }
 
-        if (doubleInput > (double)Decimal.MaxValue)
+        if (doubleInput > (double)Decimal.MaxValue || Double.IsInfinity(doubleInput))
         {
             toReturn = Decimal.MaxValue;
             return toReturn;
         }
+
+        if (Double.IsNaN(doubleInput))
+            return Decimal.MaxValue;
 
         return (decimal)doubleInput;
     }
 
     public NtcVulcanoConverter(
         string name,
-        AnalogInput<PureNumber> adcInput,
+        AnalogInput adcInput,
         ILogger<NtcVulcanoConverter> log
         ) : base(name, adcInput, valueConverter, log)
     {

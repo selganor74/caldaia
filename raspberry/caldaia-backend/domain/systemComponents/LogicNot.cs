@@ -18,12 +18,13 @@ public class LogicNot : DigitalInput
         source.OnValueRead += OnSourceChanged;
     }
 
-    private void OnSourceChanged(object? source, OnOff newValue) 
+    private void OnSourceChanged(object? source, IMeasure newValue) 
     {
-        if (newValue.DigitalValue == OnOffState.ON)
-            this.LastMeasure = newValue.WithNewValue(0);
+        var lv = (OnOff)newValue;
+        if (lv.DigitalValue == OnOffState.ON)
+            this.LastMeasure = lv.WithNewValue(0);
         
-        if (newValue.DigitalValue == OnOffState.OFF)
-            this.LastMeasure = newValue.WithNewValue(1);
+        if (lv.DigitalValue == OnOffState.OFF)
+            this.LastMeasure = lv.WithNewValue(1);
     }
 }

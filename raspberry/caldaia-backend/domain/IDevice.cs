@@ -7,6 +7,9 @@ public interface IDevice
 {
     string Name { get; }
 
+    IMeasure? LastMeasure { get; }
+    event EventHandler<IMeasure>? OnValueRead;
+
     // returns true if LastMeasure is not null
     bool IsReady();
 
@@ -14,25 +17,18 @@ public interface IDevice
     Exception? LastError { get; }
 }
 
-public interface IDevice<TMeasure> : IDevice where TMeasure : IMeasure
-{
-    TMeasure? LastMeasure { get; }
-    event EventHandler<TMeasure>? OnValueRead;
-}
-
-public abstract class Device<TMeasure> : IDevice<TMeasure>
-    where TMeasure : IMeasure
+public abstract class Device : IDevice
 {
     public string Name { get; protected set; }
-    public virtual event EventHandler<TMeasure>? OnValueRead;
+    public virtual event EventHandler<IMeasure>? OnValueRead;
 
     public DateTime? FirstTimeSet { get; protected set; }
 
     public Exception? LastError { get; protected set; }
 
-    protected ILogger<Device<TMeasure>> log;
-    protected TMeasure? _lastMeasure;
-    public virtual TMeasure? LastMeasure
+    protected ILogger<Device> log;
+    protected virtual IMeasure? _lastMeasure { get; set; }
+    public virtual IMeasure? LastMeasure
     {
         get
         {
@@ -51,10 +47,10 @@ public abstract class Device<TMeasure> : IDevice<TMeasure>
         }
     }
 
-    protected Device(string name, ILogger<Device<TMeasure>>? log = null)
+    protected Device(string name, ILogger<Device>? log = null)
     {
         Name = name;
-        this.log = log ?? NullLoggerFactory.Instance.CreateLogger<Device<TMeasure>>();
+        this.log = log ?? NullLoggerFactory.Instance.CreateLogger<Device>();
     }
 
     public bool IsReady()
@@ -63,7 +59,7 @@ public abstract class Device<TMeasure> : IDevice<TMeasure>
     }
 
 
-    protected virtual void Fire(EventHandler<TMeasure>? eventHandler, TMeasure measure)
+    protected virtual void Fire(EventHandler<IMeasure>? eventHandler, IMeasure measure)
     {
         if (eventHandler == null)
             return;

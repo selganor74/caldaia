@@ -21,7 +21,7 @@ public class MockDigitalInput : DigitalInput, IDisposable
 
     public void Toggle(DateTime? utcTimeStamp = null)
     {
-        var newValue = (this._lastMeasure?.DigitalValue ?? OnOffState.OFF) == OnOffState.ON ? OnOffState.OFF : OnOffState.ON;
+        var newValue = (((OnOff)(this._lastMeasure))?.DigitalValue ?? OnOffState.OFF) == OnOffState.ON ? OnOffState.OFF : OnOffState.ON;
         this.LastMeasure = new OnOff(newValue, utcTimeStamp);
     }
 

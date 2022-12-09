@@ -23,25 +23,25 @@ public class Tests
     [SetUp]
     public void Setup()
     {
-        var adcInput = new MockAnalogInput<Voltage>("caminoTemp ADC", new NullLogger<MockAnalogInput<Voltage>>());
-        var caminoTemp = new AnalogInputConverter<Voltage, Temperature>(
+        var adcInput = new MockAnalogInput("caminoTemp ADC", new NullLogger<MockAnalogInput>());
+        var caminoTemp = new AnalogInputConverter<Temperature>(
             nameof(CaldaiaIOSet.CAMINO_TEMPERATURA),
             adcInput,
             (sourceVal) =>
             {
                 return sourceVal / 750m;
             },
-            new NullLogger<AnalogInput<Temperature>>()
+            new NullLogger<AnalogInput>()
         );
 
-        var camino_on_off = new ComparatorWithHysteresis<Temperature>(
+        var camino_on_off = new ComparatorWithHysteresis(
             nameof(CaldaiaIOSet.CAMINO_ON_OFF),
             caminoTemp,
             45m,
             40m,
             OnOffLogic.OnWhenRaising,
             TimeSpan.FromSeconds(1),
-            new NullLogger<ComparatorWithHysteresis<Temperature>>()
+            new NullLogger<ComparatorWithHysteresis>()
             );
 
         var relayPompaCamino = new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_POMPA_CAMINO), new NullLogger<MockDigitalOutput>());
@@ -61,8 +61,8 @@ public class Tests
         var rotex = new Rotex(
             tERMOSTATO_ROTEX: new MockDigitalInput(nameof(CaldaiaIOSet.TERMOSTATO_ROTEX), new NullLogger<MockDigitalInput>()),
             rOTEX_STATO_POMPA: new MockDigitalInput(nameof(CaldaiaIOSet.ROTEX_STATO_POMPA), new NullLogger<DigitalInput>()),
-            rOTEX_TEMP_ACCUMULO: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.ROTEX_TEMP_ACCUMULO), new NullLogger<MockAnalogInput<Temperature>>()),
-            rOTEX_TEMP_PANNELLI: new MockAnalogInput<Temperature>(nameof(CaldaiaIOSet.ROTEX_TEMP_PANNELLI), new NullLogger<MockAnalogInput<Temperature>>())
+            rOTEX_TEMP_ACCUMULO: new MockAnalogInput(nameof(CaldaiaIOSet.ROTEX_TEMP_ACCUMULO), new NullLogger<MockAnalogInput>()),
+            rOTEX_TEMP_PANNELLI: new MockAnalogInput(nameof(CaldaiaIOSet.ROTEX_TEMP_PANNELLI), new NullLogger<MockAnalogInput>())
         );
 
         var caldaia = new CaldaiaMetano(

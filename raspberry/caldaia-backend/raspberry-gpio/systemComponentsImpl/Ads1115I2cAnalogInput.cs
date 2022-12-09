@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace raspberry_gpio;
 
-public class Ads1115I2cAnalogInput : AnalogInput<PureNumber>, IDisposable
+public class Ads1115I2cAnalogInput : AnalogInput, IDisposable
 {
     private readonly ADS1115Sensor adc;
     private readonly TimeSpan readInterval;
@@ -28,11 +28,7 @@ public class Ads1115I2cAnalogInput : AnalogInput<PureNumber>, IDisposable
             this.adc = new ADS1115Sensor(addr);
             this.readInterval = readInterval;
 
-#pragma warning disable CS8604
-#pragma warning disable CS8631
-            LastMeasure = LastMeasure.WithNewValue(0m);
-#pragma warning restore CS8631
-#pragma warning restore CS8604
+            LastMeasure = new PureNumber(0m);
             adc.Initialize(busId);
 
             settings = new ADS1115SensorSetting();
@@ -56,9 +52,9 @@ public class Ads1115I2cAnalogInput : AnalogInput<PureNumber>, IDisposable
         {
             while (isStarted)
             {
-#pragma warning disable CS8631
                 Thread.Sleep(readInterval);
                 var value = (decimal)adc.readContinuous();
+#pragma warning disable CS8604
                 LastMeasure = LastMeasure.WithNewValue(value);
 #pragma warning restore CS8604
                 log.LogDebug($"{Name} Read new value: adc:{value}");

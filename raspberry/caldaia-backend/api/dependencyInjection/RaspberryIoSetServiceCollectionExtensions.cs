@@ -1,6 +1,5 @@
 using System.Device.Gpio;
 using application;
-using domain.measures;
 using domain.systemComponents;
 using domain.systemComponents.mocks;
 using raspberry_gpio;
@@ -61,7 +60,7 @@ public static class RaspberryIoSetServiceCollectionExtensions
 #pragma warning restore CS8604
             );
 
-        var caminoOnOff = new ComparatorWithHysteresis<Temperature>(
+        var caminoOnOff = new ComparatorWithHysteresis(
             nameof(CaldaiaIOSet.CAMINO_ON_OFF),
             ccaminoTmp,
             riseThreshold: 45m,
@@ -69,7 +68,7 @@ public static class RaspberryIoSetServiceCollectionExtensions
             logic: OnOffLogic.OnWhenRaising,
             TimeSpan.FromSeconds(60),
 #pragma warning disable CS8604
-            log: injector.GetService<ILogger<ComparatorWithHysteresis<Temperature>>>()
+            log: injector.GetService<ILogger<ComparatorWithHysteresis>>()
 #pragma warning restore CS8604
         );
 
@@ -117,17 +116,17 @@ public static class RaspberryIoSetServiceCollectionExtensions
         GpioController gpioCtrl
     )
     { 
-        var tempAccumulo = new MockAnalogInput<Temperature>(
+        var tempAccumulo = new MockAnalogInput(
                 nameof(CaldaiaIOSet.ROTEX_TEMP_ACCUMULO),
 #pragma warning disable CS8604
-                injector.GetService<ILogger<MockAnalogInput<Temperature>>>()
+                injector.GetService<ILogger<MockAnalogInput>>()
 #pragma warning restore CS8604
             );
 
-        var tempPannelli = new MockAnalogInput<Temperature>(
+        var tempPannelli = new MockAnalogInput(
                 nameof(CaldaiaIOSet.ROTEX_TEMP_PANNELLI),
 #pragma warning disable CS8604
-                injector.GetService<ILogger<MockAnalogInput<Temperature>>>()
+                injector.GetService<ILogger<MockAnalogInput>>()
 #pragma warning restore CS8604
             );
 
@@ -147,6 +146,13 @@ public static class RaspberryIoSetServiceCollectionExtensions
 #pragma warning restore CS8604
             );
 
+        var termostatoRotexNegated = new LogicNot(
+            nameof(CaldaiaIOSet.TERMOSTATO_ROTEX) + " Negated", 
+            termostatoRotex,
+#pragma warning disable CS8604
+                injector.GetService<ILogger<LogicNot>>()
+#pragma warning restore CS8604
+            );
 
         // tempAccumulo.StartSineInput(
         //     new Temperature(35),
@@ -171,7 +177,7 @@ public static class RaspberryIoSetServiceCollectionExtensions
             rOTEX_TEMP_ACCUMULO: tempAccumulo,
             rOTEX_TEMP_PANNELLI: tempPannelli,
             rOTEX_STATO_POMPA: statoPompaRotex,
-            tERMOSTATO_ROTEX: termostatoRotex 
+            tERMOSTATO_ROTEX: termostatoRotexNegated 
         );
 
         return rotex;

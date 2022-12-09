@@ -2,12 +2,12 @@ using Microsoft.Extensions.Logging;
 
 namespace domain.systemComponents.mocks;
 
-public class MockAnalogInput<TMeasure> : AnalogInput<TMeasure>, IDisposable where TMeasure : IMeasure
+public class MockAnalogInput : AnalogInput, IDisposable
 {
     private class SineInputParameters
     {
-        public TMeasure min { get; }
-        public TMeasure max { get; }
+        public IMeasure min { get; }
+        public IMeasure max { get; }
         public TimeSpan period { get; }
         public int measuresPerPeriod { get; }
         public TimeSpan timeStep => period / measuresPerPeriod;
@@ -15,8 +15,8 @@ public class MockAnalogInput<TMeasure> : AnalogInput<TMeasure>, IDisposable wher
         public decimal offset => (max.Value + min.Value) / 2;
 
         public SineInputParameters(
-            TMeasure min,
-            TMeasure max,
+            IMeasure min,
+            IMeasure max,
             TimeSpan period,
             int measuresPerPeriod)
         {
@@ -31,23 +31,23 @@ public class MockAnalogInput<TMeasure> : AnalogInput<TMeasure>, IDisposable wher
     private bool isSineInputStarted;
 
     #pragma warning disable CS8618
-    private MockAnalogInput<TMeasure>.SineInputParameters sineInputParameters;
+    private MockAnalogInput.SineInputParameters sineInputParameters;
 
-    public MockAnalogInput(string name, ILogger<MockAnalogInput<TMeasure>> log) : base(name, log)
+    public MockAnalogInput(string name, ILogger<MockAnalogInput> log) : base(name, log)
     {
         sineInputThread = new Thread((obj) => SineInput());
     }
     #pragma warning restore CS8618
 
     // Provides a means of setting the input from the outside.
-    public void SetInput(TMeasure newMeasure)
+    public void SetInput(IMeasure newMeasure)
     {
         this.LastMeasure = newMeasure;
     }
 
     public void StartSineInput(
-        TMeasure min,
-        TMeasure max,
+        IMeasure min,
+        IMeasure max,
         TimeSpan period,
         int measuresPerPeriod)
     {

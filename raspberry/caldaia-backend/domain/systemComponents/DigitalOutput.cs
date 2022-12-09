@@ -99,7 +99,7 @@ public abstract class DigitalOutput : DigitalInput, IDisposable
     private void DutyCycle()
     {
         var sw = new Stopwatch();
-        var currentState = () => this._lastMeasure?.DigitalValue ?? OnOffState.OFF;
+        var currentState = () => ((OnOff)this._lastMeasure)?.DigitalValue ?? OnOffState.OFF;
         var lastStateChange = () => this._lastMeasure?.UtcTimeStamp ?? DateTime.MinValue;
         var canToggle = () => (DateTime.UtcNow - lastStateChange() > TimeSpan.FromSeconds(10));
         try

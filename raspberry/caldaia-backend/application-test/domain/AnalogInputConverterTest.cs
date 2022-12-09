@@ -17,12 +17,12 @@ public class AnalogInputConverterTest
     [Test]
     public void AnalogInputConverter_must_convert_at_each_ValueChanged_event()
     {
-        var input = new MockAnalogInput<PureNumber>("mock input", new NullLogger<MockAnalogInput<PureNumber>>());
-        var converter = new AnalogInputConverter<PureNumber, Temperature>("sut", input, (inmeasure) =>
+        var input = new MockAnalogInput("mock input", new NullLogger<MockAnalogInput>());
+        var converter = new AnalogInputConverter<Temperature>("sut", input, (inmeasure) =>
         {
             return inmeasure * 2m;
         },
-        new NullLogger<AnalogInput<Temperature>>()
+        new NullLogger<AnalogInput>()
         );
 
         input.SetInput(new PureNumber(1m));
@@ -32,9 +32,9 @@ public class AnalogInputConverterTest
     [Test]
     public void NtcVulcanoConverter_must_never_throw_an_OverflowException()
     {
-        var input = new MockAnalogInput<PureNumber>("mock input", new NullLogger<MockAnalogInput<PureNumber>>());
+        var input = new MockAnalogInput("mock input", new NullLogger<MockAnalogInput>());
         var sut = new NtcVulcanoConverter("sut", input, new NullLogger<NtcVulcanoConverter>());
-        for(var testInput = -32768m; testInput <=32767m; testInput++ ) {
+        for(var testInput = -32767m; testInput <=32767m; testInput++ ) {
             var newMeasure = new PureNumber(testInput);
             Assert.DoesNotThrow(() => input.SetInput(newMeasure));
             Assert.IsNull(sut.LastError, $"failed at testInput = {testInput}");

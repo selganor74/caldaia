@@ -52,19 +52,21 @@ public class DigitalIOMeter
         inputToMeasure.TransitionedFromOnToOff += OnToOffHandler;
     }
 
-    protected virtual void ValueChangedHandler(object? sender, OnOff? newValue)
+    protected virtual void ValueChangedHandler(object? sender, IMeasure? newValue)
     {
         if (newValue is null)
             return;
 
-        this.LastKnownValue = newValue;
+        var nv = (OnOff)newValue;
+
+        this.LastKnownValue = nv;
         OnOff? removedValue = default(OnOff);
         if (this.history.Count == MAX_ITEMS_IN_HISTORY)
         {
             removedValue = this.history[0];
             this.history.RemoveAt(0);
         }
-        this.history.Add(newValue);
+        this.history.Add(nv);
     }
 
     protected virtual void OffToOnHandler(object? sender, OnOff? newValue)

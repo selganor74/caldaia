@@ -15,19 +15,19 @@ public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
     private Thread readThread;
     private bool isStarted = false;
 
-    private MockAnalogInput<Temperature> _ROTEX_TEMPERATURA_PANNELLI { get; }
-    public AnalogInput<Temperature> ROTEX_TEMPERATURA_PANNELLI => _ROTEX_TEMPERATURA_PANNELLI;
+    private MockAnalogInput _ROTEX_TEMPERATURA_PANNELLI { get; }
+    public AnalogInput ROTEX_TEMPERATURA_PANNELLI => _ROTEX_TEMPERATURA_PANNELLI;
     
-    private MockAnalogInput<Temperature> _ROTEX_TEMPERATURA_ACCUMULO { get; }    
-    public AnalogInput<Temperature> ROTEX_TEMPERATURA_ACCUMULO => _ROTEX_TEMPERATURA_ACCUMULO;
+    private MockAnalogInput _ROTEX_TEMPERATURA_ACCUMULO { get; }    
+    public AnalogInput ROTEX_TEMPERATURA_ACCUMULO => _ROTEX_TEMPERATURA_ACCUMULO;
 
     private MockDigitalInput _ROTEX_STATO_POMPA { get; }
     public DigitalInput ROTEX_STATO_POMPA => _ROTEX_STATO_POMPA;
 
     public RaspberryRotexReader(
         RaspberryRotexReaderConfig config,
-        MockAnalogInput<Temperature> rOTEX_TEMPERATURA_PANNELLI,
-        MockAnalogInput<Temperature> rOTEX_TEMPERATURA_ACCUMULO,
+        MockAnalogInput rOTEX_TEMPERATURA_PANNELLI,
+        MockAnalogInput rOTEX_TEMPERATURA_ACCUMULO,
         MockDigitalInput rOTEX_STATO_POMPA,
         ILogger<RaspberryRotexReader> log
         )
