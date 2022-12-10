@@ -82,6 +82,7 @@ public abstract class DigitalOutput : DigitalInput, IDisposable
         if (!IsDutyCycleStarted)
         {
             IsDutyCycleStarted = true;
+            this.dutyCycleThread = new Thread(() => DutyCycle());
             dutyCycleThread.Start();
         }
     }

@@ -3,7 +3,7 @@ using application;
 using application.infrastructure;
 using Microsoft.AspNetCore.SignalR;
 
-namespace api.arduinoMimic;
+namespace api.signalr;
 public class SignalRNotificationAdapter
 {
     private readonly ILogger<SignalRNotificationAdapter> _log;
@@ -29,32 +29,11 @@ public class SignalRNotificationAdapter
             "status-reading",
             (CaldaiaAllValues data) =>
                 {
-                    _log.LogDebug($"Converting {nameof(CaldaiaAllValues)} to {nameof(DataFromArduino)}");
-                    NotifyData(DataFromArduino.From(data));
-                });
-
-        notificationHub.Subscribe<CaldaiaAllValues>(
-            "status-reading",
-            (CaldaiaAllValues data) =>
-                {
                     _log.LogDebug($"Directly sending CaldaiaAllValues to channel caldaia-state.");
                     signalrDataHub.Clients.All.SendAsync("caldaia-state", data);
                 });
 
         //_appObservable.Subscribe("settings", (SettingsFromArduino settings) => { NotifyToChannel("settings", settings); });
         //_appObservable.Subscribe("raw", (string rawData) => { NotifyToChannel("raw", rawData); });
-    }
-
-    private void NotifyData(DataFromArduino data)
-    {
-        try
-        {
-            _log.LogDebug("Notifying status to datahub clients.");
-            signalrDataHub.Clients.All.SendAsync("notify", data);
-        }
-        catch (Exception e)
-        {
-            _log.LogWarning("Errors in Hub.", e);
-        }
     }
 }
