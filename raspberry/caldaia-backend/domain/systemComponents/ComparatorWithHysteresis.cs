@@ -23,7 +23,7 @@ public class ComparatorWithHysteresis : DigitalOutput, IDisposable
         decimal fallThreshold,
         OnOffLogic logic,
         TimeSpan minTimeBetweenToggles,
-        ILogger<ComparatorWithHysteresis> log
+        ILogger log
         ) : base(name, log)
     {
         this.SetMinTimeBetweenToggles(minTimeBetweenToggles);

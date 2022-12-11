@@ -15,4 +15,19 @@
     <ProjectReference Include="..\rotex\rotex.csproj" />
     <ProjectReference Include="..\raspberry-gpio\raspberry-gpio.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <_ExternalUI Include="..\..\caldaia-frontend\caldaia-frontend\dist\caldaia-frontend\*.*">
+      <InProject>false</InProject>
+    </_ExternalUI>
+  </ItemGroup>
+  <Target Name="CopyUIToWwwRoot" AfterTargets="AfterBuild">
+    <Copy SourceFiles="@(_ExternalUI)" DestinationFolder="$(ProjectDir)\wwwroot\app" />
+  </Target>
+  <Target Name="CopyUIToOutDir" AfterTargets="AfterBuild">
+    <Copy SourceFiles="@(_ExternalUI)" DestinationFolder="$(OutDir)\wwwroot\app" />
+  </Target>
+  <Target Name="CopyUIToPublish" AfterTargets="AfterPublish">
+    <Copy SourceFiles="@(_ExternalUI)" DestinationFolder="$(PublishDir)\wwwroot\app" />
+    <!-- <Exec Command="CALL $(ProjectDir)build-scripts\copy-ui-to-www.bat" /> -->
+  </Target>
 </Project>

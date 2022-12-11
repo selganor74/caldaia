@@ -50,43 +50,10 @@ public class CaldaiaIOSet : IDisposable
         if (log == null)
             log = NullLoggerFactory.Instance.CreateLogger(nameof(CaldaiaIOSet));
 
-
-        var isReady =  !(RELAY_POMPA_CAMINO.LastMeasure == null
-            || RELAY_BYPASS_TERMOSTATO_AMBIENTE.LastMeasure == null
-            || RELAY_POMPA_RISCALDAMENTO.LastMeasure == null
-            || CAMINO_ON_OFF.LastMeasure == null
-            || CAMINO_TEMPERATURA.LastMeasure == null
-            || RELAY_CALDAIA.LastMeasure == null
-            || TERMOSTATO_AMBIENTI.LastMeasure == null
-            || TERMOSTATO_ROTEX.LastMeasure == null
-            || ROTEX_TEMP_ACCUMULO.LastMeasure == null
-        );
-
-        if (!isReady) {
-            LogIsReadyDetail(log);
-        }
-
-        return isReady;
-    }
-
-    private void LogIsReadyDetail(ILogger log)
-    {
-        if (DateTime.Now > (LastPrinted + TimeSpan.FromSeconds(10)))
-        {
-            LastPrinted = DateTime.Now;
-            log.LogInformation(@$"
-{nameof(RELAY_POMPA_CAMINO)}:{RELAY_POMPA_CAMINO.LastMeasure == null}
-{nameof(RELAY_BYPASS_TERMOSTATO_AMBIENTE)}: {RELAY_BYPASS_TERMOSTATO_AMBIENTE.LastMeasure == null}
-{nameof(RELAY_POMPA_RISCALDAMENTO)}: {RELAY_POMPA_RISCALDAMENTO.LastMeasure == null}
-{nameof(CAMINO_ON_OFF)}: {CAMINO_ON_OFF.LastMeasure == null}
-{nameof(CAMINO_TEMPERATURA)}: {CAMINO_TEMPERATURA.LastMeasure == null}
-{nameof(RELAY_CALDAIA)}: {RELAY_CALDAIA.LastMeasure == null}
-{nameof(TERMOSTATO_AMBIENTI)}: {TERMOSTATO_AMBIENTI.LastMeasure == null}
-{nameof(TERMOSTATO_ROTEX)}: {TERMOSTATO_ROTEX.LastMeasure == null}
-{nameof(ROTEX_TEMP_ACCUMULO)}: {ROTEX_TEMP_ACCUMULO.LastMeasure == null}
-"
-    );
-        }
+        return ROTEX.IsReady()
+            && CAMINO.IsReady()
+            && CALDAIA.IsReady()
+            && RISCALDAMENTO.IsReady();
     }
 
     public CaldaiaAllValues ReadAll(ILogger? log)
@@ -116,6 +83,8 @@ public class CaldaiaIOSet : IDisposable
 
         return toReturn;
     }
+
+    
 
     // Disposes every property that can be disposed
     public void Dispose()

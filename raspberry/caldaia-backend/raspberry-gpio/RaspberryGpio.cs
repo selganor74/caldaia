@@ -1,11 +1,9 @@
 using System.Device.Gpio;
-using application.infrastructure;
-using application.services;
 using Microsoft.Extensions.Logging;
 
 namespace raspberry_gpio;
 
-public class RaspberryGpio : IStartable, IGpioInputReader, IDisposable
+public class RaspberryGpio : IDisposable
 {
     private GpioController gpio;
     private Thread blinker;

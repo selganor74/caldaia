@@ -18,7 +18,7 @@ public class NtcVulcanoConverter : AnalogInputConverter<Temperature>
     const decimal Tbeta0 = 273.15m;             // T riferimento calcolo Beta = 0°C = 273.15 K
     const decimal Rntc0 = 16452.46338m;         // Resistenza dell'ntc a 0°
 
-    private static ILogger<NtcVulcanoConverter>? logger;
+    private static ILogger? logger;
 
     private static Func<decimal, decimal> valueConverter =
         (decimal adcReading) =>
@@ -28,7 +28,7 @@ public class NtcVulcanoConverter : AnalogInputConverter<Temperature>
                 var Vradc = (Vdd / steps) * adcReading;     // La tensione letta dall'adc
                 if (Vradc == 0m)
                     return decimal.MaxValue;
-                    
+
                 decimal Rntc = Radc * (Vdd - Vradc) / Vradc;
 
                 // Make all calculations as Double ...
@@ -75,7 +75,7 @@ public class NtcVulcanoConverter : AnalogInputConverter<Temperature>
     public NtcVulcanoConverter(
         string name,
         AnalogInput adcInput,
-        ILogger<NtcVulcanoConverter> log
+        ILogger log
         ) : base(name, adcInput, valueConverter, log)
     {
         logger = logger ?? log;

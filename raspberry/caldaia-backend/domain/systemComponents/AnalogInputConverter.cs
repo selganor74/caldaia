@@ -11,7 +11,7 @@ public class AnalogInputConverter<TToMeasure> : AnalogInput, IDisposable
         string name,
         AnalogInput source,
         Func<decimal, decimal> valueConverter,
-        ILogger<AnalogInput> log) : base(name, log)
+        ILogger log) : base(name, log)
     {
         this.source = source;
 

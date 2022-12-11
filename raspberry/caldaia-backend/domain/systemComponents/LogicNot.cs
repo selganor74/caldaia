@@ -9,7 +9,7 @@ public class LogicNot : DigitalInput
     public LogicNot(
         string name,
         DigitalInput source,  
-        ILogger<LogicNot> log
+        ILogger log
         ) : base(name, log)
     {
         if (source.LastMeasure != null)

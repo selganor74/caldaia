@@ -33,7 +33,7 @@ public class MockAnalogInput : AnalogInput, IDisposable
     #pragma warning disable CS8618
     private MockAnalogInput.SineInputParameters sineInputParameters;
 
-    public MockAnalogInput(string name, ILogger<MockAnalogInput> log) : base(name, log)
+    public MockAnalogInput(string name, ILogger log) : base(name, log)
     {
         sineInputThread = new Thread((obj) => SineInput());
     }
@@ -55,6 +55,7 @@ public class MockAnalogInput : AnalogInput, IDisposable
         if (isSineInputStarted)
             return;
         isSineInputStarted = true;
+        sineInputThread = new Thread((obj) => SineInput());
         sineInputThread.Start();
     }
 

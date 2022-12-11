@@ -14,7 +14,7 @@ public class RaspberryDigitalInput : DigitalInput
         string name,
         int gpioId,
         GpioController gpio, 
-        ILogger<RaspberryDigitalInput> log
+        ILogger log
         ) : base(name, log)
     {
         this.gpioId = gpioId;

@@ -1,9 +1,13 @@
-using domain.systemComponents;
+
 using application.infrastructure;
+using domain.measures;
+using domain.systemComponents;
+using domain.systemComponents.mocks;
+using Microsoft.Extensions.Logging;
 
 namespace application.subSystems;
 
-public class Rotex : IDisposable
+public class Rotex : Subsystem
 {
     public AnalogInput ROTEX_TEMP_ACCUMULO { get; set; }
 
@@ -14,21 +18,18 @@ public class Rotex : IDisposable
     public DigitalInput TERMOSTATO_ROTEX { get; set; }
 
     public Rotex(
-        AnalogInput rOTEX_TEMP_ACCUMULO,
-        AnalogInput rOTEX_TEMP_PANNELLI,
-        DigitalInput rOTEX_STATO_POMPA,
-        DigitalInput tERMOSTATO_ROTEX
-        )
+        INotificationPublisher hub,
+        ILogger<Rotex> log
+    ) : base(hub, log)
     {
-        ROTEX_TEMP_ACCUMULO = rOTEX_TEMP_ACCUMULO;
-        ROTEX_TEMP_PANNELLI = rOTEX_TEMP_PANNELLI;
-        ROTEX_STATO_POMPA = rOTEX_STATO_POMPA;
-        TERMOSTATO_ROTEX = tERMOSTATO_ROTEX;
-    }
+        ROTEX_TEMP_ACCUMULO = new MockAnalogInput(nameof(ROTEX_TEMP_ACCUMULO), log);
+        ROTEX_TEMP_PANNELLI = new MockAnalogInput(nameof(ROTEX_TEMP_PANNELLI), log);
+        ROTEX_STATO_POMPA = new MockDigitalInput(nameof(ROTEX_STATO_POMPA), log);
+        TERMOSTATO_ROTEX = new MockDigitalInput(nameof(TERMOSTATO_ROTEX), log);
 
-    public void Dispose()
-    {
-        this.DisposeDisposables(null);
+        ((MockAnalogInput)ROTEX_TEMP_ACCUMULO).SetInput(new Temperature(50m));
+        ((MockAnalogInput)ROTEX_TEMP_PANNELLI).SetInput(new Temperature(25m));
+        ((MockDigitalInput)ROTEX_STATO_POMPA).Set(domain.measures.OnOffState.OFF);
+        ((MockDigitalInput)TERMOSTATO_ROTEX).Set(domain.measures.OnOffState.OFF);
     }
 }
-#pragma warning restore CS8618

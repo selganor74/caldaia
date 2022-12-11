@@ -1,7 +1,4 @@
-using api.dependencyInjection;
 using application.dependencyInjection;
-using rotex;
-using rotex.dependencyInjection;
 using application.infrastructure;
 
 
@@ -10,6 +7,9 @@ using NLog;
 using NLog.Web;
 using LogLevel = NLog.LogLevel;
 using api.signalr;
+using application;
+using rotex;
+using api.dependencyInjection;
 
 LogManager.Setup().LoadConfiguration(logBuilder =>
 {
@@ -35,10 +35,8 @@ LogManager.Setup().LoadConfiguration(logBuilder =>
         );
 });
 
-
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
-    WebRootPath = "www",
     Args = args
 });
 
@@ -62,10 +60,15 @@ builder.Services.AddSingleton<INotificationPublisher, InProcessNotificationHub>(
 builder.Services.AddSingleton<INotificationSubscriber, InProcessNotificationHub>();
 builder.Services.AddSingleton<SignalRNotificationAdapter>();
 
-builder.Services.AddSerialRotexReader(new RaspberryRotexReaderConfig());
-builder.Services.AddRaspberryGpio();
-builder.Services.AddRaspberryIOSet();
-builder.Services.AddCaldaiaApplication();
+#if RELEASE
+var rotexConfig = new RaspberryRotexReaderConfig();
+builder.Services.AddRaspberryIOSet(rotexConfig);
+#else
+builder.Services.AddMockIOSet();
+#endif
+
+var config = new CaldaiaConfig(TimeSpan.FromSeconds(1));
+builder.Services.AddCaldaiaApplication(config);
 
 var app = builder.Build();
 
@@ -79,7 +82,7 @@ app.UseSwaggerUI();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

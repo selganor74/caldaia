@@ -26,7 +26,7 @@ public abstract class Device : IDevice
 
     public Exception? LastError { get; protected set; }
 
-    protected ILogger<Device> log;
+    protected ILogger log;
     protected virtual IMeasure? _lastMeasure { get; set; }
     public virtual IMeasure? LastMeasure
     {
@@ -47,7 +47,7 @@ public abstract class Device : IDevice
         }
     }
 
-    protected Device(string name, ILogger<Device>? log = null)
+    protected Device(string name, ILogger? log = null)
     {
         Name = name;
         this.log = log ?? NullLoggerFactory.Instance.CreateLogger<Device>();

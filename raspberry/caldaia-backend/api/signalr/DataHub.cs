@@ -20,5 +20,6 @@ public class DataHub : Hub
     {
         _log.LogInformation($"Client disconnected from {GetType().Name}", exception);
         return base.OnDisconnectedAsync(exception);
+        
     }
 }

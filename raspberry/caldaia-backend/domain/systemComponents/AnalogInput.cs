@@ -6,7 +6,7 @@ public abstract class AnalogInput : Device
 {
     public AnalogInput(
         string name,
-        ILogger<AnalogInput> log
+        ILogger log
         ) : base(name, log)
     {
     }

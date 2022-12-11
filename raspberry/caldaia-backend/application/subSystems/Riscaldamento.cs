@@ -1,24 +1,32 @@
 using application.infrastructure;
+using domain.measures;
 using domain.systemComponents;
+using domain.systemComponents.mocks;
+using Microsoft.Extensions.Logging;
 
 namespace application.subSystems;
 
-public class Riscaldamento : IDisposable
+public class Riscaldamento : Subsystem
 {
     public DigitalOutput RELAY_BYPASS_TERMOSTATO_AMBIENTE { get; set; }
     public DigitalInput TERMOSTATO_AMBIENTI { get; set; }
     public DigitalOutput RELAY_POMPA_RISCALDAMENTO { get; set; }
 
-    public Riscaldamento(DigitalOutput rELAY_BYPASS_TERMOSTATO_AMBIENTE, DigitalInput tERMOSTATO_AMBIENTI, DigitalOutput rELAY_POMPA_RISCALDAMENTO)
+    public Riscaldamento(
+        INotificationPublisher hub,
+        ILogger<Riscaldamento> log
+    ) : base(hub, log)
     {
-        RELAY_BYPASS_TERMOSTATO_AMBIENTE = rELAY_BYPASS_TERMOSTATO_AMBIENTE;
-        TERMOSTATO_AMBIENTI = tERMOSTATO_AMBIENTI;
-        RELAY_POMPA_RISCALDAMENTO = rELAY_POMPA_RISCALDAMENTO;
-    }
+        var bypass = new MockDigitalOutput(nameof(RELAY_BYPASS_TERMOSTATO_AMBIENTE),log);
+        bypass.SetToOff("init");
+        RELAY_BYPASS_TERMOSTATO_AMBIENTE = bypass;
 
-    public void Dispose()
-    {
-        this.DisposeDisposables(null);
+        var termoAmb = new MockDigitalInput(nameof(TERMOSTATO_AMBIENTI), log);
+        termoAmb.Set(OnOffState.OFF);
+        TERMOSTATO_AMBIENTI = termoAmb;
+
+        var pompa = new MockDigitalOutput(nameof(RELAY_POMPA_RISCALDAMENTO), log);
+        pompa.SetToOff("init");
+        RELAY_POMPA_RISCALDAMENTO = pompa;
     }
 }
-#pragma warning restore CS8618

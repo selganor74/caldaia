@@ -17,6 +17,13 @@ public class InProcessNotificationHub : INotificationSubscriber, INotificationPu
     {
         this.log = log;
     }
+
+    public void Reset()
+    {
+        handlers.Clear();
+        channelHandlers.Clear();
+    }
+
     public void Publish<TEvent>(string channel, TEvent data)
     {
         log.LogTrace($"Publishing {typeof(TEvent).Name} in channel {channel}.{Environment.NewLine}{JsonConvert.SerializeObject(data, Formatting.Indented)}");

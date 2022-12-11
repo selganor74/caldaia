@@ -16,7 +16,7 @@ public abstract class DigitalOutput : DigitalInput, IDisposable
     private TimeSpan tOn;
     private TimeSpan tOff;
 
-    protected DigitalOutput(string name, ILogger<DigitalOutput> log) : base(name, log)
+    protected DigitalOutput(string name, ILogger log) : base(name, log)
     {
         MIN_TIME_BETWEEN_TOGGLES = TimeSpan.FromSeconds(10);
         lastMinTimeBetweenTogglesLog = DateTime.Now - MIN_TIME_BETWEEN_TOGGLES;

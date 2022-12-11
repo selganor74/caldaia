@@ -21,7 +21,7 @@ public class Ads1115I2cAnalogInput : AnalogInput, IDisposable
         AdcAddress addr,
         AdcInput input,
         TimeSpan readInterval,
-        ILogger<Ads1115I2cAnalogInput> log) : base(name, log)
+        ILogger log) : base(name, log)
     {
         try
         {

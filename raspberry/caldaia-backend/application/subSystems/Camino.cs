@@ -1,24 +1,39 @@
 using domain.systemComponents;
 using domain.measures;
 using application.infrastructure;
+using Microsoft.Extensions.Logging;
+using domain.systemComponents.mocks;
 
 namespace application.subSystems;
 
-public class Camino : IDisposable
+public class Camino : Subsystem
 {
     public AnalogInput CAMINO_TEMPERATURA { get; set; }
     public ComparatorWithHysteresis CAMINO_ON_OFF { get; set; }
     public DigitalOutput RELAY_POMPA_CAMINO { get; set; }
 
     public Camino(
-        AnalogInput cAMINO_TEMPERATURA,
-        ComparatorWithHysteresis cAMINO_ON_OFF,
-        DigitalOutput rELAY_POMPA_CAMINO
-        )
+        INotificationPublisher hub,
+        ILogger<Camino> log
+    ) : base(hub, log)
     {
-        CAMINO_TEMPERATURA = cAMINO_TEMPERATURA;
-        CAMINO_ON_OFF = cAMINO_ON_OFF;
-        RELAY_POMPA_CAMINO = rELAY_POMPA_CAMINO;
+        var camino_temperatura = new MockAnalogInput(nameof(CAMINO_TEMPERATURA), log);
+        camino_temperatura.SetInput(new Temperature(45m));
+        CAMINO_TEMPERATURA = camino_temperatura;
+
+        CAMINO_ON_OFF = new ComparatorWithHysteresis(
+            nameof(CAMINO_ON_OFF),
+            CAMINO_TEMPERATURA,
+            45m,
+            40m,
+            OnOffLogic.OnWhenRaising, TimeSpan.FromSeconds(60),
+            log);
+
+        var relayPompaCamino = new MockDigitalOutput(nameof(RELAY_POMPA_CAMINO), log);
+        relayPompaCamino.SetToOff("init");
+        RELAY_POMPA_CAMINO = relayPompaCamino;
+
+        
     }
 
 

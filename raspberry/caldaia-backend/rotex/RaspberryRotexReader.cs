@@ -1,24 +1,23 @@
 using System.IO.Ports;
 using application.infrastructure;
-using application.services;
 using domain.measures;
 using domain.systemComponents;
 using domain.systemComponents.mocks;
 using Microsoft.Extensions.Logging;
 
 namespace rotex;
-public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
+public class RaspberryRotexReader : IDisposable
 {
     private RaspberryRotexReaderConfig config;
     private SerialPort? serialPort;
-    private readonly ILogger<RaspberryRotexReader> log;
+    private readonly ILogger log;
     private Thread readThread;
     private bool isStarted = false;
 
     private MockAnalogInput _ROTEX_TEMPERATURA_PANNELLI { get; }
     public AnalogInput ROTEX_TEMPERATURA_PANNELLI => _ROTEX_TEMPERATURA_PANNELLI;
-    
-    private MockAnalogInput _ROTEX_TEMPERATURA_ACCUMULO { get; }    
+
+    private MockAnalogInput _ROTEX_TEMPERATURA_ACCUMULO { get; }
     public AnalogInput ROTEX_TEMPERATURA_ACCUMULO => _ROTEX_TEMPERATURA_ACCUMULO;
 
     private MockDigitalInput _ROTEX_STATO_POMPA { get; }
@@ -29,7 +28,7 @@ public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
         MockAnalogInput rOTEX_TEMPERATURA_PANNELLI,
         MockAnalogInput rOTEX_TEMPERATURA_ACCUMULO,
         MockDigitalInput rOTEX_STATO_POMPA,
-        ILogger<RaspberryRotexReader> log
+        ILogger log
         )
     {
         if (config is null)
@@ -56,7 +55,7 @@ public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
         // Set the read/write timeouts in milliseconds
         serialPort.ReadTimeout = 500;
         serialPort.WriteTimeout = 500;
-        serialPort.NewLine = "" + (char)0x0a; 
+        serialPort.NewLine = "" + (char)0x0a;
 
         // this.serialPort.DataReceived += this.DataReceivedHandler;
         this.serialPort.Open();
@@ -82,7 +81,7 @@ public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
     // (pin 6)              - GND
     // (pin 8)  GPIO 14     - TXD 
     // (pin 10) GPIO 15     - RXD <- Abbiamo bisogno solo di questo 
-    
+
     private void SerialRead()
     {
         while (isStarted)
@@ -100,7 +99,8 @@ public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
         }
     }
 
-    struct RotexField {
+    struct RotexField
+    {
         public static readonly int HA = 0;
         public static readonly int BK = 1;
         public static readonly int P1_Percent = 2;
@@ -119,22 +119,43 @@ public class RaspberryRotexReader : IStartable, IRotexReader, IDisposable
         if (line is null)
             return;
 
-        if(!line.Any(c => c == ';'))
+        if (!line.Any(c => c == ';'))
             return;
 
         var components = line.Split(";");
 
-        var tAccumulo = Decimal.Parse(components[RotexField.TS_Accumulo]);
-        _ROTEX_TEMPERATURA_ACCUMULO.SetInput(new Temperature(tAccumulo));
-        log.LogDebug($"{nameof(ParseLine)}: read {nameof(tAccumulo)}: {tAccumulo}");
+        try
+        {
+            var tAccumulo = Decimal.Parse(components[RotexField.TS_Accumulo]);
+            _ROTEX_TEMPERATURA_ACCUMULO.SetInput(new Temperature(tAccumulo));
+            log.LogDebug($"{nameof(ParseLine)}: read {nameof(tAccumulo)}: {tAccumulo}");
+        }
+        catch (Exception e)
+        {
+            log.LogError($"{nameof(_ROTEX_TEMPERATURA_ACCUMULO)}: Unable to parse {components[RotexField.TS_Accumulo]}");
+        }
 
-        var tPannelli = Decimal.Parse(components[RotexField.TK_Pannelli]);
-        _ROTEX_TEMPERATURA_PANNELLI.SetInput(new Temperature(tPannelli));
-        log.LogDebug($"{nameof(ParseLine)}: read {nameof(tPannelli)}: {tPannelli}");
+        try
+        {
+            var tPannelli = Decimal.Parse(components[RotexField.TK_Pannelli]);
+            _ROTEX_TEMPERATURA_PANNELLI.SetInput(new Temperature(tPannelli));
+            log.LogDebug($"{nameof(ParseLine)}: read {nameof(tPannelli)}: {tPannelli}");
+        }
+        catch (Exception e)
+        {
+            log.LogError($"{nameof(_ROTEX_TEMPERATURA_PANNELLI)}: Unable to parse {components[RotexField.TK_Pannelli]}");
+        }
 
-        var statoPompaRotex = Decimal.Parse(components[RotexField.P1_Percent]) != 0;
-        _ROTEX_STATO_POMPA.Set(statoPompaRotex ? OnOffState.ON : OnOffState.OFF);
-        log.LogDebug($"{nameof(ParseLine)}: read {nameof(statoPompaRotex)}: {statoPompaRotex}");
+        try
+        {
+            var statoPompaRotex = Decimal.Parse(components[RotexField.P1_Percent]) != 0;
+            _ROTEX_STATO_POMPA.Set(statoPompaRotex ? OnOffState.ON : OnOffState.OFF);
+            log.LogDebug($"{nameof(ParseLine)}: read {nameof(statoPompaRotex)}: {statoPompaRotex}");
+        }
+        catch (Exception e)
+        {
+            log.LogError($"{nameof(_ROTEX_STATO_POMPA)}: Unable to parse {components[RotexField.P1_Percent]}");
+        }
     }
 
     public void Stop()

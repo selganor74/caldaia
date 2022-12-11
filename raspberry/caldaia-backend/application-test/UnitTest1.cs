@@ -16,13 +16,14 @@ public class Tests
     private CaldaiaIOSet io;
     private CaldaiaApplication application;
 
-    private InProcessNotificationHub notificationHub;
+    private InProcessNotificationHub notificationHub = new InProcessNotificationHub(new NullLogger<InProcessNotificationHub>());
     
 #pragma warning restore CS8618
 
     [SetUp]
     public void Setup()
     {
+        notificationHub.Reset();
         var adcInput = new MockAnalogInput("caminoTemp ADC", new NullLogger<MockAnalogInput>());
         var caminoTemp = new AnalogInputConverter<Temperature>(
             nameof(CaldaiaIOSet.CAMINO_TEMPERATURA),
@@ -46,28 +47,13 @@ public class Tests
 
         var relayPompaCamino = new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_POMPA_CAMINO), new NullLogger<MockDigitalOutput>());
 
-        var camino = new Camino(
-            cAMINO_TEMPERATURA: caminoTemp,
-            cAMINO_ON_OFF: camino_on_off,
-            rELAY_POMPA_CAMINO: relayPompaCamino
-        );
+        var camino = new Camino(notificationHub, new NullLogger<Camino>());
 
-        var riscaldamento = new Riscaldamento(
-            rELAY_BYPASS_TERMOSTATO_AMBIENTE: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_BYPASS_TERMOSTATO_AMBIENTE), new NullLogger<MockDigitalOutput>()),
-            rELAY_POMPA_RISCALDAMENTO: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_POMPA_RISCALDAMENTO), new NullLogger<MockDigitalOutput>()),
-            tERMOSTATO_AMBIENTI: new MockDigitalInput(nameof(CaldaiaIOSet.TERMOSTATO_AMBIENTI), new NullLogger<MockDigitalInput>()) 
-        );
+        var riscaldamento = new Riscaldamento(notificationHub, new NullLogger<Riscaldamento>());
 
-        var rotex = new Rotex(
-            tERMOSTATO_ROTEX: new MockDigitalInput(nameof(CaldaiaIOSet.TERMOSTATO_ROTEX), new NullLogger<MockDigitalInput>()),
-            rOTEX_STATO_POMPA: new MockDigitalInput(nameof(CaldaiaIOSet.ROTEX_STATO_POMPA), new NullLogger<DigitalInput>()),
-            rOTEX_TEMP_ACCUMULO: new MockAnalogInput(nameof(CaldaiaIOSet.ROTEX_TEMP_ACCUMULO), new NullLogger<MockAnalogInput>()),
-            rOTEX_TEMP_PANNELLI: new MockAnalogInput(nameof(CaldaiaIOSet.ROTEX_TEMP_PANNELLI), new NullLogger<MockAnalogInput>())
-        );
+        var rotex = new Rotex(notificationHub, new NullLogger<Rotex>());
 
-        var caldaia = new CaldaiaMetano(
-            rELAY_ACCENSIONE_CALDAIA: new MockDigitalOutput(nameof(CaldaiaIOSet.RELAY_CALDAIA), new NullLogger<MockDigitalOutput>())
-        );
+        var caldaia = new CaldaiaMetano(notificationHub, new NullLogger<CaldaiaMetano>());
 
         this.io = new CaldaiaIOSet(
             cALDAIA: caldaia,

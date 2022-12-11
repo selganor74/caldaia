@@ -13,7 +13,7 @@ public class RaspberryDigitalOutput : DigitalOutput
         string name,
         int gpioId,
         GpioController gpio, 
-        ILogger<RaspberryDigitalOutput> log) : base(name, log)
+        ILogger log) : base(name, log)
     {
         this.gpioId = gpioId;
         this.gpio = gpio;

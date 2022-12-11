@@ -9,7 +9,7 @@ public class MockDigitalInput : DigitalInput, IDisposable
     private bool _isSquareInputRunning;
     private TimeSpan period = TimeSpan.FromSeconds(10);
 
-    public MockDigitalInput(string name, ILogger<DigitalInput> log) : base(name, log)
+    public MockDigitalInput(string name, ILogger log) : base(name, log)
     {
         this._squareInputThread = new Thread((obj) => SquareInput());
     }

@@ -9,7 +9,7 @@ public abstract class DigitalInput : AnalogInput
     public event EventHandler<OnOff>? TransitionedFromOffToOn;
     public event EventHandler<OnOff>? TransitionedFromOnToOff;
 
-    public DigitalInput(string name, ILogger<DigitalInput> log) : base(name, log)
+    public DigitalInput(string name, ILogger log) : base(name, log)
     {
     }
 }
