@@ -17,7 +17,7 @@
   </ItemGroup>
   <ItemGroup>
     <_ExternalUI Include="..\..\caldaia-frontend\caldaia-frontend\dist\caldaia-frontend\*.*">
-      <InProject>false</InProject>
+      <InProject>false</InProject> 
     </_ExternalUI>
   </ItemGroup>
   <Target Name="CopyUIToWwwRoot" AfterTargets="AfterBuild">

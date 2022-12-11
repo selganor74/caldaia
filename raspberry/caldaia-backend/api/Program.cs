@@ -13,6 +13,7 @@ using api.dependencyInjection;
 
 LogManager.Setup().LoadConfiguration(logBuilder =>
 {
+#if RELEASE
     logBuilder.ForLogger()
         .FilterMinLevel(LogLevel.Warn)
         .WriteToConsole();
@@ -33,6 +34,11 @@ LogManager.Setup().LoadConfiguration(logBuilder =>
             archiveAboveSize: 9 * 1024 * 1024,
             maxArchiveFiles: 2
         );
+#else
+    logBuilder.ForLogger()
+        .FilterMinLevel(LogLevel.Debug)
+        .WriteToConsole();
+#endif
 });
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
