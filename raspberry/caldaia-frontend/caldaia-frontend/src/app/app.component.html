@@ -1,21 +1,11 @@
-<div style="margin-left: 8em; margin-right: 8em;margin-top: 5.5em;">
-    <!-- <pre style="font-size:3.25em">
- Temperatura Accumulo : {{tAccumulo}}             
-   Temperatura Camino : {{tCamino}}                   
- Temperatura Pannelli : {{tPannelli}}               
-  Termostato Ambienti : {{termoAmbienti}}    
-     Termostato Rotex : {{termoRotex}}
-         Pompa Camino : {{rPompaCamino}}
-       Pompa Pannelli : {{pompaPannelli}}
-Bypass Termo Ambienti : {{termoAmbienti}}
-    </pre> -->
-<pre style="font-size:3.25em">{{consoleOut}}</pre>
+<div style="margin:0;">
+  <app-temp-chart name="Accumulo" data-endpoint="../api/meters/analog/ROTEX_TEMP_ACCUMULO"></app-temp-chart>
+  <app-temp-chart name="Pannelli" data-endpoint="../api/meters/analog/ROTEX_TEMP_PANNELLI"></app-temp-chart>
+  <app-temp-chart name="Camino" data-endpoint="../api/meters/analog/CAMINO_TEMPERATURA"></app-temp-chart>
 </div>
-<!-- <div>
-  <div class="card" *ngFor="let item of state">
-    <p class="card-header">{{item.name}}</p>
-    <p class="card-body">{{item.formattedValue}}</p>
-    <p class="card-body">{{item.utcTimeStamp}}</p>
-  </div>
-</div> -->
+
+<div style="display: inline-block; width: 100vw; padding: 0; margin-left: 2em; margin-right: 0em; margin-top: 1em;">
+  <pre style="font-size:3.25em">{{consoleOut}}</pre>
+</div>
+
 <router-outlet></router-outlet>

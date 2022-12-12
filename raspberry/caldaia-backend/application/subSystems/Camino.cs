@@ -32,10 +32,17 @@ public class Camino : Subsystem
         var relayPompaCamino = new MockDigitalOutput(nameof(RELAY_POMPA_CAMINO), log);
         relayPompaCamino.SetToOff("init");
         RELAY_POMPA_CAMINO = relayPompaCamino;
-
-        
     }
 
+    protected override void Init()
+    {
+        ((MockAnalogInput)CAMINO_TEMPERATURA).StartSineInput(
+            min: new Temperature(25),
+            max: new Temperature(98),
+            period: TimeSpan.FromMinutes(5),
+            measuresPerPeriod: 300
+        );
+    }
 
     public void Dispose()
     {

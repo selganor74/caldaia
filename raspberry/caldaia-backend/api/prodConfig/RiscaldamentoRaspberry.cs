@@ -40,4 +40,8 @@ public class RiscaldamentoRaspberry : Riscaldamento
                 log
         );
     }
+
+    protected  override void Init() {
+        // do nothing !
+    }
 }

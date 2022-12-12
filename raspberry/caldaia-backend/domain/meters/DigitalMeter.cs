@@ -1,9 +1,12 @@
+using System.Diagnostics;
 using domain.systemComponents;
 
 namespace domain.measures.meters;
 
-public class DigitalIOMeter
+public class DigitalMeter
 {
+    private readonly DigitalInput source;
+    public string Name => source.Name;
     public OnOff? LastKnownValue { get; protected set; }
 
     private IntervalMilliseconds _totalTimeOn = new IntervalMilliseconds(0);
@@ -42,14 +45,15 @@ public class DigitalIOMeter
         }
     }
 
-    protected List<OnOff> history = new List<OnOff>();
-    protected const int MAX_ITEMS_IN_HISTORY = 512;
+    public List<OnOff> history { get; } = new List<OnOff>();
+    protected const int MAX_ITEMS_IN_HISTORY = 8192;
 
-    public DigitalIOMeter(DigitalInput inputToMeasure)
+    public DigitalMeter(DigitalInput inputToMeasure)
     {
         inputToMeasure.OnValueRead += ValueChangedHandler;
         inputToMeasure.TransitionedFromOffToOn += OffToOnHandler;
         inputToMeasure.TransitionedFromOnToOff += OnToOffHandler;
+        this.source = inputToMeasure;
     }
 
     protected virtual void ValueChangedHandler(object? sender, IMeasure? newValue)

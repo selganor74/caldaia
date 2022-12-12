@@ -1,22 +1,27 @@
+using System.Diagnostics;
 using domain.systemComponents;
 
 namespace domain.measures.meters;
 
-public class AnalogInputMeter
+public class AnalogMeter
 {
+    private AnalogInput source;
+    public string Name => source.Name;
     public IMeasure? LastKnownValue { get; protected set; }
     public IMeasure? Average { get; protected set; }
-    protected List<IMeasure> history = new List<IMeasure>();
-    protected const int MAX_ITEMS_IN_HISTORY = 512;
+    public List<IMeasure> history { get; } = new List<IMeasure>();
+    protected const int MAX_ITEMS_IN_HISTORY = 8192;
 
     // A meter keeps track of the values assumed by an input as time goes by...
-    public AnalogInputMeter(AnalogInput inputToMeasure)
+    public AnalogMeter(AnalogInput inputToMeasure)
     {
         if (inputToMeasure is null)
             throw new ArgumentNullException(nameof(inputToMeasure));
 
         inputToMeasure.OnValueRead += ValueChangedHandler;
         ValueChangedHandler(this, inputToMeasure.LastMeasure);
+
+        this.source = inputToMeasure;
     }
 
     public IMeasure? GetAverageByTimeSpan(TimeSpan period)

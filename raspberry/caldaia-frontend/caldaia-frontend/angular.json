@@ -41,6 +41,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "baseHref": "/app/",
             "outputPath": "dist/caldaia-frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -57,7 +58,8 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/@microsoft/signalr/dist/browser/signalr.js"
+              "node_modules/@microsoft/signalr/dist/browser/signalr.js",
+              "node_modules/chart.js/dist/chart.js"
             ]
           },
           "configurations": {

@@ -46,4 +46,8 @@ public class CaminoRaspberry : Camino
                 log: log
             );
     }
+    
+    protected  override void Init() {
+        // do nothing !
+    }
 }

@@ -8,3 +8,10 @@ export type Measure = {
 }
 
 export type State = { [index: string]: Measure };
+
+export type AnalogMeter = {
+    name: string,
+    lastKnownValue: Measure,
+    average: Measure,
+    history: Measure[]
+}

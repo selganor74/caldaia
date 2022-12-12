@@ -10,10 +10,12 @@ namespace api.prodConfig;
 
 public class RotexRaspberry : Rotex
 {
+    private readonly RaspberryRotexReader serialRotex;
+
     public RotexRaspberry(
         RaspberryRotexReaderConfig rotexReaderConfig,
         GpioController gpioCtrl,
-        INotificationPublisher hub, 
+        INotificationPublisher hub,
         ILogger<Rotex> log
         ) : base(hub, log)
     {
@@ -40,7 +42,7 @@ public class RotexRaspberry : Rotex
             );
 
         var termostatoRotexNegated = new LogicNot(
-            nameof(TERMOSTATO_ROTEX) + " Negated", 
+            nameof(TERMOSTATO_ROTEX) + " Negated",
             termostatoRotex,
             log
             );
@@ -49,7 +51,7 @@ public class RotexRaspberry : Rotex
         ROTEX_TEMP_ACCUMULO = tempAccumulo;
         ROTEX_TEMP_PANNELLI = tempPannelli;
 
-        var serialRotex = new RaspberryRotexReader(
+        serialRotex = new RaspberryRotexReader(
             rotexReaderConfig,
             rOTEX_TEMPERATURA_PANNELLI: tempPannelli,
             rOTEX_TEMPERATURA_ACCUMULO: tempAccumulo,
@@ -57,5 +59,12 @@ public class RotexRaspberry : Rotex
             log
         );
 
-        serialRotex.Start();    }
+        serialRotex.Start();
+
+    }
+
+    protected override void Init()
+    {
+        // do nothing
+    }
 }

@@ -3,7 +3,7 @@
 
 $Env:PATH += ";.\node_modules\.bin"
 Push-Location ..\caldaia-frontend\caldaia-frontend\ 
-    ng build --base-href /app/
+    npm run build
     Push-Location dist\caldaia-frontend 
         scp -i ${keyPath} -r * ${toPi}:caldaia/bin/wwwroot/app
     Pop-Location 

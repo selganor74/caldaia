@@ -1,9 +1,18 @@
 # includes variables from config.ps1 file
 . .\support\config.ps1
 
+Push-Location ..\caldaia-backend\api\wwwroot
+    Remove-Item -Path app -Recurse -Force
+Pop-Location
+
+Push-Location ..\caldaia-frontend\caldaia-frontend
+    npm run build
+Pop-Location
+
 Push-Location ..\caldaia-backend\api
     # generates the final binaries to be published
     dotnet publish --configuration Release
+    
 
     Write-host "Stopping service on pi ..."
     # ssh -i ${keyPath} ${toPi} 'sudo systemctl stop raspberry-caldaia.service'

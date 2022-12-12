@@ -20,4 +20,8 @@ public class CaldaiaMetanoRaspberry : CaldaiaMetano
             log: log
         );
     }
+
+    protected  override void Init() {
+        // do nothing !
+    }
 }

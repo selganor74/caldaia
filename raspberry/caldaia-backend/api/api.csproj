@@ -17,7 +17,7 @@
   </ItemGroup>
   <ItemGroup>
     <_ExternalUI Include="..\..\caldaia-frontend\caldaia-frontend\dist\caldaia-frontend\*.*">
-      <InProject>false</InProject> 
+      <InProject>false</InProject>
     </_ExternalUI>
   </ItemGroup>
   <Target Name="CopyUIToWwwRoot" AfterTargets="AfterBuild">
@@ -28,6 +28,5 @@
   </Target>
   <Target Name="CopyUIToPublish" AfterTargets="AfterPublish">
     <Copy SourceFiles="@(_ExternalUI)" DestinationFolder="$(PublishDir)\wwwroot\app" />
-    <!-- <Exec Command="CALL $(ProjectDir)build-scripts\copy-ui-to-www.bat" /> -->
   </Target>
 </Project>

@@ -22,14 +22,19 @@ public class Rotex : Subsystem
         ILogger<Rotex> log
     ) : base(hub, log)
     {
-        ROTEX_TEMP_ACCUMULO = new MockAnalogInput(nameof(ROTEX_TEMP_ACCUMULO), log);
-        ROTEX_TEMP_PANNELLI = new MockAnalogInput(nameof(ROTEX_TEMP_PANNELLI), log);
-        ROTEX_STATO_POMPA = new MockDigitalInput(nameof(ROTEX_STATO_POMPA), log);
-        TERMOSTATO_ROTEX = new MockDigitalInput(nameof(TERMOSTATO_ROTEX), log);
+        var tempAccumulo = new MockAnalogInput(nameof(ROTEX_TEMP_ACCUMULO), log);
+        var tempPannelli = new MockAnalogInput(nameof(ROTEX_TEMP_PANNELLI), log);
+        var statoPompa = new MockDigitalInput(nameof(ROTEX_STATO_POMPA), log);
+        var termoRotex = new MockDigitalInput(nameof(TERMOSTATO_ROTEX), log);
+        
+        tempAccumulo.SetInput(new Temperature(50m));
+        tempPannelli.SetInput(new Temperature(25m));
+        statoPompa.Set(domain.measures.OnOffState.OFF);
+        termoRotex.Set(domain.measures.OnOffState.OFF);
 
-        ((MockAnalogInput)ROTEX_TEMP_ACCUMULO).SetInput(new Temperature(50m));
-        ((MockAnalogInput)ROTEX_TEMP_PANNELLI).SetInput(new Temperature(25m));
-        ((MockDigitalInput)ROTEX_STATO_POMPA).Set(domain.measures.OnOffState.OFF);
-        ((MockDigitalInput)TERMOSTATO_ROTEX).Set(domain.measures.OnOffState.OFF);
+        ROTEX_TEMP_ACCUMULO = tempAccumulo;
+        ROTEX_TEMP_PANNELLI = tempPannelli;
+        ROTEX_STATO_POMPA = statoPompa;
+        TERMOSTATO_ROTEX = termoRotex;
     }
 }
