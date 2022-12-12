@@ -36,6 +36,8 @@ export class TempChartComponent {
   public id: string;
   ctx?: ChartItem;
   chart?: Chart<"line", number[], string>;
+  lastTimestamp!: Date;
+  currentData: Measure[] = [];
 
   @Input() name!: string;
   @Input('data-endpoint') dataEndpoint!: string;
@@ -52,34 +54,63 @@ export class TempChartComponent {
   }
 
   loadData(): void {
-    this.httpClient.get<AnalogMeter>(this.dataEndpoint)
-      .subscribe(result => {
-        this.lastValue = result.lastKnownValue.formattedValue;
-        const now = Date.now().valueOf();
-        const all = result.history.map(d => {
-          d.utcTimeStamp = new Date(Date.parse(d.utcTimeStamp.toString()));
-          d.value = Number(d.value);
-          return d;
+    if (!this.lastTimestamp) {
+      this.httpClient.get<AnalogMeter>(this.dataEndpoint)
+        .subscribe(result => {
+
+          this.dataEndpoint += "/history/{fromDate}";
+
+          this.lastValue = result.lastKnownValue.formattedValue;
+          const history = result.history;
+          this.updateChart(history);
         });
-        const filtered = all.filter(d => d.utcTimeStamp.valueOf() > (now - 24 * hourInMilliseconds));
-        const labels = filtered.map(d => d.utcTimeStamp
-          .toLocaleString('it-IT', {
-            year: undefined,
-            month: undefined,
-            day: undefined,
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          }));
+    } else {
+      this.httpClient.get<Measure[]>(this.dataEndpoint.replace("{fromDate}", this.lastTimestamp.toISOString()))
+        .subscribe(result => {
+          if (!result)
+            return;
 
-        const fromApi = filtered.map(d => d.value);
-        if (!this.chart || !this.chart.data)
-          return;
+          if (result.length == 0)
+            return;
 
-        this.chart.data.labels = labels;
-        this.chart.data.datasets[0].data = fromApi;
-        this.chart?.update();
-      });
+          this.updateChart(result);
+        });
+    }
+  }
+
+  private updateChart(history: Measure[]) {
+    const now = Date.now().valueOf();
+    const all = history.map(d => {
+      d.utcTimeStamp = new Date(Date.parse(d.utcTimeStamp.toString()));
+      d.value = Number(d.value);
+      return d;
+    });
+    const lastValue = all[all.length - 1]
+
+    this.lastValue = lastValue.formattedValue;
+    this.lastTimestamp = lastValue.utcTimeStamp;
+
+    //const filtered = all.filter(d => d.utcTimeStamp.valueOf() > (now - 24 * hourInMilliseconds));
+    this.currentData.push(...all);
+    this.currentData = this.currentData.filter(d => d.utcTimeStamp.valueOf() > (now - 24 * hourInMilliseconds));
+    const labels = this.currentData.map(d => d.utcTimeStamp
+      .toLocaleString('it-IT', {
+        year: undefined,
+        month: undefined,
+        day: undefined,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }));
+
+    const fromApi = this.currentData.map(d => d.value);
+    if (!this.chart || !this.chart.data)
+      return;
+
+    this.chart.data.labels = labels;
+    this.chart.data.datasets[0].data = fromApi;
+
+    this.chart.update();
   }
 
   private init() {

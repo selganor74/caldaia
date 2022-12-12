@@ -37,9 +37,9 @@ export class AppComponent {
   }
 
   onCaldaiaStateReceived(d: any): void {
-    if (this.drawing)
-      return;
-    this.drawing = true;
+    // if (this.drawing)
+    //   return;
+    // this.drawing = true;
     
     const q = <State>d;
     this.state = [];
@@ -70,23 +70,25 @@ export class AppComponent {
        Pompa Pannelli : ${this.pompaPannelli}
 Bypass Termo Ambienti : ${this.termoAmbienti}
 `;
-    let start = 0;
-    let current = 0;
-    let end = Math.max(c.length, this.consoleOut.length);
-    this.oldConsoleOut = this.consoleOut;
-    let cancel = setInterval(() => {
-      current++;
-      if (current <= end) {
-        let crLf = this.oldConsoleOut.substring(current,current+1) == "\n" ? "\n" : "";
-        this.consoleOut = c.substring(start, current) + "_" + crLf + this.oldConsoleOut.substring(current+1);
-      }
-      if (current > end) {
-        clearInterval(cancel);
-        this.drawing = false;
-        this.consoleOut = c;
-      }        
-      //this.cdr.markForCheck();
-    }, 2);
+    this.consoleOut = c;
+    this.cdr.markForCheck();
+    // let start = 0;
+    // let current = 0;
+    // let end = Math.max(c.length, this.consoleOut.length);
+    // this.oldConsoleOut = this.consoleOut;
+    // let cancel = setInterval(() => {
+    //   current++;
+    //   if (current <= end) {
+    //     let crLf = this.oldConsoleOut.substring(current,current+1) == "\n" ? "\n" : "";
+    //     this.consoleOut = c.substring(start, current) + "_" + crLf + this.oldConsoleOut.substring(current+1);
+    //   }
+    //   if (current > end) {
+    //     clearInterval(cancel);
+    //     this.drawing = false;
+    //     this.consoleOut = c;
+    //   }        
+    //   //this.cdr.markForCheck();
+    // }, 2);
   }
 
   private onDataReceived(d: IDataFromArduino) {
