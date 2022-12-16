@@ -23,4 +23,3 @@ public class CaldaiaMetano : Subsystem
         RELAY_ACCENSIONE_CALDAIA = relay;
     }
 }
-#pragma warning restore CS8618

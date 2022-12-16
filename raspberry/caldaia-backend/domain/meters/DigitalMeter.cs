@@ -45,7 +45,7 @@ public class DigitalMeter
         }
     }
 
-    public List<OnOff> history { get; } = new List<OnOff>();
+    public List<OnOff> History { get; } = new List<OnOff>();
     protected const int MAX_ITEMS_IN_HISTORY = 8192;
 
     public DigitalMeter(DigitalInput inputToMeasure)
@@ -54,6 +54,7 @@ public class DigitalMeter
         inputToMeasure.TransitionedFromOffToOn += OffToOnHandler;
         inputToMeasure.TransitionedFromOnToOff += OnToOffHandler;
         this.source = inputToMeasure;
+        History.Add(new OnOff(OnOffState.OFF));
     }
 
     protected virtual void ValueChangedHandler(object? sender, IMeasure? newValue)
@@ -65,12 +66,12 @@ public class DigitalMeter
 
         this.LastKnownValue = nv;
         OnOff? removedValue = default(OnOff);
-        if (this.history.Count == MAX_ITEMS_IN_HISTORY)
+        if (this.History.Count == MAX_ITEMS_IN_HISTORY)
         {
-            removedValue = this.history[0];
-            this.history.RemoveAt(0);
+            removedValue = this.History[0];
+            this.History.RemoveAt(0);
         }
-        this.history.Add(nv);
+        this.History.Add(nv);
     }
 
     protected virtual void OffToOnHandler(object? sender, OnOff? newValue)

@@ -3,6 +3,10 @@ import { IDataFromArduino } from './idata-from-arduino';
 import { SignalrAdapterService } from './signalr-adapter.service';
 import { Measure, State } from "./caldaia-state";
 
+// Inits ChartJS
+import { Chart, registerables } from 'chart.js'
+Chart.register(...registerables)
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -23,6 +27,7 @@ export class AppComponent {
   public termoRotex: string = "";
 
   public consoleOut: string = "";
+  public consoleOut2: string = "";
   public oldConsoleOut: string = "";
 
   public state: Measure[] = [];
@@ -60,17 +65,19 @@ export class AppComponent {
     this.termoRotex = q["termostatO_ROTEX"]?.formattedValue ?? this.termoRotex;
 
 
-    let c = 
-` Temperatura Accumulo : ${this.tAccumulo}             
-   Temperatura Camino : ${this.tCamino}                   
- Temperatura Pannelli : ${this.tPannelli}               
-  Termostato Ambienti : ${this.termoAmbienti}    
-     Termostato Rotex : ${this.termoRotex}
+
+    this.consoleOut = 
+`  Temperatura Accumulo : ${this.tAccumulo}             
+    Temperatura Camino : ${this.tCamino}                   
+  Temperatura Pannelli : ${this.tPannelli}               
+   Termostato Ambienti : ${this.termoAmbienti}`;
+
+    this.consoleOut2 = 
+`     Termostato Rotex : ${this.termoRotex}
          Pompa Camino : ${this.rPompaCamino}
        Pompa Pannelli : ${this.pompaPannelli}
-Bypass Termo Ambienti : ${this.termoAmbienti}
-`;
-    this.consoleOut = c;
+Bypass Termo Ambienti : ${this.termoAmbienti}`;
+
     this.cdr.markForCheck();
     // let start = 0;
     // let current = 0;

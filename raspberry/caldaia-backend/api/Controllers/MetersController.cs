@@ -1,4 +1,3 @@
-using System.Net.Http;
 using application.subSystems;
 using domain;
 using domain.measures.meters;
@@ -53,7 +52,7 @@ public class MetersController : ControllerBase
 
     [Route("analog/{name}/history/{fromDate}")]
     [HttpGet()]
-    public async Task<IEnumerable<IMeasure>> GetAnalogMeterByName(string name, DateTimeOffset fromDate)
+    public async Task<IEnumerable<IMeasure>> GetAnalogMeterHistory(string name, DateTimeOffset fromDate)
     {
         var meter = allSubsystems
             .SelectMany(s => s.AnalogMeters)
@@ -84,4 +83,21 @@ public class MetersController : ControllerBase
         return allSubsystems.SelectMany(s => s.DigitalMeters).Where(s => s.Name == name).FirstOrDefault();
     }
 
+    [Route("digital/{name}/history/{fromDate}")]
+    [HttpGet]
+    public async Task<IEnumerable<IMeasure>> GetDigitalMeterHistory(string name, DateTimeOffset fromDate)
+    {
+        var meter = allSubsystems
+            .SelectMany(s => s.DigitalMeters)
+            .Where(s => s.Name == name)
+            .FirstOrDefault();
+
+        if (meter == null)
+            return null;
+
+        // In CSharp     = 2022-12-12T22:20:06.2038858Z
+        // In Javascript = 2022-12-12T22:20:06.203Z
+        // per evitare di restituire due volte lo stesso timestamp dobbiamo "approssimare" al millisecondo
+        return meter.History.Where(d => (d.UtcTimeStamp - TimeSpan.FromMilliseconds(1)) > fromDate);
+    }
 }

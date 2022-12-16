@@ -15,3 +15,10 @@ export type AnalogMeter = {
     average: Measure,
     history: Measure[]
 }
+
+export type DigitalMeter = {
+    name: string,
+    lastKnownValue: Measure,
+    average: Measure,
+    history: Measure[]
+}

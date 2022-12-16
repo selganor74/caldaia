@@ -1,13 +1,20 @@
+import { HttpClient } from '@angular/common/http';
 import { Attribute, Component, Input } from '@angular/core';
-import { Measure } from 'src/app/caldaia-state';
+import { DigitalMeter, Measure } from 'src/app/caldaia-state';
 import { v4 as uuid } from 'uuid';
 
-import { ChartItem, Chart } from 'chart.js';
-import { DeviceDataLoaderService, DeviceDataLoaderServiceFactory, hourInMilliseconds, minuteInMilliseconds } from 'src/app/device-data-loader.service';
+import { slottifyMeasures } from 'src/app/measure-helpers';
+import { ChartItem, Chart } from 'chart.js'
 import { Subscription } from 'rxjs';
+import { DeviceDataLoaderService, DeviceDataLoaderServiceFactory } from 'src/app/device-data-loader.service';
+
+
+const hourInMilliseconds = 60 * 60 * 1000;
+const minuteInMilliseconds = 60 * 1000;
+
 
 @Component({
-  selector: 'app-temp-chart',
+  selector: 'app-on-off-chart',
   template: `
 <div style=
   "display: inline-block;
@@ -20,7 +27,7 @@ import { Subscription } from 'rxjs';
     text-align: center;
     width: 100%; 
     height: 2em;">
-    <span>{{name}} : </span><span style="font-size: 2em">{{lastValue}}</span>  
+    <span>{{name}}: </span><span style="font-size: 2em">{{lastValue}} </span><span> tₒₙ: </span><span style="font-size: 2em">{{this.tOn}}</span>  
   </div>
   <canvas id="{{this.id}}" ></canvas>
 </div>
@@ -28,7 +35,7 @@ import { Subscription } from 'rxjs';
   styles: [
   ]
 })
-export class TempChartComponent {
+export class OnOffChartComponent {
   public id: string;
   ctx!: ChartItem;
   chart!: Chart<"line", number[], string>;
@@ -37,23 +44,43 @@ export class TempChartComponent {
 
   lastValue: string = "";
 
+  tOnMilliseconds: number = 0;
+  get tOn() {
+    const totalSeconds = this.tOnMilliseconds / 1000;
+    let toReturn = Math.round(10 * totalSeconds) / 10;
+    let um = "s";
+
+    if (totalSeconds > 60) {
+      toReturn = Math.round(10 * totalSeconds / 60) / 10;
+      um = "m";
+    }
+
+    if (totalSeconds > 3600) {
+      toReturn = Math.round(10 * totalSeconds / 3600) / 10;
+      um = "h";
+    }
+
+    return `${toReturn} ${um}`;
+  }
+
   constructor(
-    @Attribute('name')
+    @Attribute('name') 
     public name: string,
-
-    @Attribute('data-endpoint')
+    
+    @Attribute('data-endpoint') 
     public dataEndpoint: string,
-
+    
     dataLoaderFactory: DeviceDataLoaderServiceFactory
   ) {
     // generates an unique id for our canvas
     this.id = "gid-" + uuid();
 
-    this.dataLoader = dataLoaderFactory.createLoader(this.dataEndpoint, "analog", 5 * minuteInMilliseconds, 0.5 * hourInMilliseconds);
+    this.dataLoader = dataLoaderFactory.createLoader(this.dataEndpoint, "analog", 5 * minuteInMilliseconds, 0.5*hourInMilliseconds);
 
     setTimeout(() => this.init(), 10);
     setInterval(() => this.loadData(), 5000);
   }
+
 
   loadData(): Subscription {
     return this.dataLoader.loadData()
@@ -72,8 +99,8 @@ export class TempChartComponent {
         if (!this.chart || !this.chart.data)
           return;
 
-        this.lastValue = graphValues[fromApi.length - 1].formattedValue;
-
+        this.lastValue = graphValues[fromApi.length -1].formattedValue;
+        
         this.chart.data.labels = labels;
         this.chart.data.datasets[0].data = fromApi;
 
@@ -92,8 +119,13 @@ export class TempChartComponent {
       type: 'line',
       data: {
         datasets: [{
-          label: this.name,
+          label: "",
           data: [],
+          fill: {
+            target: 'origin',
+            below: 'rgba(0,40,0,100)',
+            above: 'rgba(0,40,0,100)'
+          },
           pointBorderColor: 'greenyellow',
           borderColor: 'green',
           pointRadius: 1,
@@ -107,17 +139,17 @@ export class TempChartComponent {
         color: "greenyellow",
         scales: {
           y: {
-            beginAtZero: false,
+            beginAtZero: true,
             grid: {
               color: 'darkgreen',
-            }
+            },
+            display: false
           },
           x: {
             grid: {
               color: 'darkgreen',
             }
           }
-
         }
       }
     });
