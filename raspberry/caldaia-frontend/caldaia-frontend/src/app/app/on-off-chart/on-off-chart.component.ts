@@ -9,17 +9,19 @@ import { DeviceDataLoaderService, DeviceDataLoaderServiceFactory, hourInMillisec
 @Component({
   selector: 'app-on-off-chart',
   template: `
-<div style=
-  "display: inline-block;
+<div style="
+    display: inline-block;
     position: relative;
-    width: 31.5vw; 
-    height: 30vh;">
-  <div style=
-  "display: block;
+    width: 100%;
+    ">
+  <div style="
+    display: block;
     align: center;
     text-align: center;
+    font-familiy: monospace;
     width: 100%; 
-    height: 2em;">
+    height: 2em;
+    ">
     <span>{{name}}: </span><span style="font-size: 2em">{{lastValue}} </span><span> tₒₙ: </span><span style="font-size: 2em">{{this.tOn}}</span>  
   </div>
   <canvas id="{{this.id}}" ></canvas>

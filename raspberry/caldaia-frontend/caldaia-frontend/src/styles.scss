@@ -1,6 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
 html {
+    box-sizing: content-box;
     background-color:black; 
     color:greenyellow;
     font-family: Consolas; 
+}
+
+.graph-container {
+    margin:0;
+    height: 33vh;
+    width: 100vw
+}
+
+.mini-graph {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    width: 31.5vw; 
+    height: 30vh;
 }

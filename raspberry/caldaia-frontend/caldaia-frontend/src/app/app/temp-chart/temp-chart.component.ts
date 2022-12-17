@@ -9,20 +9,26 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-temp-chart',
   template: `
-<div style=
-  "display: inline-block;
+<div style="
+    display: inline-block;
     position: relative;
-    width: 31.5vw; 
-    height: 30vh;">
-  <div style=
-  "display: block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    ">
+  <div style="
+    display: block;
     align: center;
+    margin: 0;
+    padding: 0;
     text-align: center;
+    font-familiy: monospace;
     width: 100%; 
-    height: 2em;">
+    height: 2em;
+    ">
     <span>{{name}} : </span><span style="font-size: 2em">{{lastValue}}</span>  
   </div>
-  <canvas id="{{this.id}}" ></canvas>
+  <canvas style="box-sizing: border-box; margin:0; padding:0;" id="{{this.id}}" ></canvas>
 </div>
   `,
   styles: [
