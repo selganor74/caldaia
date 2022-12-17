@@ -6,7 +6,8 @@ import { slottifyMeasures } from './measure-helpers';
 
 export type DeviceType = "digital" | "analog";
 
-export const minuteInMilliseconds = 60 * 1000;
+export const secondInMilliseconds = 1000;
+export const minuteInMilliseconds = 60 * secondInMilliseconds;
 export const hourInMilliseconds = 60 * minuteInMilliseconds;
 
 @Injectable({
@@ -38,12 +39,13 @@ export class DeviceDataLoaderService {
   private baseUrl: string = "../api/meters";
   private deviceName!: string;
   private deviceType!: DeviceType;
-  lastValue!: string;
-  lastTimestamp: Date = new Date(Date.now());
   private isFirstLoad: boolean = true;
   private allData: Measure[] = [];
   private timeSlotSizeInMilliseconds: number = 10 * minuteInMilliseconds / 60;
   private timeWindowSizeInMilliseconds: number = 24 * hourInMilliseconds;
+  
+  lastValue: string = "";
+  lastTimestamp: Date = new Date(Date.now() - this.timeWindowSizeInMilliseconds);
 
   private get meterUrl(): string { return `${this.baseUrl}/${this.deviceType}/${this.deviceName}`; };
   private get historyUrl(): string { return `${this.baseUrl}/${this.deviceType}/${this.deviceName}/history/${this.lastTimestamp.toISOString()}`; };
@@ -69,16 +71,16 @@ export class DeviceDataLoaderService {
     if (!this.deviceName)
       return from([]);
 
-    let o: Observable<Measure[]>;
+    let toReturn: Observable<Measure[]>;
 
     if (this.isFirstLoad) {
-      o = this.firstDataLoad();
+      toReturn = this.firstDataLoad();
       this.isFirstLoad = false;
     } else {
-      o = this.deltaDataLoad();
+      toReturn = this.deltaDataLoad();
     }
 
-    return o.pipe(map(() => this.allData));
+    return toReturn;
   }
 
   private deltaDataLoad(): Observable<Measure[]> {
@@ -99,15 +101,16 @@ export class DeviceDataLoaderService {
   }
 
   private processData(fromApi: Measure[]): Measure[] {
-    let lastValue = fromApi[fromApi.length - 1];
-    this.lastValue = lastValue?.formattedValue || "";
-    this.lastTimestamp = lastValue?.utcTimeStamp || new Date(Date.now());
 
     const managed = fromApi.map(d => {
       d.utcTimeStamp = new Date(Date.parse(d.utcTimeStamp.toString()));
       d.value = Number(d.value);
       return d;
     });
+
+    let lastValue = managed[fromApi.length - 1];
+    this.lastValue = lastValue?.formattedValue || "";
+    this.lastTimestamp = lastValue?.utcTimeStamp || new Date(Date.now() - this.timeWindowSizeInMilliseconds);
 
     this.allData.push(...managed);
     const now = Date.now();

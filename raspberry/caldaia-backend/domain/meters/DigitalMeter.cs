@@ -46,7 +46,7 @@ public class DigitalMeter
     }
 
     public List<OnOff> History { get; } = new List<OnOff>();
-    protected const int MAX_ITEMS_IN_HISTORY = 8192;
+    protected const int MAX_ITEMS_IN_HISTORY = 65536;
 
     public DigitalMeter(DigitalInput inputToMeasure)
     {

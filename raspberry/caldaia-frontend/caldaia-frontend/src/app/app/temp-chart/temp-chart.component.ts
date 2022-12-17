@@ -49,7 +49,7 @@ export class TempChartComponent {
     // generates an unique id for our canvas
     this.id = "gid-" + uuid();
 
-    this.dataLoader = dataLoaderFactory.createLoader(this.dataEndpoint, "analog", 5 * minuteInMilliseconds, 0.5 * hourInMilliseconds);
+    this.dataLoader = dataLoaderFactory.createLoader(this.dataEndpoint, "analog", 5 * minuteInMilliseconds, 24 * hourInMilliseconds);
 
     setTimeout(() => this.init(), 10);
     setInterval(() => this.loadData(), 5000);

@@ -1,17 +1,10 @@
-import { HttpClient } from '@angular/common/http';
-import { Attribute, Component, Input } from '@angular/core';
-import { DigitalMeter, Measure } from 'src/app/caldaia-state';
+import { Attribute, Component } from '@angular/core';
+import { Measure } from 'src/app/caldaia-state';
 import { v4 as uuid } from 'uuid';
 
-import { slottifyMeasures } from 'src/app/measure-helpers';
 import { ChartItem, Chart } from 'chart.js'
 import { Subscription } from 'rxjs';
-import { DeviceDataLoaderService, DeviceDataLoaderServiceFactory } from 'src/app/device-data-loader.service';
-
-
-const hourInMilliseconds = 60 * 60 * 1000;
-const minuteInMilliseconds = 60 * 1000;
-
+import { DeviceDataLoaderService, DeviceDataLoaderServiceFactory, hourInMilliseconds, minuteInMilliseconds, secondInMilliseconds } from 'src/app/device-data-loader.service';
 
 @Component({
   selector: 'app-on-off-chart',
@@ -45,6 +38,8 @@ export class OnOffChartComponent {
   lastValue: string = "";
 
   tOnMilliseconds: number = 0;
+  private readonly timeSlotSize = 5 * minuteInMilliseconds;
+
   get tOn() {
     const totalSeconds = this.tOnMilliseconds / 1000;
     let toReturn = Math.round(10 * totalSeconds) / 10;
@@ -64,18 +59,18 @@ export class OnOffChartComponent {
   }
 
   constructor(
-    @Attribute('name') 
+    @Attribute('name')
     public name: string,
-    
-    @Attribute('data-endpoint') 
+
+    @Attribute('data-endpoint')
     public dataEndpoint: string,
-    
+
     dataLoaderFactory: DeviceDataLoaderServiceFactory
   ) {
     // generates an unique id for our canvas
     this.id = "gid-" + uuid();
 
-    this.dataLoader = dataLoaderFactory.createLoader(this.dataEndpoint, "analog", 5 * minuteInMilliseconds, 0.5*hourInMilliseconds);
+    this.dataLoader = dataLoaderFactory.createLoader(this.dataEndpoint, "digital", this.timeSlotSize, 24 * hourInMilliseconds);
 
     setTimeout(() => this.init(), 10);
     setInterval(() => this.loadData(), 5000);
@@ -95,14 +90,15 @@ export class OnOffChartComponent {
             second: '2-digit'
           }));
 
-        const fromApi = graphValues.map(d => d.value);
+        this.lastValue = graphValues[graphValues.length - 1].formattedValue;
+        const values = graphValues.map(d => d.value);
         if (!this.chart || !this.chart.data)
           return;
 
-        this.lastValue = graphValues[fromApi.length -1].formattedValue;
-        
+        this.tOnMilliseconds = this.timeSlotSize * values.reduce((sum, val) => sum + val, 0);
+
         this.chart.data.labels = labels;
-        this.chart.data.datasets[0].data = fromApi;
+        this.chart.data.datasets[0].data = values;
 
         this.chart.update();
       });
@@ -143,7 +139,9 @@ export class OnOffChartComponent {
             grid: {
               color: 'darkgreen',
             },
-            display: false
+            display: false,
+            min: 0,
+            max: 1
           },
           x: {
             grid: {

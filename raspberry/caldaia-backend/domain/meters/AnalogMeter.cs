@@ -10,7 +10,7 @@ public class AnalogMeter
     public IMeasure? LastKnownValue { get; protected set; }
     public IMeasure? Average { get; protected set; }
     public List<IMeasure> history { get; } = new List<IMeasure>();
-    protected const int MAX_ITEMS_IN_HISTORY = 8192;
+    protected const int MAX_ITEMS_IN_HISTORY = 65536;
 
     // A meter keeps track of the values assumed by an input as time goes by...
     public AnalogMeter(AnalogInput inputToMeasure)
