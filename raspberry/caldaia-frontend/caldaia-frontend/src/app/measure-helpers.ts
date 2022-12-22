@@ -34,7 +34,7 @@ export function slottifyMeasures(
         newSlot.push(...fromData);
 
         lastOneOrDefault = Object.assign( {}, fromData[fromData.length - 1] || lastOneOrDefault || {
-            formattedValue: "",
+            formattedValue: "-",
             name: "",
             uoM: "",
             utcTimeStamp: slotEndDate,
@@ -50,6 +50,7 @@ export function slottifyMeasures(
         if (newSlot.length > 0) {
             const averageValue = Object.assign({}, newSlot[0]);
             const avg = newSlot.map(d => d.value).reduce((p, v) => { return p += v / newSlot.length }, 0);
+            averageValue.formattedValue = lastOneOrDefault.formattedValue;
             averageValue.value = Math.round( avg * 100 ) / 100;
             averageValue.utcTimeStamp = slotEndDate;
 

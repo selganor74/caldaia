@@ -1,18 +1,24 @@
 <div style="graph-container">
-  <app-temp-chart class="mini-graph" name="Accumulo" data-endpoint="ROTEX_TEMP_ACCUMULO"></app-temp-chart>
-  <app-temp-chart class="mini-graph" name="Pannelli" data-endpoint="ROTEX_TEMP_PANNELLI"></app-temp-chart>
-  <app-temp-chart class="mini-graph" name="Camino" data-endpoint="CAMINO_TEMPERATURA"></app-temp-chart>
+  <app-temp-chart class="mini-graph" name="Accumulo" measure-kind="analog" measure-name="ROTEX_TEMP_ACCUMULO"></app-temp-chart>
+  <app-temp-chart class="mini-graph" name="Camino" measure-kind="analog" measure-name="CAMINO_TEMPERATURA"></app-temp-chart>
+  <app-temp-chart class="mini-graph" name="Pannelli" measure-kind="analog" measure-name="ROTEX_TEMP_PANNELLI"></app-temp-chart>
 </div>
 
 <div style="graph-container">
-  <app-on-off-chart class="mini-graph" name="Pompa Camino" data-endpoint="RELAY_POMPA_CAMINO"></app-on-off-chart>
-  <app-on-off-chart class="mini-graph" name="Caldaia" data-endpoint="RELAY_ACCENSIONE_CALDAIA"></app-on-off-chart>
-  <app-on-off-chart class="mini-graph" name="Bypass Termostati" data-endpoint="RELAY_BYPASS_TERMOSTATO_AMBIENTE"></app-on-off-chart>
+  <app-on-off-chart class="mini-graph" name="Caldaia" measure-kind="digital" measure-name="RELAY_ACCENSIONE_CALDAIA"></app-on-off-chart>
+  <app-on-off-chart class="mini-graph" name="Pompa Camino" measure-kind="digital" measure-name="RELAY_POMPA_CAMINO"></app-on-off-chart>
+  <app-on-off-chart class="mini-graph" name="Pompa Pannelli" measure-kind="digital" measure-name="ROTEX_STATO_POMPA"></app-on-off-chart>
 </div>
 
+<div style="graph-container">
+  <app-on-off-chart class="mini-graph" name="Bypass Termostati" measure-kind="digital" measure-name="RELAY_BYPASS_TERMOSTATO_AMBIENTE"></app-on-off-chart>
+  <app-on-off-chart class="mini-graph" name="Camino On/Off" measure-kind="digital" measure-name="CAMINO_ON_OFF"></app-on-off-chart>
+  <app-on-off-chart class="mini-graph" name="Pompa Riscaldamenti" measure-kind="digital" measure-name="RELAY_POMPA_RISCALDAMENTO"></app-on-off-chart>
+</div>
+<!--
 <div style="margin-bottom: 0;" class="graph-container">
   <pre style="display:inline-block; width: 48vw; font-size:1.75em">{{consoleOut}}</pre>
   <pre style="display:inline-block; width: 48vw; font-size:1.75em">{{consoleOut2}}</pre>
 </div>
-
+-->
 <router-outlet></router-outlet>
