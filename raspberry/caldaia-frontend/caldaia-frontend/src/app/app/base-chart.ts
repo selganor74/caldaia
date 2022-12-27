@@ -4,15 +4,15 @@ import { Chart, ChartItem } from "chart.js";
 import { v4 as uuid } from 'uuid';
 
 import { Measure } from "../caldaia-state";
-import { 
-    DeviceDataLoaderService, 
-    DeviceDataLoaderServiceFactory, 
-    hourInMilliseconds, 
-    minuteInMilliseconds 
+import {
+    DeviceDataLoaderService,
+    DeviceDataLoaderServiceFactory,
+    hourInMilliseconds,
+    minuteInMilliseconds
 } from "../device-data-loader.service";
 
 export function templateBuilder(textContent: string) {
-return `
+    return `
 <style>  
 .widget-mode {
     display: inline-block;
@@ -111,7 +111,7 @@ return `
     ${textContent}
     </div>
     <div class="backdrop {{fullScreen ? 'backdrop-fullscreen' : ''}}">&nbsp;</div>
-`;    
+`;
 }
 
 
@@ -128,135 +128,142 @@ export class BaseChartComponent {
     currentData: Measure[] = [];
     dataLoader: DeviceDataLoaderService;
     lastValue: string = "";
-  
+
     tOnMilliseconds: number = 0;
     private readonly timeSlotSize = 5 * minuteInMilliseconds;
     fullScreen: boolean = false;
+    // dataProcessor: Worker;
     get class() {
-      return this.fullScreen ? "full-screen-mode" : "widget-mode"
+        return this.fullScreen ? "full-screen-mode" : "widget-mode"
     };
-  
-    get tOn() {
-      const totalSeconds = this.tOnMilliseconds / 1000;
-      let toReturn = Math.round(10 * totalSeconds) / 10;
-      let um = "s";
-  
-      if (totalSeconds > 60) {
-        toReturn = Math.round(10 * totalSeconds / 60) / 10;
-        um = "m";
-      }
-  
-      if (totalSeconds > 3600) {
-        toReturn = Math.round(10 * totalSeconds / 3600) / 10;
-        um = "h";
-      }
-  
-      return `${toReturn} ${um}`;
-    }
-  
-    constructor(
-      @Attribute('name')
-      public name: string,
-  
-      @Attribute('measure-name')
-      public measureName: string,
 
-      @Attribute('measure-kind')
-      public measureKind: "analog" | "digital",
-  
-      private cdr: ChangeDetectorRef,
-      dataLoaderFactory: DeviceDataLoaderServiceFactory
+    get tOn() {
+        const totalSeconds = this.tOnMilliseconds / 1000;
+        let toReturn = Math.round(10 * totalSeconds) / 10;
+        let um = "s";
+
+        if (totalSeconds > 60) {
+            toReturn = Math.round(10 * totalSeconds / 60) / 10;
+            um = "m";
+        }
+
+        if (totalSeconds > 3600) {
+            toReturn = Math.round(10 * totalSeconds / 3600) / 10;
+            um = "h";
+        }
+
+        return `${toReturn} ${um}`;
+    }
+
+    constructor(
+        @Attribute('name')
+        public name: string,
+
+        @Attribute('measure-name')
+        public measureName: string,
+
+        @Attribute('measure-kind')
+        public measureKind: "analog" | "digital",
+
+        private cdr: ChangeDetectorRef,
+        dataLoaderFactory: DeviceDataLoaderServiceFactory
     ) {
-      // generates an unique id for our canvas
-      this.id = "gid-" + uuid();
-  
-      this.dataLoader = dataLoaderFactory.createLoader(this.measureName, this.measureKind, this.timeSlotSize, 24 * hourInMilliseconds);
-  
-      setTimeout(() => this.init(), 10);
-      setInterval(() => this.loadData(), 5000);
+        // generates an unique id for our canvas
+        this.id = "gid-" + uuid();
+
+        this.dataLoader = dataLoaderFactory.createLoader(this.measureName, this.measureKind, this.timeSlotSize, 24 * hourInMilliseconds);
+        // this.dataProcessor = new Worker(new URL('./app/data-processor.worker.ts', import.meta.url));
+        // // Create a new
+        // this.dataProcessor.onmessage = ({ data }) => {
+        //     console.log(`page got message: ${data}`);
+        // };
+        // this.dataProcessor.postMessage('hello');
+
+        setTimeout(() => this.init(), 10);
+        setInterval(() => this.loadData(), 5000);
     }
-  
+
     public toggleFullScreen() {
-      this.fullScreen = !this.fullScreen;
-      this.cdr.markForCheck();
+        this.fullScreen = !this.fullScreen;
+        this.cdr.markForCheck();
     }
-  
+
     loadData(): Subscription {
-      return this.dataLoader.loadData()
-        .subscribe((graphValues) => {
-          const labels = graphValues.map(d => d.utcTimeStamp
-            .toLocaleString('it-IT', {
-              year: undefined,
-              month: undefined,
-              day: undefined,
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit'
-            }));
-  
-          this.lastValue = graphValues[graphValues.length - 1].formattedValue;
-          const values = graphValues.map(d => d.value);
-          if (!this.chart || !this.chart.data)
-            return;
-  
-          this.tOnMilliseconds = this.timeSlotSize * values.reduce((sum, val) => sum + val, 0);
-  
-          this.chart.data.labels = labels;
-          this.chart.data.datasets[0].data = values;
-  
-          this.chart.update();
-        });
+        return this.dataLoader.loadData()
+            .subscribe((graphValues) => {
+                const labels = graphValues.map(d => d.utcTimeStamp
+                    .toLocaleString('it-IT', {
+                        year: undefined,
+                        month: undefined,
+                        day: undefined,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    }));
+
+                this.lastValue = graphValues[graphValues.length - 1].formattedValue;
+                const values = graphValues.map(d => d.value);
+                if (!this.chart || !this.chart.data)
+                    return;
+
+                this.tOnMilliseconds = this.timeSlotSize * values.reduce((sum, val) => sum + val, 0);
+
+                this.chart.data.labels = labels;
+                this.chart.data.datasets[0].data = values;
+
+                this.chart.update();
+            });
     }
-  
+
     private init() {
         this.ctx = <HTMLCanvasElement>document.getElementById(this.id);
-        
+
         if (!this.ctx)
-        return;
-        
-        this.chart = this.chartBuilder();   
+            return;
+
+        this.chart = this.chartBuilder();
     }
-    
-    protected chartBuilder() : Chart<"line", number[], string>{
+
+    protected chartBuilder(): Chart<"line", number[], string> {
         return new Chart(this.ctx, {
             type: 'line',
             data: {
-              datasets: [{
-                label: this.name,
-                data: [],
-                fill: {
-                  target: 'origin',
-                  below: 'rgba(0,40,0,0.75)',
-                  above: 'rgba(0,40,0,0.75)'
-                },
-                pointBorderColor: 'greenyellow',
-                borderColor: 'green',
-                pointRadius: 1,
-                pointHoverRadius: 3,
-                borderWidth: 1,
-                showLine: true,
-              }]
+                datasets: [{
+                    label: this.name,
+                    data: [],
+                    fill: {
+                        target: 'origin',
+                        below: 'rgba(0,40,0,0.75)',
+                        above: 'rgba(0,40,0,0.75)'
+                    },
+                    pointBorderColor: 'greenyellow',
+                    borderColor: 'green',
+                    pointRadius: 1,
+                    pointHoverRadius: 3,
+                    borderWidth: 1,
+                    showLine: true,
+                }]
             },
             options: {
-              responsive: true,
-              color: "greenyellow",
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  grid: {
-                    color: 'darkgreen',
-                  },
-                  display: false,
-                  min: 0,
-                  max: 1
-                },
-                x: {
-                  grid: {
-                    color: 'darkgreen',
-                  }
+                responsive: true,
+                color: "greenyellow",
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'darkgreen',
+                        },
+                        display: false,
+                        min: 0,
+                        max: 1
+                    },
+                    x: {
+                        grid: {
+                            color: 'darkgreen',
+                        }
+                    }
                 }
-              }
             }
-          });
-        }    
-    }; 
+        });
+    }
+}; 
