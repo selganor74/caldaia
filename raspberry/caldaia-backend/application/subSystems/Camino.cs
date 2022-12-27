@@ -39,8 +39,8 @@ public class Camino : Subsystem
         ((MockAnalogInput)CAMINO_TEMPERATURA).StartSineInput(
             min: new Temperature(25),
             max: new Temperature(98),
-            period: TimeSpan.FromMinutes(5),
-            measuresPerPeriod: 300
+            period: TimeSpan.FromMinutes(30),
+            measuresPerPeriod: 3000
         );
     }
 

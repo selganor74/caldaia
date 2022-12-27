@@ -1,24 +1,11 @@
 /// <reference lib="webworker" />
 
-import { Measure } from "./caldaia-state";
-
-export type GraphValues = {
-  graphId?: string;
-  lastValue?: string;
-  labels?: string[];
-  values?: number[];
-  tOnMilliseconds?: number;
-}
-
-export type InData = {
-  graphId?: string;
-  measures?: Measure[];
-  timeSlotSize?: number;
-}
+import { DataProcessorInData } from "./data-processor-in-data";
+import { DataProcessorOutData } from "./data-processor-out-data";
 
 addEventListener('message', ({ data }) => {
-  const toReturn : GraphValues = {};
-  const inData: InData = data as InData;
+  const toReturn : DataProcessorOutData = {};
+  const inData: DataProcessorInData = data as DataProcessorInData;
   if (!inData.measures)
     return;
 

@@ -11,6 +11,7 @@ using api.signalr;
 using application;
 using rotex;
 using api.dependencyInjection;
+using Microsoft.AspNetCore.Rewrite;
 
 LogManager.Setup().LoadConfiguration(logBuilder =>
 {
@@ -95,7 +96,9 @@ app.UseAuthorization();
 
 app.MapHub<DataHub>("datahub");
 app.MapControllers();
-
+app.UseRewriter(new RewriteOptions()
+    .AddRedirect("^$", "/app/")
+);
 var signalRNotificationAdapter = app.Services.GetService<SignalRNotificationAdapter>();
 signalRNotificationAdapter.Start();
 

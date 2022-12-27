@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --base-href /app/ && del /S /Q ..\\..\\caldaia-backend\\api\\wwwroot\\app\\* && xcopy /C /H /I /M /E /S /Y dist\\caldaia-frontend ..\\..\\caldaia-backend\\api\\wwwroot\\app",
+    "build": "ng build --base-href /app/ --configuration development && del /S /Q ..\\..\\caldaia-backend\\api\\wwwroot\\app\\* && xcopy /C /H /I /M /E /S /Y dist\\caldaia-frontend ..\\..\\caldaia-backend\\api\\wwwroot\\app",
+    "build-prod": "ng build --base-href /app/ --configuration production && del /S /Q ..\\..\\caldaia-backend\\api\\wwwroot\\app\\* && xcopy /C /H /I /M /E /S /Y dist\\caldaia-frontend ..\\..\\caldaia-backend\\api\\wwwroot\\app",
     "watch": "ng build --watch --configuration development"
   },
   "private": true,

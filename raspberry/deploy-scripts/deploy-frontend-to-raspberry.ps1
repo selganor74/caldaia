@@ -3,7 +3,7 @@
 
 $Env:PATH += ";.\node_modules\.bin"
 Push-Location ..\caldaia-frontend\caldaia-frontend\ 
-    npm run build
+    npm run build-prod
     Push-Location dist\caldaia-frontend
         ssh -i ${keyPath} ${toPi} 'rm -fR caldaia/bin/wwwroot/app/*'
         scp -i ${keyPath} -r * ${toPi}:caldaia/bin/wwwroot/app

@@ -6,7 +6,7 @@ Push-Location ..\caldaia-backend\api\wwwroot
 Pop-Location
 
 Push-Location ..\caldaia-frontend\caldaia-frontend
-    npm run build
+    npm run build-prod
 Pop-Location
 
 Push-Location ..\caldaia-backend\api

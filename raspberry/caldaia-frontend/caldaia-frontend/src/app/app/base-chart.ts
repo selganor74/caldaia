@@ -1,4 +1,4 @@
-import { Attribute, ChangeDetectorRef, Component } from "@angular/core";
+import { Attribute, ChangeDetectorRef, Component, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 import { Chart, ChartItem } from "chart.js";
 import { v4 as uuid } from 'uuid';
@@ -10,6 +10,8 @@ import {
     hourInMilliseconds,
     minuteInMilliseconds
 } from "../device-data-loader.service";
+import { DataProcessorOutData } from "../data-processor-out-data";
+import { DataProcessorInData } from "../data-processor-in-data";
 
 export function templateBuilder(textContent: string) {
     return `
@@ -121,8 +123,8 @@ export function templateBuilder(textContent: string) {
     template: templateBuilder(``),
     styles: []
 })
-export class BaseChartComponent {
-    public id: string;
+export class BaseChartComponent implements OnDestroy {
+    id: string;
     ctx!: ChartItem;
     chart!: Chart<"line", number[], string>;
     currentData: Measure[] = [];
@@ -130,9 +132,10 @@ export class BaseChartComponent {
     lastValue: string = "";
 
     tOnMilliseconds: number = 0;
-    private readonly timeSlotSize = 5 * minuteInMilliseconds;
+    timeSlotSize = 5 * minuteInMilliseconds;
     fullScreen: boolean = false;
-    // dataProcessor: Worker;
+    dataProcessor: Worker;
+    
     get class() {
         return this.fullScreen ? "full-screen-mode" : "widget-mode"
     };
@@ -172,15 +175,26 @@ export class BaseChartComponent {
         this.id = "gid-" + uuid();
 
         this.dataLoader = dataLoaderFactory.createLoader(this.measureName, this.measureKind, this.timeSlotSize, 24 * hourInMilliseconds);
-        // this.dataProcessor = new Worker(new URL('./app/data-processor.worker.ts', import.meta.url));
-        // // Create a new
-        // this.dataProcessor.onmessage = ({ data }) => {
-        //     console.log(`page got message: ${data}`);
-        // };
-        // this.dataProcessor.postMessage('hello');
+        this.dataProcessor = new Worker(new URL('../data-processor.worker', import.meta.url));
+
+        this.dataProcessor.onmessage = ({ data }) => {
+            const outData = data as DataProcessorOutData;
+            this.lastValue = outData.lastValue || "";
+
+            this.tOnMilliseconds = outData.tOnMilliseconds || 0;
+
+            this.chart.data.labels = outData.labels || [];
+            this.chart.data.datasets[0].data = outData.values || [];
+
+            this.chart.update();
+        };
 
         setTimeout(() => this.init(), 10);
         setInterval(() => this.loadData(), 5000);
+    }
+
+    ngOnDestroy(): void {
+        this.dataProcessor?.terminate();
     }
 
     public toggleFullScreen() {
@@ -191,27 +205,12 @@ export class BaseChartComponent {
     loadData(): Subscription {
         return this.dataLoader.loadData()
             .subscribe((graphValues) => {
-                const labels = graphValues.map(d => d.utcTimeStamp
-                    .toLocaleString('it-IT', {
-                        year: undefined,
-                        month: undefined,
-                        day: undefined,
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
-                    }));
+                const inData: DataProcessorInData = {};
+                inData.graphId = this.id;
+                inData.measures = graphValues;
+                inData.timeSlotSize = this.timeSlotSize;
 
-                this.lastValue = graphValues[graphValues.length - 1].formattedValue;
-                const values = graphValues.map(d => d.value);
-                if (!this.chart || !this.chart.data)
-                    return;
-
-                this.tOnMilliseconds = this.timeSlotSize * values.reduce((sum, val) => sum + val, 0);
-
-                this.chart.data.labels = labels;
-                this.chart.data.datasets[0].data = values;
-
-                this.chart.update();
+                this.dataProcessor.postMessage(inData);
             });
     }
 
