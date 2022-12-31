@@ -1,6 +1,6 @@
 using application.infrastructure;
 using domain;
-using domain.measures.meters;
+using domain.meters;
 using domain.systemComponents;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

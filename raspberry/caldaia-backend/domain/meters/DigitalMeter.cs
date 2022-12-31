@@ -1,7 +1,7 @@
-using System.Diagnostics;
+using domain.measures;
 using domain.systemComponents;
 
-namespace domain.measures.meters;
+namespace domain.meters;
 
 public class DigitalMeter
 {
@@ -45,7 +45,7 @@ public class DigitalMeter
         }
     }
 
-    public List<OnOff> History { get; } = new List<OnOff>();
+    public List<IMeasure> history { get; } = new List<IMeasure>();
     protected const int MAX_ITEMS_IN_HISTORY = 65536;
 
     public DigitalMeter(DigitalInput inputToMeasure)
@@ -54,8 +54,14 @@ public class DigitalMeter
         inputToMeasure.TransitionedFromOffToOn += OffToOnHandler;
         inputToMeasure.TransitionedFromOnToOff += OnToOffHandler;
         this.source = inputToMeasure;
-        History.Add(new OnOff(OnOffState.OFF));
+        history.Add(new OnOff(OnOffState.OFF));
     }
+
+    public StatsDTO GetStats(DateTimeOffset fromDate, DateTimeOffset? toDate = null)
+    {
+        return history.GetStats(fromDate, toDate);
+    }
+
 
     protected virtual void ValueChangedHandler(object? sender, IMeasure? newValue)
     {
@@ -66,12 +72,12 @@ public class DigitalMeter
 
         this.LastKnownValue = nv;
         OnOff? removedValue = default(OnOff);
-        if (this.History.Count == MAX_ITEMS_IN_HISTORY)
+        if (this.history.Count == MAX_ITEMS_IN_HISTORY)
         {
-            removedValue = this.History[0];
-            this.History.RemoveAt(0);
+            removedValue = history[0] as OnOff;
+            this.history.RemoveAt(0);
         }
-        this.History.Add(nv);
+        this.history.Add(nv);
     }
 
     protected virtual void OffToOnHandler(object? sender, OnOff? newValue)

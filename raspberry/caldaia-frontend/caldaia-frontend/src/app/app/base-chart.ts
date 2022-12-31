@@ -22,6 +22,7 @@ export function templateBuilder(textContent: string) {
     margin: 0;
     padding: 0;
     width: 100%;
+    heigth: 100%;
 }
 
 .full-screen-mode {
@@ -109,9 +110,7 @@ export function templateBuilder(textContent: string) {
 <div class="{{class}}">
     <canvas style="box-sizing: border-box; margin:0; padding:0;" id="{{this.id}}" ></canvas>
     <div class="{{fullScreen ? 'full-screen-toggle-button-fullscreen' : 'full-screen-toggle-button'}}" (click)="toggleFullScreen()">[{{fullScreen ? '-' : '+' }}]</div>
-    <div class="text-container">
-    ${textContent}
-    </div>
+    <div class="text-container">${textContent}</div>
     <div class="backdrop {{fullScreen ? 'backdrop-fullscreen' : ''}}">&nbsp;</div>
 `;
 }

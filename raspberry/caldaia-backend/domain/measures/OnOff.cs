@@ -26,7 +26,7 @@ public static class OnOffExtensions {
     }
 }
 
-public class OnOff : SimpleMeasure
+public class OnOff : SimpleMeasure, IMeasure
 {
     public override string UoM => "";
     public override string FormattedValue => Value == 0 ? "Off" : "On";

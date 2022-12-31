@@ -1,7 +1,6 @@
-using System.Diagnostics;
 using domain.systemComponents;
 
-namespace domain.measures.meters;
+namespace domain.meters;
 
 public class AnalogMeter
 {
@@ -31,6 +30,11 @@ public class AnalogMeter
 
         var average = history.Where(h => h.UtcTimeStamp > DateTime.UtcNow - period).Select(h => h.Value).Average();
         return LastKnownValue.WithNewValue(average, DateTime.UtcNow);
+    }
+
+    public StatsDTO GetStats(DateTimeOffset fromDate, DateTimeOffset? toDate = null)
+    {
+        return history.GetStats(fromDate, toDate);
     }
 
     protected virtual void ValueChangedHandler(object? sender, IMeasure? newValue)
