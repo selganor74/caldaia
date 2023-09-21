@@ -11,7 +11,11 @@ public class CaldaiaApplication : IDisposable
     private readonly INotificationPublisher notificationHub;
     private readonly ILogger log;
 
+    private CaldaiaAllValues stato;
+    private decimal prevDutyCycle;
+
     private Thread mainLoopThread;
+    private Thread logStatoThread;
     private bool isStarted;
 
     public CaldaiaApplication(
@@ -25,6 +29,16 @@ public class CaldaiaApplication : IDisposable
         this.config = config;
         this.notificationHub = notificationHub;
         this.log = log;
+
+        logStatoThread = new Thread((obj) => {
+            var LOG_OUTPUT_INTERVAL = TimeSpan.FromSeconds(10);
+            var lastTimeLogged = DateTime.Now;
+
+            while(isStarted) {
+                Thread.Sleep(LOG_OUTPUT_INTERVAL);
+                log.LogDebug(stato.ToString());
+            }
+        });
 
         mainLoopThread = new Thread((obj) =>
         {
@@ -77,17 +91,11 @@ public class CaldaiaApplication : IDisposable
 
         log.LogInformation($"{nameof(MainLoop)}: ... ok, {nameof(io)} Ready ...");
 
-        var lastOutput = DateTime.Now;
         while (isStarted)
         {
             nextLoopStart = WaitForNextLoopStart(config.MainLoopPeriod, nextLoopStart);
 
             stato = io.ReadAll(log);
-            if (DateTime.Now > (lastOutput + TimeSpan.FromSeconds(10)))
-            {
-                lastOutput = DateTime.Now;
-                log.LogDebug(stato.ToString());
-            }
 
             CrunchInputs();
             NotifyState();
@@ -121,8 +129,6 @@ public class CaldaiaApplication : IDisposable
         TEMPERATURA_CAMINO = (CaldaiaAllValues stato) => stato.TEMPERATURA_CAMINO.Value;
 
     private Func<CaldaiaAllValues, CaldaiaIOSet, bool> POMPA_CAMINO_ACCESA = (CaldaiaAllValues stato, CaldaiaIOSet io) => stato.STATO_RELAY_POMPA_CAMINO.IsOn() || io.RELAY_POMPA_CAMINO.IsDutyCycleStarted;
-    private CaldaiaAllValues stato;
-    private decimal prevDutyCycle;
 
     private decimal CALCOLA_DUTY_CYCLE_POMPA_CAMINO(CaldaiaAllValues stato)
     {        
