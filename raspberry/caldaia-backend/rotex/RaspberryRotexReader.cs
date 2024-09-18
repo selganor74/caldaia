@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.IO.Ports;
 using application.infrastructure;
 using domain.measures;
@@ -6,12 +7,13 @@ using domain.systemComponents.mocks;
 using Microsoft.Extensions.Logging;
 
 namespace rotex;
+
 public class RaspberryRotexReader : IDisposable
 {
     private RaspberryRotexReaderConfig config;
     private SerialPort? serialPort;
     private readonly ILogger log;
-    private Thread readThread;
+    private BackgroundWorker readThread;
     private bool isStarted = false;
 
     private MockAnalogInput _ROTEX_TEMPERATURA_PANNELLI { get; }
@@ -37,7 +39,9 @@ public class RaspberryRotexReader : IDisposable
         this.config = config.DeepClone() ?? new RaspberryRotexReaderConfig();
         this.log = log;
 
-        this.readThread = new Thread((obj) => this.SerialRead());
+        this.readThread = new BackgroundWorker();
+        this.readThread.DoWork += (obj, evt) => this.SerialRead();
+
         _ROTEX_TEMPERATURA_PANNELLI = rOTEX_TEMPERATURA_PANNELLI;
         _ROTEX_TEMPERATURA_ACCUMULO = rOTEX_TEMPERATURA_ACCUMULO;
         _ROTEX_STATO_POMPA = rOTEX_STATO_POMPA;
@@ -58,10 +62,17 @@ public class RaspberryRotexReader : IDisposable
         serialPort.NewLine = "" + (char)0x0a;
 
         // this.serialPort.DataReceived += this.DataReceivedHandler;
-        this.serialPort.Open();
+        try
+        {
+            this.serialPort.Open();
+        } catch (Exception ex)
+        {
+            log.LogError($"Unable to open Serial {config.SerialPortName} @ {config.BaudRate}. Rotex will not be available: {ex}");
+            return;
+        }
 
         this.isStarted = true;
-        this.readThread.Start();
+        this.readThread.RunWorkerAsync();
 
         log.LogInformation($"{nameof(RaspberryRotexReader)} Started!");
     }
@@ -95,6 +106,11 @@ public class RaspberryRotexReader : IDisposable
             catch (TimeoutException)
             {
                 // just wait for the next run
+            }
+            catch(Exception e)
+            {
+                log.LogWarning($"{nameof(SerialRead)}: error while reading data: {e}");
+                Thread.Sleep(5000);
             }
         }
     }
@@ -161,7 +177,7 @@ public class RaspberryRotexReader : IDisposable
     public void Stop()
     {
         this.isStarted = false;
-        this.readThread.Join(); // waits for the thread to finish its job
+        // this.readThread.CancelAsync(); // waits for the thread to finish its job
 
         this.serialPort?.Close();
         this.serialPort?.Dispose();
@@ -171,5 +187,6 @@ public class RaspberryRotexReader : IDisposable
     public void Dispose()
     {
         Stop();
+        this.readThread?.Dispose();
     }
 }

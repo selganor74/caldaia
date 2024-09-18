@@ -12,6 +12,7 @@ using application;
 using rotex;
 using api.dependencyInjection;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Server.IIS.Core;
 
 LogManager.Setup().LoadConfiguration(logBuilder =>
 {
@@ -100,9 +101,14 @@ app.UseRewriter(new RewriteOptions()
     .AddRedirect("^$", "/app/")
 );
 var signalRNotificationAdapter = app.Services.GetService<SignalRNotificationAdapter>();
-signalRNotificationAdapter.Start();
+signalRNotificationAdapter?.Start();
 
 var caldaiaApp = app.Services.StartCaldaiaApplication();
 
-app.Lifetime.ApplicationStopping.Register(() => caldaiaApp.Stop());
+app.Lifetime.ApplicationStopping.Register(() => {
+    Console.WriteLine("Stopping Caldaia Application!");
+    caldaiaApp.Stop();
+    caldaiaApp.Dispose();
+});
+
 app.Run();

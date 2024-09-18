@@ -22,7 +22,7 @@ public class RaspberryGpio : IDisposable
         Unset = 0,
         RELAY_CALDAIA = 17, // GPIO=17, PIN=11
         RELAY_POMPA_CAMINO = 27, // GPIO=27, PIN=13
-        RELAY_BYPASS_TERMOSTATO = 22, // GPIO=22, PIN15
+        RELAY_BYPASS_TERMOSTATO = 22, // GPIO=22, PIN=15
         RELAY_POMPA_RISCALDAMENTO = 23 // GPIO=23, PIN=16
     }
 

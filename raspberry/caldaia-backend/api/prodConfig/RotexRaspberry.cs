@@ -59,12 +59,12 @@ public class RotexRaspberry : Rotex
             log
         );
 
-        serialRotex.Start();
 
     }
 
     protected override void Init()
     {
         // do nothing
+        serialRotex.Start();
     }
 }
