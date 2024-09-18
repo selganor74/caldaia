@@ -33,4 +33,4 @@ Write-host "... done"
 
 # . .\deploy-frontend-to-raspberry.ps1
 
-.\tail-debug.ps1
+.\tail-syslog.ps1
