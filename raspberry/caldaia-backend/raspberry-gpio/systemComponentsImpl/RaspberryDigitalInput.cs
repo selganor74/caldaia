@@ -19,7 +19,7 @@ public class RaspberryDigitalInput : DigitalInput
     {
         this.gpioId = gpioId;
         this.gpio = gpio;
-        this.gpio.OpenPin(gpioId, PinMode.Input);
+        this.gpio.OpenPin(gpioId, PinMode.InputPullUp);
 
         this.gpio.RegisterCallbackForPinValueChangedEvent(gpioId, PinEventTypes.Rising | PinEventTypes.Falling, OnPinChangedEvent);
         var value = this.gpio.Read(this.gpioId) == PinValue.High ? OnOffState.ON : OnOffState.OFF;

@@ -22,19 +22,31 @@ public class Rotex : Subsystem
         ILogger<Rotex> log
     ) : base(hub, log)
     {
+        SetUpMockInputOutputs(log);
+    }
+
+    private void SetUpMockInputOutputs(ILogger log)
+    {
         var tempAccumulo = new MockAnalogInput(nameof(ROTEX_TEMP_ACCUMULO), log);
         var tempPannelli = new MockAnalogInput(nameof(ROTEX_TEMP_PANNELLI), log);
         var statoPompa = new MockDigitalInput(nameof(ROTEX_STATO_POMPA), log);
         var termoRotex = new MockDigitalInput(nameof(TERMOSTATO_ROTEX), log);
-        
+
         tempAccumulo.SetInput(new Temperature(50m));
         tempPannelli.SetInput(new Temperature(25m));
-        statoPompa.Set(domain.measures.OnOffState.OFF);
-        termoRotex.Set(domain.measures.OnOffState.OFF);
+        statoPompa.Set(OnOffState.OFF);
+        termoRotex.Set(OnOffState.OFF);
 
         ROTEX_TEMP_ACCUMULO = tempAccumulo;
         ROTEX_TEMP_PANNELLI = tempPannelli;
         ROTEX_STATO_POMPA = statoPompa;
         TERMOSTATO_ROTEX = termoRotex;
+    }
+
+    public override void SetAsNotReady()
+    {
+        SetUpMockInputOutputs(log);
+
+        base.SetAsNotReady();
     }
 }

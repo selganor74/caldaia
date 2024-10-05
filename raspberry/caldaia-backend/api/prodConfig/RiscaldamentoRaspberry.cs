@@ -15,7 +15,7 @@ public class RiscaldamentoRaspberry : Riscaldamento
     {
         RELAY_BYPASS_TERMOSTATO_AMBIENTE = new RaspberryDigitalOutput(
                 nameof(RELAY_BYPASS_TERMOSTATO_AMBIENTE),
-                27, // GPIO=27, PIN=13
+                22, // GPIO=22, PIN=15
                 gpioCtrl,
                 log
             );
@@ -35,7 +35,7 @@ public class RiscaldamentoRaspberry : Riscaldamento
 
         RELAY_POMPA_RISCALDAMENTO = new RaspberryDigitalOutput(
                 nameof(RELAY_POMPA_RISCALDAMENTO),
-                gpioId: 17, // GPIO=17, PIN=11
+                gpioId: 23, // GPIO=23, PIN=23
                 gpioCtrl,
                 log
         );

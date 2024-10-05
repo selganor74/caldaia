@@ -42,9 +42,14 @@ public static class StatsCalculator
 
     private static StatsDTO ComputeStats(DateTimeOffset fromDate, DateTimeOffset? toDate, List<IMeasure> valuesInPeriod)
     {
+        if(!valuesInPeriod.Any())
+        {
+            return StatsDTO.EmptyStatsDTO;
+        }
+
         valuesInPeriod = valuesInPeriod.OrderBy(h => h.UtcTimeStamp).ToList();
         decimal totalWeight = (decimal)(valuesInPeriod.Last().UtcTimeStamp - valuesInPeriod.First().UtcTimeStamp).TotalMilliseconds;
-        IMeasure prev = null;
+        IMeasure? prev = null;
         decimal avg = 0;
         decimal min = valuesInPeriod.Count == 0 ? 0 : Decimal.MaxValue;
         decimal max = valuesInPeriod.Count == 0 ? 0 : Decimal.MinValue;
@@ -69,7 +74,7 @@ public static class StatsCalculator
             Min = min,
             Avg = avg,
             From = fromDate.DateTime,
-            To = toDate.Value.DateTime,
+            To = toDate?.DateTime ?? fromDate.DateTime,
             Samples = valuesInPeriod.Count
         };
         return toReturn;

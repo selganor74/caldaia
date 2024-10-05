@@ -4,6 +4,7 @@ using application.subSystems;
 using application.infrastructure;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Diagnostics;
 
 namespace application;
 
@@ -50,16 +51,37 @@ public class CaldaiaIOSet : IDisposable
         if (log == null)
             log = NullLoggerFactory.Instance.CreateLogger(nameof(CaldaiaIOSet));
 
-        return ROTEX.IsReady()
+        var timeout = Stopwatch.StartNew();
+        var TIMEOUT = TimeSpan.FromSeconds(15);
+        var isReady = () => ROTEX.IsReady()
             && CAMINO.IsReady()
             && CALDAIA.IsReady()
             && RISCALDAMENTO.IsReady();
+
+        while (!isReady() && timeout.Elapsed < TIMEOUT)
+        {
+            Thread.Sleep(100);
+        }
+        if (!isReady())
+        {
+            if (!ROTEX.IsReady()) ROTEX.SetAsNotReady();
+            if (!CAMINO.IsReady()) CAMINO.SetAsNotReady();
+            if (!CALDAIA.IsReady()) CALDAIA.SetAsNotReady();
+            if (!RISCALDAMENTO.IsReady()) RISCALDAMENTO.SetAsNotReady();
+            
+            return false;
+        }
+
+        return true;
     }
 
     public CaldaiaAllValues ReadAll(ILogger? log)
     {
-        while (!IsReady(log))
-            Thread.Sleep(100);
+        //var READY_TIMEOUT = TimeSpan.FromSeconds(1);
+        //while (!IsReady(log))
+        //{
+        //    Thread.Sleep(100);
+        //}
 
         var toReturn = new CaldaiaAllValues();
 

@@ -41,7 +41,7 @@ public class CaminoRaspberry : Camino
 
         RELAY_POMPA_CAMINO = new RaspberryDigitalOutput(
                 nameof(RELAY_POMPA_CAMINO),
-                22, // GPIO=22, PIN15
+                27, // GPIO=27, PIN13
                 gpioCtrl,
                 log: log
             );

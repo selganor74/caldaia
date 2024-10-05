@@ -1,6 +1,7 @@
 ﻿using application.infrastructure;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace application;
 
@@ -30,18 +31,22 @@ public class CaldaiaApplication : IDisposable
         this.notificationHub = notificationHub;
         this.log = log;
 
-        logStatoThread = new Thread((obj) => {
+        logStatoThread = new Thread((obj) =>
+        {
             var LOG_OUTPUT_INTERVAL = TimeSpan.FromSeconds(10);
             var lastTimeLogged = DateTime.Now;
 
-            while(isStarted) {
+            while (isStarted)
+            {
                 Thread.Sleep(LOG_OUTPUT_INTERVAL);
-                log.LogDebug(stato.ToString());
+                if (stato is not null)
+                    log.LogDebug(stato!.ToString());
             }
         });
 
         mainLoopThread = new Thread((obj) =>
         {
+            log.LogDebug($"{mainLoopThread} started!");
             try
             {
                 MainLoop();
@@ -62,8 +67,18 @@ public class CaldaiaApplication : IDisposable
 
     public void Start()
     {
-        this.isStarted = true;
-        this.mainLoopThread.Start();
+        log.LogInformation($"{nameof(CaldaiaApplication)} Starting application.");
+        if (isStarted)
+            return;
+
+        isStarted = true;
+
+        log.LogInformation($"{nameof(CaldaiaApplication)} * Starting main loop thread.");
+        mainLoopThread.Start();
+
+        log.LogInformation($"{nameof(CaldaiaApplication)} * Starting status logging thread.");
+        logStatoThread.Start();
+
         log.LogInformation($"{nameof(CaldaiaApplication)} Started with config:{Environment.NewLine}{JsonConvert.SerializeObject(config, Formatting.Indented)}");
     }
 
@@ -74,8 +89,9 @@ public class CaldaiaApplication : IDisposable
 
         this.isStarted = false;
         this.mainLoopThread.Join();
+        this.logStatoThread.Join();
         this.io.Dispose();
-        
+
         log.LogInformation($"{nameof(CaldaiaApplication)} Stopped!");
     }
 
@@ -84,16 +100,32 @@ public class CaldaiaApplication : IDisposable
     {
         var nextLoopStart = DateTime.Now;
 
-        log.LogInformation($"{nameof(MainLoop)}: Waiting for {nameof(io)} to become Ready ...");
+        log.LogInformation($"{nameof(MainLoop)}: 😁 Waiting for {nameof(io)} to become Ready ...");
 
-        while (!io.IsReady(log))
+        var timer = Stopwatch.StartNew();
+        var READY_TIMEOUT = TimeSpan.FromSeconds(15);
+        while (!io.IsReady(log) && timer.Elapsed < READY_TIMEOUT)
+        {
+            log.LogDebug($"Ready Timeout will occour in {(READY_TIMEOUT - timer.Elapsed).TotalSeconds} seconds");
             Thread.Sleep(100);
+        }
 
-        log.LogInformation($"{nameof(MainLoop)}: ... ok, {nameof(io)} Ready ...");
+        if (io.IsReady(log))
+        {
+            log.LogInformation($"{nameof(MainLoop)}: ... ok, {nameof(io)} Ready ...");
+        }
+        else
+        {
+            log.LogInformation("Timeout while waiting for readyness ... lets go on");
+        }
 
         while (isStarted)
         {
+            log.LogDebug($"{nameof(MainLoop)}: Waiting to start ... (loop period: {config.MainLoopPeriod}) ");
+
             nextLoopStart = WaitForNextLoopStart(config.MainLoopPeriod, nextLoopStart);
+
+            log.LogDebug($"{nameof(MainLoop)}: Waiting to start ...");
 
             stato = io.ReadAll(log);
 
@@ -102,7 +134,8 @@ public class CaldaiaApplication : IDisposable
         }
     }
 
-    private void NotifyState() {
+    private void NotifyState()
+    {
         log.LogDebug($"Publishing to status-reading channel");
         notificationHub.Publish("status-reading", stato);
     }
@@ -131,7 +164,7 @@ public class CaldaiaApplication : IDisposable
     private Func<CaldaiaAllValues, CaldaiaIOSet, bool> POMPA_CAMINO_ACCESA = (CaldaiaAllValues stato, CaldaiaIOSet io) => stato.STATO_RELAY_POMPA_CAMINO.IsOn() || io.RELAY_POMPA_CAMINO.IsDutyCycleStarted;
 
     private decimal CALCOLA_DUTY_CYCLE_POMPA_CAMINO(CaldaiaAllValues stato)
-    {        
+    {
         if (!ROTEX_DISPONIBILE(stato))
         {
             return CalcolaDutyCycleSoloSuTemperaturaCamino(stato);
@@ -195,8 +228,9 @@ public class CaldaiaApplication : IDisposable
     private void Manage_POMPA_CAMINO()
     {
         var dutyCyclePompaCamino = CALCOLA_DUTY_CYCLE_POMPA_CAMINO(stato);
-        if (prevDutyCycle != dutyCyclePompaCamino) {
-            log.LogDebug($"{nameof(Manage_POMPA_CAMINO)}: Different DutyCycle computed from {prevDutyCycle} to {dutyCyclePompaCamino}.");       
+        if (prevDutyCycle != dutyCyclePompaCamino)
+        {
+            log.LogDebug($"{nameof(Manage_POMPA_CAMINO)}: Different DutyCycle computed from {prevDutyCycle} to {dutyCyclePompaCamino}.");
             prevDutyCycle = dutyCyclePompaCamino;
         }
 

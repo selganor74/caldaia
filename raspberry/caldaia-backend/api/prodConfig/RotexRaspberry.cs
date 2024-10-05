@@ -47,6 +47,7 @@ public class RotexRaspberry : Rotex
             log
             );
 
+        TERMOSTATO_ROTEX = termostatoRotexNegated;
         ROTEX_STATO_POMPA = statoPompaRotex;
         ROTEX_TEMP_ACCUMULO = tempAccumulo;
         ROTEX_TEMP_PANNELLI = tempPannelli;

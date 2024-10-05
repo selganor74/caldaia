@@ -31,7 +31,7 @@ namespace application.dependencyInjection
         {
             var app = injector.GetService<CaldaiaApplication>();
             
-            app?.Start();
+            app!.Start();
 
             return app;
         }

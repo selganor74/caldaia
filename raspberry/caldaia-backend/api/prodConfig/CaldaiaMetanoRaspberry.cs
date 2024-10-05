@@ -15,7 +15,7 @@ public class CaldaiaMetanoRaspberry : CaldaiaMetano
     {
         RELAY_ACCENSIONE_CALDAIA = new RaspberryDigitalOutput(
             name: nameof(RELAY_ACCENSIONE_CALDAIA),
-            gpioId: 23, // GPIO=23, PIN=16
+            gpioId: 17, // GPIO=17, PIN=11
             gpio: gpioCtrl,
             log: log
         );
