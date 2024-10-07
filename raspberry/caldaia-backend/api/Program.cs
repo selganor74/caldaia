@@ -76,7 +76,7 @@ builder.Services.AddRaspberryIOSet(rotexConfig);
 builder.Services.AddMockIOSet();
 #endif
 
-var config = new CaldaiaConfig(TimeSpan.FromSeconds(1));
+var config = new CaldaiaConfig(TimeSpan.FromSeconds(5));
 builder.Services.AddCaldaiaApplication(config);
 
 var app = builder.Build();
