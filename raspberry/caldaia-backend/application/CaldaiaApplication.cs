@@ -148,7 +148,7 @@ public class CaldaiaApplication : IDisposable
     }
 
     private Func<CaldaiaAllValues, bool>
-        ROTEX_DISPONIBILE = (CaldaiaAllValues stato) => stato.ROTEX_TEMP_ACCUMULO.UtcTimeStamp > DateTime.UtcNow - TimeSpan.FromMinutes(5);
+        ROTEX_DISPONIBILE = (CaldaiaAllValues stato) => stato.ROTEX_TEMP_ACCUMULO.UtcTimeStamp > DateTime.UtcNow - TimeSpan.FromSeconds(30);
 
     private Func<CaldaiaAllValues, bool>
         CALDAIA_ACCESA = (CaldaiaAllValues stato) => stato.STATO_RELAY_CALDAIA.IsOn();
