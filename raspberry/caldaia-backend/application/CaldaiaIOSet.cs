@@ -75,13 +75,13 @@ public class CaldaiaIOSet : IDisposable
         return true;
     }
 
-    public CaldaiaAllValues ReadAll(ILogger? log)
+    public CaldaiaAllValues ReadAll(ILogger log)
     {
-        //var READY_TIMEOUT = TimeSpan.FromSeconds(1);
-        //while (!IsReady(log))
-        //{
-        //    Thread.Sleep(100);
-        //}
+        var props = GetType().GetProperties();
+        foreach(var p in props)
+        {
+            log.LogDebug($"{nameof(ReadAll)} {p.Name} {p.GetValue(this)?.GetType().Name ?? "<null>"}");
+        }
 
         var toReturn = new CaldaiaAllValues();
 

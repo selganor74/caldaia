@@ -106,7 +106,7 @@ public class CaldaiaApplication : IDisposable
         var READY_TIMEOUT = TimeSpan.FromSeconds(15);
         while (!io.IsReady(log) && timer.Elapsed < READY_TIMEOUT)
         {
-            log.LogDebug($"Ready Timeout will occour in {(READY_TIMEOUT - timer.Elapsed).TotalSeconds} seconds");
+            log.LogDebug($"Ready Timeout will occour in {Math.Round((READY_TIMEOUT - timer.Elapsed).TotalSeconds,1)} seconds");
             Thread.Sleep(100);
         }
 
@@ -125,11 +125,18 @@ public class CaldaiaApplication : IDisposable
 
             nextLoopStart = WaitForNextLoopStart(config.MainLoopPeriod, nextLoopStart);
 
-            log.LogDebug($"{nameof(MainLoop)}: Waiting to start ...");
+            log.LogDebug($"{nameof(MainLoop)}: Reading IO state ...");
 
             stato = io.ReadAll(log);
 
+            log.LogDebug($"{nameof(MainLoop)}: {stato}");
+
+            log.LogDebug($"{nameof(MainLoop)}: Crunching inputs ...");
+
             CrunchInputs();
+
+            log.LogDebug($"{nameof(MainLoop)}: Notifying state to UI ...");
+
             NotifyState();
         }
     }
@@ -216,28 +223,35 @@ public class CaldaiaApplication : IDisposable
 
     private void CrunchInputs()
     {
+        log.LogDebug($"{nameof(CrunchInputs)}: {nameof(Manage_ACCENSIONE_CALDAIA)}");
         Manage_ACCENSIONE_CALDAIA();
 
+        log.LogDebug($"{nameof(CrunchInputs)}: {nameof(Manage_POMPA_RISCALDAMENTO)}");
         Manage_POMPA_RISCALDAMENTO();
 
+        log.LogDebug($"{nameof(CrunchInputs)}: {nameof(Manage_BYPASS_TERMO_AMBIENTI)}");
         Manage_BYPASS_TERMO_AMBIENTI();
 
+        log.LogDebug($"{nameof(CrunchInputs)}: {nameof(Manage_POMPA_CAMINO)}");
         Manage_POMPA_CAMINO();
     }
 
     private void Manage_POMPA_CAMINO()
     {
         var dutyCyclePompaCamino = CALCOLA_DUTY_CYCLE_POMPA_CAMINO(stato);
+        log.LogDebug($"  {nameof(Manage_POMPA_CAMINO)}: Computed Duty Cycle pompa camino: {dutyCyclePompaCamino}");
         if (prevDutyCycle != dutyCyclePompaCamino)
         {
-            log.LogDebug($"{nameof(Manage_POMPA_CAMINO)}: Different DutyCycle computed from {prevDutyCycle} to {dutyCyclePompaCamino}.");
+            log.LogDebug($"{nameof(Manage_POMPA_CAMINO)}: Duty Cycle has changed from {prevDutyCycle} to {dutyCyclePompaCamino}.");
             prevDutyCycle = dutyCyclePompaCamino;
         }
 
         if (ROTEX_DISPONIBILE(stato))
         {
+            log.LogDebug($"  {nameof(Manage_POMPA_CAMINO)}: ROTEX is available!");
             if (POMPA_CAMINO_ACCESA(stato, io) && dutyCyclePompaCamino == 0m)
             {
+                log.LogDebug($"  {nameof(Manage_POMPA_CAMINO)}: Setting {nameof(io.RELAY_POMPA_CAMINO)} ad {dutyCyclePompaCamino} Duty Cycle!");
                 io.RELAY_POMPA_CAMINO.StopDutyCycle();
                 io.RELAY_POMPA_CAMINO.SetToOff($"Temperatura camino sotto soglia minima innesco {config.CAMINO_T_INNESCO_50_50}");
             }
@@ -246,18 +260,23 @@ public class CaldaiaApplication : IDisposable
             {
                 if (TEMPERATURA_ROTEX(stato) > TEMPERATURA_CAMINO(stato))
                 {
+                    log.LogDebug($"  {nameof(Manage_POMPA_CAMINO)}: {nameof(io.ROTEX_TEMP_ACCUMULO)} ({TEMPERATURA_ROTEX(stato)}) > {nameof(io.CAMINO_TEMPERATURA)} ({TEMPERATURA_CAMINO(stato)}).");
                     if (TEMPERATURA_ROTEX(stato) > 60)
                     {
+                        log.LogDebug($"  {nameof(Manage_POMPA_CAMINO)}: Setting {nameof(io.RELAY_POMPA_CAMINO)} to 0.25 Duty Cycle (FIXED)!");
                         io.RELAY_POMPA_CAMINO.SetDutyCycle(0.25m, TimeSpan.FromMinutes(5));
                     }
                     if (TEMPERATURA_ROTEX(stato) <= 60)
                     {
+                        log.LogDebug($"  {nameof(Manage_POMPA_CAMINO)}: Stopping {nameof(io.RELAY_POMPA_CAMINO)}");
                         io.RELAY_POMPA_CAMINO.StopDutyCycle();
                         io.RELAY_POMPA_CAMINO.SetToOff($"Temperatura camino ({TEMPERATURA_CAMINO(stato):F1}) inferiore a temperatura ROTEX ({TEMPERATURA_ROTEX(stato):F1}) e temperatura ROTEX <= 60.");
                     }
                 }
                 else
                 {
+                    log.LogDebug($"  {nameof(Manage_POMPA_CAMINO)}: {nameof(io.ROTEX_TEMP_ACCUMULO)} ({TEMPERATURA_ROTEX(stato)}) <= {nameof(io.CAMINO_TEMPERATURA)} ({TEMPERATURA_CAMINO(stato)}).");
+                    log.LogDebug($"  {nameof(Manage_POMPA_CAMINO)}: Setting {nameof(io.RELAY_POMPA_CAMINO)} to {dutyCyclePompaCamino} Duty Cycle (computed)!");
                     io.RELAY_POMPA_CAMINO.SetDutyCycle(dutyCyclePompaCamino, TimeSpan.FromMinutes(5));
                 }
             }
@@ -265,14 +284,17 @@ public class CaldaiaApplication : IDisposable
 
         if (!ROTEX_DISPONIBILE(stato))
         {
+            log.LogDebug($"  {nameof(Manage_POMPA_CAMINO)}: ROTEX is NOT available!");
             if (POMPA_CAMINO_ACCESA(stato, io) && dutyCyclePompaCamino == 0m)
             {
+                log.LogDebug($"  {nameof(Manage_POMPA_CAMINO)}: Stopping {nameof(io.RELAY_POMPA_CAMINO)}!");
                 io.RELAY_POMPA_CAMINO.StopDutyCycle();
                 io.RELAY_POMPA_CAMINO.SetToOff($"Temperatura camino sotto soglia minima innesco {config.CAMINO_T_INNESCO_50_50}");
             }
 
             if (dutyCyclePompaCamino != 0m)
             {
+                log.LogDebug($"  {nameof(Manage_POMPA_CAMINO)}: Setting {nameof(io.RELAY_POMPA_CAMINO)} ad {dutyCyclePompaCamino} Duty Cycle!");
                 io.RELAY_POMPA_CAMINO.SetDutyCycle(dutyCyclePompaCamino, TimeSpan.FromMinutes(5));
             }
         }
@@ -320,22 +342,37 @@ public class CaldaiaApplication : IDisposable
     {
         if (ROTEX_DISPONIBILE(stato))
         {
+            log.LogDebug($"  {nameof(Manage_ACCENSIONE_CALDAIA)}: ROTEX is available!");
             // Se il ROTEX è DISPONIBILE usiamo la temperatura dell'accumulo per decidere se accendere la caldaia o no
             if (CALDAIA_ACCESA(stato) && TEMPERATURA_ROTEX(stato) > config.ROTEX_T_SOGLIA_SPEGNIMENTO_CALDAIA)
+            {
+                log.LogDebug($"  {nameof(Manage_ACCENSIONE_CALDAIA)}: Temperatura accumulo ROTEX [{TEMPERATURA_ROTEX(stato)}] > {nameof(config.ROTEX_T_SOGLIA_SPEGNIMENTO_CALDAIA)} [{config.ROTEX_T_SOGLIA_SPEGNIMENTO_CALDAIA}]");
                 io.RELAY_CALDAIA.SetToOff($"Temperatura accumulo ROTEX [{TEMPERATURA_ROTEX(stato)}] > {nameof(config.ROTEX_T_SOGLIA_SPEGNIMENTO_CALDAIA)} [{config.ROTEX_T_SOGLIA_SPEGNIMENTO_CALDAIA}]");
+            }
 
             if (CALDAIA_SPENTA(stato) && TEMPERATURA_ROTEX(stato) < config.ROTEX_T_SOGLIA_ACCENSIONE_CALDAIA)
+            {
+                log.LogDebug($"  {nameof(Manage_ACCENSIONE_CALDAIA)}: Temperatura accumulo ROTEX [{TEMPERATURA_ROTEX(stato)}] < {nameof(config.ROTEX_T_SOGLIA_ACCENSIONE_CALDAIA)} [{config.ROTEX_T_SOGLIA_ACCENSIONE_CALDAIA}]");
                 io.RELAY_CALDAIA.SetToOn($"Temperatura accumulo ROTEX [{TEMPERATURA_ROTEX(stato)}] < {nameof(config.ROTEX_T_SOGLIA_ACCENSIONE_CALDAIA)} [{config.ROTEX_T_SOGLIA_ACCENSIONE_CALDAIA}]");
+            }
         }
 
         if (!ROTEX_DISPONIBILE(stato))
         {
+            log.LogDebug($"  {nameof(Manage_ACCENSIONE_CALDAIA)}: ROTEX is NOT available!");
+            log.LogDebug($"  {nameof(Manage_ACCENSIONE_CALDAIA)}: CALDAIA_SPENTA:{CALDAIA_SPENTA(stato)} TERMOSTATO_ROTEX_ATTIVO:{TERMOSTATO_ROTEX_ATTIVO(stato)}");
             // se la centralina rotex non è disponibile, usiamo il termostato "volante" 
             if (CALDAIA_SPENTA(stato) && TERMOSTATO_ROTEX_ATTIVO(stato))
+            {
+                log.LogDebug($"  {nameof(Manage_ACCENSIONE_CALDAIA)}: Setting {nameof(io.RELAY_CALDAIA)} to ON: Termostato ROTEX sotto set point");
                 io.RELAY_CALDAIA.SetToOn($"Termostato ROTEX sotto set point");
+            }
 
             if (CALDAIA_ACCESA(stato) && TERMOSTATO_ROTEX_NON_ATTIVO(stato))
+            {
+                log.LogDebug($"  {nameof(Manage_ACCENSIONE_CALDAIA)}: Setting {nameof(io.RELAY_CALDAIA)} to OFF: Termostato ROTEX ha raggiunto il set point");
                 io.RELAY_CALDAIA.SetToOff($"Termostato ROTEX ha raggiunto il set point");
+            }
         }
     }
 

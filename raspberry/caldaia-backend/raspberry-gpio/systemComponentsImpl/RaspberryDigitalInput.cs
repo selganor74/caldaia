@@ -36,5 +36,6 @@ public class RaspberryDigitalInput : DigitalInput
                 this.LastMeasure = new OnOff(OnOffState.ON);
                 break;            
         }
+        log.LogDebug($"{nameof(OnPinChangedEvent)}: gpioId:{gpioId} detected {pinValueChangedEventArgs.ChangeType}. new value: {this.LastMeasure?.FormattedValue}");
     }
 }

@@ -26,5 +26,7 @@ public class LogicNot : DigitalInput
         
         if (lv.DigitalValue == OnOffState.OFF)
             this.LastMeasure = lv.WithNewValue(1);
+
+        log.LogDebug($"{nameof(LogicNot)}<{((DigitalInput)source).Name}>: Input: {lv.DigitalValue} Output: {LastMeasure.FormattedValue}");
     }
 }
