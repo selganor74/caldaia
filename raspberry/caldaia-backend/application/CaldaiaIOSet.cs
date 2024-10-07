@@ -29,7 +29,7 @@ public class CaldaiaIOSet : IDisposable
     public DigitalOutput RELAY_CALDAIA => CALDAIA.RELAY_ACCENSIONE_CALDAIA;
 
     public DigitalInput TERMOSTATO_AMBIENTI => RISCALDAMENTO.TERMOSTATO_AMBIENTI;
-    public DigitalInput TERMOSTATO_ROTEX => ROTEX.TERMOSTATO_ROTEX;
+    public DigitalInput TERMOSTATO_ROTEX => RISCALDAMENTO.TERMOSTATO_ROTEX;
 
     public CaldaiaIOSet(
         Rotex rOTEX,

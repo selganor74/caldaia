@@ -39,9 +39,23 @@ public class RiscaldamentoRaspberry : Riscaldamento
                 gpioCtrl,
                 log
         );
+
+        var termostatoRotex = new RaspberryDigitalInput(
+            nameof(TERMOSTATO_ROTEX),
+            6,        // GPIO=6, PIN=31
+            gpioCtrl,
+            log
+        );
+
+        TERMOSTATO_ROTEX = new LogicNot(
+            nameof(TERMOSTATO_ROTEX) + " Negated",
+            termostatoRotex,
+            log
+        );
     }
 
-    protected  override void Init() {
+    protected override void Init()
+    {
         // do nothing !
     }
 }

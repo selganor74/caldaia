@@ -11,6 +11,7 @@ public class Riscaldamento : Subsystem
     public DigitalOutput RELAY_BYPASS_TERMOSTATO_AMBIENTE { get; set; }
     public DigitalInput TERMOSTATO_AMBIENTI { get; set; }
     public DigitalOutput RELAY_POMPA_RISCALDAMENTO { get; set; }
+    public DigitalInput TERMOSTATO_ROTEX { get; set; }
 
     public Riscaldamento(
         INotificationPublisher hub,
@@ -28,5 +29,10 @@ public class Riscaldamento : Subsystem
         var pompa = new MockDigitalOutput(nameof(RELAY_POMPA_RISCALDAMENTO), log);
         pompa.SetToOff("init");
         RELAY_POMPA_RISCALDAMENTO = pompa;
+
+
+        var termoRotex = new MockDigitalOutput(nameof(TERMOSTATO_ROTEX), log);
+        termoRotex.SetToOff("init");
+        TERMOSTATO_ROTEX = termoRotex;
     }
 }

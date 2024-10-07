@@ -34,20 +34,6 @@ public class RotexRaspberry : Rotex
                 log
             );
 
-        var termostatoRotex = new RaspberryDigitalInput(
-                nameof(TERMOSTATO_ROTEX),
-                6,        // GPIO=6, PIN=31
-                gpioCtrl,
-                log
-            );
-
-        var termostatoRotexNegated = new LogicNot(
-            nameof(TERMOSTATO_ROTEX) + " Negated",
-            termostatoRotex,
-            log
-            );
-
-        TERMOSTATO_ROTEX = termostatoRotexNegated;
         ROTEX_STATO_POMPA = statoPompaRotex;
         ROTEX_TEMP_ACCUMULO = tempAccumulo;
         ROTEX_TEMP_PANNELLI = tempPannelli;
