@@ -13,7 +13,7 @@ public class LogicNot : DigitalInput
         ) : base(name, log)
     {
         if (source.LastMeasure != null)
-            OnSourceChanged(null, source.LastMeasure);
+            OnSourceChanged(source, source.LastMeasure);
 
         source.OnValueRead += OnSourceChanged;
     }

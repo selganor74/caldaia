@@ -94,6 +94,7 @@ public class CaldaiaIOSet : IDisposable
 
         toReturn.TERMOSTATO_AMBIENTI = (OnOff)TERMOSTATO_AMBIENTI.LastMeasure;
         toReturn.TERMOSTATO_ROTEX = (OnOff)TERMOSTATO_ROTEX.LastMeasure;
+
         toReturn.ROTEX_TEMP_ACCUMULO = (Temperature)ROTEX_TEMP_ACCUMULO.LastMeasure;
         toReturn.ROTEX_TEMP_PANNELLI = (Temperature)ROTEX_TEMP_PANNELLI.LastMeasure;
 
