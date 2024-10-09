@@ -3,6 +3,7 @@ using application.infrastructure;
 using application.subSystems;
 using domain.systemComponents;
 using raspberry_gpio;
+using static raspberry_gpio.RaspberryGpio;
 
 namespace api.prodConfig;
 
@@ -15,7 +16,7 @@ public class CaldaiaMetanoRaspberry : CaldaiaMetano
     {
         RELAY_ACCENSIONE_CALDAIA = new RaspberryDigitalOutput(
             name: nameof(RELAY_ACCENSIONE_CALDAIA),
-            gpioId: 17, // GPIO=17, PIN=11
+            gpioId: (int)RelayOutput_GPIO.RELAY_CALDAIA,
             gpio: gpioCtrl,
             log: log
         );

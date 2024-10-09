@@ -3,6 +3,7 @@ using application.infrastructure;
 using application.subSystems;
 using domain.systemComponents;
 using raspberry_gpio;
+using static raspberry_gpio.RaspberryGpio;
 
 namespace api.prodConfig;
 
@@ -15,14 +16,14 @@ public class RiscaldamentoRaspberry : Riscaldamento
     {
         RELAY_BYPASS_TERMOSTATO_AMBIENTE = new RaspberryDigitalOutput(
                 nameof(RELAY_BYPASS_TERMOSTATO_AMBIENTE),
-                22, // GPIO=22, PIN=15
+                (int)RelayOutput_GPIO.RELAY_BYPASS_TERMOSTATO,
                 gpioCtrl,
                 log
             );
 
         var termostatoAmbienti = new RaspberryDigitalInput(
                 nameof(TERMOSTATO_AMBIENTI),
-                5,    // GPIO=5, PIN=29
+                (int)DigitalInput_GPIO.TERMOSTATO_AMBIENTI,    // GPIO=26, PIN=37
                 gpioCtrl,
                 log
             );
@@ -35,14 +36,14 @@ public class RiscaldamentoRaspberry : Riscaldamento
 
         RELAY_POMPA_RISCALDAMENTO = new RaspberryDigitalOutput(
                 nameof(RELAY_POMPA_RISCALDAMENTO),
-                gpioId: 23, // GPIO=23, PIN=23
+                gpioId: (int)RelayOutput_GPIO.RELAY_POMPA_RISCALDAMENTO,
                 gpioCtrl,
                 log
         );
 
         var termostatoRotex = new RaspberryDigitalInput(
             nameof(TERMOSTATO_ROTEX),
-            6,        // GPIO=6, PIN=31
+            (int)DigitalInput_GPIO.TERMOSTATO_ROTEX,
             gpioCtrl,
             log
         );

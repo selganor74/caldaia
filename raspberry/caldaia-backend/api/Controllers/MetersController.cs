@@ -9,50 +9,49 @@ namespace api.Controllers;
 [Route("api/meters/")]
 public class MetersController : ControllerBase
 {
-    private readonly Camino camino;
-    private readonly CaldaiaMetano caldaia;
-    private readonly Rotex rotex;
-    private readonly Riscaldamento riscaldamento;
     private readonly ILogger<MetersController> log;
     private readonly List<Subsystem> allSubsystems = new List<Subsystem>();
 
     public MetersController(
-        Camino camino,
-        CaldaiaMetano caldaia,
-        Rotex rotex,
-        Riscaldamento riscaldamento,
         ILogger<MetersController> log)
     {
-        this.camino = camino;
-        this.caldaia = caldaia;
-        this.rotex = rotex;
-        this.riscaldamento = riscaldamento;
         this.log = log;
-
-        this.allSubsystems.Add(camino);
-        this.allSubsystems.Add(caldaia);
-        this.allSubsystems.Add(rotex);
-        this.allSubsystems.Add(riscaldamento); 
     }
 
     [HttpGet()]
-    [Route("analog")] 
-    public async Task<IEnumerable<string>> GetAllAnalogMeters() 
+    [Route("analog")]
+    [Produces("application/json", Type = typeof(IEnumerable<string>))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetAllAnalogMeters() 
     {
-        return allSubsystems.SelectMany(s => s.AnalogMeters).Select(s => s.Name);
+        var toReturn = allSubsystems.SelectMany(s => s.AnalogMeters).Select(s => s.Name);
+        return Ok(toReturn);
     }
 
 
     [Route("analog/{name}")]
     [HttpGet]
-    public async Task<AnalogMeter> GetAnalogMeterByName(string name)
+    [Produces("application/json", Type = typeof(AnalogMeter))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult GetAnalogMeterByName(string name)
     {
-        return allSubsystems.SelectMany(s => s.AnalogMeters).Where(s => s.Name == name).FirstOrDefault();
+        try
+        {
+            var toReturn = allSubsystems.SelectMany(s => s.AnalogMeters).Where(s => s.Name == name).Single();
+            return Ok(toReturn);
+        } catch
+        {
+            return NotFound();
+        }
     }
 
     [Route("analog/{name}/history/{fromDate}")]
     [HttpGet()]
-    public async Task<IEnumerable<IMeasure>> GetAnalogMeterHistory(string name, DateTimeOffset fromDate)
+    [Produces("application/json", Type = typeof(IEnumerable<IMeasure>))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult GetAnalogMeterHistory(string name, DateTimeOffset fromDate)
     {
         var meter = allSubsystems
             .SelectMany(s => s.AnalogMeters)
@@ -60,46 +59,60 @@ public class MetersController : ControllerBase
             .FirstOrDefault();
 
         if (meter == null)
-            return null;
+            return NotFound();
         
         // In CSharp     = 2022-12-12T22:20:06.2038858Z
         // In Javascript = 2022-12-12T22:20:06.203Z
         // per evitare di restituire due volte lo stesso timestamp dobbiamo "approssimare" al millisecondo
-        return meter.history.Where(d => (d.UtcTimeStamp - TimeSpan.FromMilliseconds(1)) > fromDate);
+        var toReturn = meter.history.Where(d => (d.UtcTimeStamp - TimeSpan.FromMilliseconds(1)) > fromDate).ToList();
+        return Ok(toReturn);
     }
     
     [Route("analog/{name}/stats/{fromDate}")]
     [HttpGet()]
-    public async Task<StatsDTO> GetAnalogStats(string name, DateTimeOffset fromDate) {
+    [Produces("application/json", Type = typeof(StatsDTO))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult GetAnalogStats(string name, DateTimeOffset fromDate) {
         var meter = allSubsystems
             .SelectMany(s => s.AnalogMeters)
             .Where(s => s.Name == name)
             .FirstOrDefault();
 
         if (meter == null)
-            return null;
-        
-        return meter.GetStats(fromDate);
+            return NotFound();
+
+        var toReturn = meter.GetStats(fromDate);
+        return Ok(toReturn);
     }
 
     [HttpGet()]
     [Route("digital")]
-    public async Task<IEnumerable<string>> GetAllDigitalMeters() 
+    [Produces("application/json", Type = typeof(IEnumerable<string>))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetAllDigitalMeters() 
     {
-        return allSubsystems.SelectMany(s => s.DigitalMeters).Select(s => s.Name);
+        var toReturn = allSubsystems.SelectMany(s => s.DigitalMeters).Select(s => s.Name);
+        return Ok(toReturn);
     }
 
 
     [Route("digital/{name}")]
     [HttpGet]
-    public async Task<DigitalMeter> GetDigitalMeterByName(string name)
+    [Produces("application/json", Type = typeof(DigitalMeter))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetDigitalMeterByName(string name)
     {
-        return allSubsystems.SelectMany(s => s.DigitalMeters).Where(s => s.Name == name).FirstOrDefault();
+        var toReturn = allSubsystems.SelectMany(s => s.DigitalMeters).Where(s => s.Name == name).FirstOrDefault();
+        return Ok(toReturn);
     }
 
     [Route("digital/{name}/history/{fromDate}")]
     [HttpGet]
-    public async Task<IEnumerable<IMeasure>> GetDigitalMeterHistory(string name, DateTimeOffset fromDate)
+    [Produces("application/json", Type = typeof(IEnumerable<IMeasure>))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult GetDigitalMeterHistory(string name, DateTimeOffset fromDate)
     {
         var meter = allSubsystems
             .SelectMany(s => s.DigitalMeters)
@@ -107,26 +120,31 @@ public class MetersController : ControllerBase
             .FirstOrDefault();
 
         if (meter == null)
-            return null;
+            return NotFound();
 
         // In CSharp     = 2022-12-12T22:20:06.2038858Z
         // In Javascript = 2022-12-12T22:20:06.203Z
         // per evitare di restituire due volte lo stesso timestamp dobbiamo "approssimare" al millisecondo
-        return meter.history.Where(d => (d.UtcTimeStamp - TimeSpan.FromMilliseconds(1)) > fromDate);
+        var toReturn = meter.history.Where(d => (d.UtcTimeStamp - TimeSpan.FromMilliseconds(1)) > fromDate);
+        return Ok(toReturn);
     }
 
 
     [Route("digital/{name}/stats/{fromDate}")]
     [HttpGet()]
-    public async Task<StatsDTO> GetDigitalStats(string name, DateTimeOffset fromDate) {
+    [Produces("application/json", Type = typeof(StatsDTO))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult GetDigitalStats(string name, DateTimeOffset fromDate) {
         var meter = allSubsystems
             .SelectMany(s => s.DigitalMeters)
             .Where(s => s.Name == name)
             .FirstOrDefault();
 
         if (meter == null)
-            return null;
+            return NotFound();
         
-        return meter.GetStats(fromDate);
+        var toReturn = meter.GetStats(fromDate);
+        return Ok(toReturn);
     }
 }

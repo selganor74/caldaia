@@ -51,7 +51,6 @@ public class RotexRaspberry : Rotex
 
     protected override void Init()
     {
-        // do nothing
         serialRotex.Start();
     }
 }
