@@ -1,3 +1,4 @@
+using application;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
@@ -6,19 +7,22 @@ namespace api.Controllers;
 [Route("api/configuration")]
 public class ConfigurationController : ControllerBase
 {
-    private readonly ILogger<ConfigurationController> log;
+    private readonly CaldaiaConfig configuration;
 
     public ConfigurationController(
-        ILogger<ConfigurationController> log
-    )
+        CaldaiaConfig configuration
+        )
     {
-        this.log = log;
+        this.configuration = configuration;
     }
 
     [HttpGet(Name = "GetRotexConfig")]
-    public object GetRotexConfig() {
-        return "";
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult<CaldaiaConfig> GetRotexConfig()
+    {
+        return Ok(configuration);
     }
 
-    
+
 }

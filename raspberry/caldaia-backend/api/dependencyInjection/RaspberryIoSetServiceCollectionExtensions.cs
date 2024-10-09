@@ -17,7 +17,7 @@ public static class RaspberryIoSetServiceCollectionExtensions
 
         services.AddSingleton<GpioController>();
         
-        services.AddSingleton<CaldaiaMetano,CaldaiaMetanoRaspberry>();
+        services.AddSingleton<CaldaiaMetano, CaldaiaMetanoRaspberry>();
         services.AddSingleton<Camino,CaminoRaspberry>();
         services.AddSingleton<Riscaldamento,RiscaldamentoRaspberry>();
         services.AddSingleton<Rotex,RotexRaspberry>();

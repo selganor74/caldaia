@@ -13,6 +13,7 @@ using rotex;
 using api.dependencyInjection;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Server.IIS.Core;
+using application.subSystems;
 
 LogManager.Setup().LoadConfiguration(logBuilder =>
 {
@@ -76,8 +77,18 @@ builder.Services.AddRaspberryIOSet(rotexConfig);
 builder.Services.AddMockIOSet();
 #endif
 
+builder.Services.AddSingleton<List<Subsystem>>((sp) => {
+    return new List<Subsystem> {
+                sp.GetRequiredService<CaldaiaMetano>(),
+                sp.GetRequiredService<Camino>(),
+                sp.GetRequiredService<Riscaldamento>(),
+                sp.GetRequiredService<Rotex>(),
+            };
+});
+
 var config = new CaldaiaConfig(TimeSpan.FromSeconds(5));
 builder.Services.AddCaldaiaApplication(config);
+
 
 var app = builder.Build();
 
