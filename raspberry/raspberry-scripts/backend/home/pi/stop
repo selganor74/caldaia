@@ -1,0 +1,8 @@
+#!/bin/bash
+
+sudo systemctl stop raspberry-caldaia.service &
+pid=$(ps -ef | grep dotnet | grep api.dll | awk '{print $2}')
+echo pid: $pid
+if [ "$pid" != "" ]; then
+  sudo kill -9 $pid
+fi

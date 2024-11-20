@@ -1,0 +1,3 @@
+#!/bin/bash
+
+tail -f caldaia/logs/INFO.log | grep -v AspNetCore

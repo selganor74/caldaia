@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "Copying program from SD to bin (RAM Disk) ..."
+
+pushd /home/pi/caldaia > /dev/null
+
+cp -r bin-consolidated/* bin
+
+popd > /dev/null
+
+echo "... done !"

@@ -3,7 +3,6 @@ using application.infrastructure;
 using application.subSystems;
 using domain.systemComponents;
 using raspberry_gpio;
-using static raspberry_gpio.RaspberryGpio;
 
 namespace api.prodConfig;
 
@@ -42,7 +41,7 @@ public class CaminoRaspberry : Camino
 
         RELAY_POMPA_CAMINO = new RaspberryDigitalOutput(
                 nameof(RELAY_POMPA_CAMINO),
-                (int)RelayOutput_GPIO.RELAY_POMPA_CAMINO,
+                RelayOutput_GPIO.RELAY_POMPA_CAMINO,
                 gpioCtrl,
                 log: log
             );

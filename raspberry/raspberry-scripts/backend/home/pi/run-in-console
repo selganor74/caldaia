@@ -1,0 +1,8 @@
+#!/bin/bash
+
+/home/pi/stop
+pushd /home/pi/caldaia/bin
+
+sudo /home/pi/.dotnet/dotnet api.dll
+
+popd

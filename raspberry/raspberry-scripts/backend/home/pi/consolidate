@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo Writing current bin to SD ...
+
+pushd /home/pi/caldaia > /dev/null
+
+  pushd bin-consolidated
+    rm -fR *
+  popd
+
+  cp -r bin/* bin-consolidated
+
+popd > /dev/null
+
+echo "... done!"

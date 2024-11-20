@@ -23,7 +23,7 @@ public class RiscaldamentoRaspberry : Riscaldamento
 
         var termostatoAmbienti = new RaspberryDigitalInput(
                 nameof(TERMOSTATO_AMBIENTI),
-                (int)DigitalInput_GPIO.TERMOSTATO_AMBIENTI,    // GPIO=26, PIN=37
+                (int)DigitalInput_GPIO.TERMOSTATO_AMBIENTI,    // GPIO=13, PIN=33
                 gpioCtrl,
                 log
             );

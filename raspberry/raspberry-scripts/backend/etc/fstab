@@ -1,0 +1,4 @@
+# Creates the temp filesystems for logs and bin folders
+# This is to limit writes on the sd card
+tmpfs /home/pi/caldaia/logs  tmpfs nodev,nosuid,size=100M 0 0
+tmpfs /home/pi/caldaia/bin   tmpfs nodev,nosuid,size=15M 0 0
